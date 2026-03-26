@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
 import { Toast, useToast } from '@/components/Toast'
+import { ShareButtons } from '@/components/ShareButtons'
 import { useCalculatorWorker } from '@/hooks/useCalculatorWorker'
 import { percentualiSchema, type PercentualiInput } from '@/lib/validations'
 
@@ -184,6 +185,13 @@ export default function CalcoloPercentuali() {
                 <span className="font-semibold">{result.toFixed(2)}%</span> di{' '}
                 {percentage}
               </p>
+            )}
+            {/* Share Buttons */}
+            {result !== null && (
+              <ShareButtons
+                title="Calcolo Percentuali - CalcolaSubito.it"
+                description="Ho appena calcolato una percentuale con questo tool gratuito. Prova anche tu!"
+              />
             )}
           </div>
         )}
