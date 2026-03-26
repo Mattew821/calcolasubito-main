@@ -25,7 +25,13 @@
       "WebFetch(domain:zod.dev)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:www.developerway.com)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(xargs ls:*)",
+      "Bash(for file:*)",
+      "Bash(do)",
+      "Bash(sed -i 's/disabled={isLoading}/disabled={isLoading}\\\\n              aria-busy={isLoading}\\\\n              aria-label={isLoading ? \"\"Calcolo in corso\"\" : \"\"Calcola\"\"}/g' \"$file\")",
+      "Bash(sed -i 's/<span className=\"\"inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin\"\"><\\\\/span>/<span className=\"\"inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin\"\" aria-hidden=\"\"true\"\"><\\\\/span>/g' \"$file\")",
+      "Bash(done)"
     ]
   },
   "hooks": {

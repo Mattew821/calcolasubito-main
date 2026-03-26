@@ -87,8 +87,9 @@ export function ShareButtons({
           disabled={isSharing}
           className="p-2 hover:bg-blue-100 rounded-lg transition-colors text-gray-600 hover:text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
           title="Condividi"
+          aria-label="Condividi questa pagina"
         >
-          <Share2 className="w-5 h-5" />
+          <Share2 className="w-5 h-5" aria-hidden="true" />
         </button>
       )}
 
@@ -99,8 +100,9 @@ export function ShareButtons({
         rel="noopener noreferrer"
         className="p-2 hover:bg-blue-100 rounded-lg transition-colors text-gray-600 hover:text-blue-600"
         title="Condividi su Facebook"
+        aria-label="Condividi su Facebook"
       >
-        <Facebook className="w-5 h-5" />
+        <Facebook className="w-5 h-5" aria-hidden="true" />
       </a>
 
       {/* Twitter/X */}
@@ -110,8 +112,9 @@ export function ShareButtons({
         rel="noopener noreferrer"
         className="p-2 hover:bg-blue-100 rounded-lg transition-colors text-gray-600 hover:text-blue-600"
         title="Condividi su Twitter"
+        aria-label="Condividi su Twitter"
       >
-        <Twitter className="w-5 h-5" />
+        <Twitter className="w-5 h-5" aria-hidden="true" />
       </a>
 
       {/* LinkedIn */}
@@ -121,8 +124,9 @@ export function ShareButtons({
         rel="noopener noreferrer"
         className="p-2 hover:bg-blue-100 rounded-lg transition-colors text-gray-600 hover:text-blue-600"
         title="Condividi su LinkedIn"
+        aria-label="Condividi su LinkedIn"
       >
-        <Linkedin className="w-5 h-5" />
+        <Linkedin className="w-5 h-5" aria-hidden="true" />
       </a>
     </div>
   )

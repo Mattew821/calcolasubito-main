@@ -116,11 +116,13 @@ export default function CalcoloRataMutuo() {
               <button
                 type="submit"
                 disabled={isLoading}
+              aria-busy={isLoading}
+              aria-label={isLoading ? "Calcolo in corso" : "Calcola"}
                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {isLoading ? (
                   <>
-                    <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" aria-hidden="true"></span>
                     Calcolo...
                   </>
                 ) : (
