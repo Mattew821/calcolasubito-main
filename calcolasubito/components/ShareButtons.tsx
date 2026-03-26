@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { Share2, Facebook, Linkedin, Twitter } from 'lucide-react'
 
 interface ShareButtonsProps {
@@ -11,8 +12,24 @@ interface ShareButtonsProps {
 export function ShareButtons({
   title,
   description,
-  url = typeof window !== 'undefined' ? window.location.href : '',
+  url: providedUrl,
 }: ShareButtonsProps) {
+  const [url, setUrl] = useState(providedUrl || '')
+  const [isReady, setIsReady] = useState(false)
+
+  // Get URL from browser after hydration
+  useEffect(() => {
+    if (!url && typeof window !== 'undefined') {
+      setUrl(window.location.href)
+    }
+    setIsReady(true)
+  }, [url])
+
+  // Don't render if URL is not available
+  if (!isReady || !url) {
+    return null
+  }
+
   const encodedUrl = encodeURIComponent(url)
   const encodedTitle = encodeURIComponent(title)
   const encodedDescription = encodeURIComponent(description)

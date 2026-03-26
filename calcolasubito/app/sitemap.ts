@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next'
 
-const BASE_URL = 'https://calcolasubito.vercel.app'
+// Use environment variable with fallback to production domain
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://calcolasubito.it'
 
 const calculators = [
   'percentuali',

@@ -141,13 +141,14 @@ export class WorkerPool {
 
       // Cancellare il timeout quando la task completa
       const originalResolve = resolve
+      const originalReject = reject
       task.resolve = (value) => {
         clearTimeout(timeout)
         originalResolve(value)
       }
       task.reject = (error) => {
         clearTimeout(timeout)
-        reject(error)
+        originalReject(error)
       }
     })
   }

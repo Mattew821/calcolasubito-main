@@ -7,7 +7,7 @@ export const percentualiSchema = z.object({
     .finite('Il numero deve essere un valore finito'),
   percentage: z.number()
     .min(0, 'La percentuale deve essere maggiore o uguale a 0')
-    .max(100, 'La percentuale deve essere minore o uguale a 100')
+    .max(10000, 'La percentuale non deve superare il 10000%')
     .finite('La percentuale deve essere un valore finito'),
 })
 

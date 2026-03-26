@@ -20,7 +20,14 @@ export const metadata: Metadata = {
   },
 }
 
-const GA_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-XXXXXXXXXX'
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID || null
+
+// Log warning in development if GA_ID is not configured
+if (!GA_ID && process.env.NODE_ENV === 'development') {
+  console.warn(
+    'Google Analytics is not configured. Set NEXT_PUBLIC_GA_ID environment variable to enable GA4 tracking.'
+  )
+}
 
 const organizationSchema = {
   '@context': 'https://schema.org',
@@ -69,23 +76,27 @@ export default function RootLayout({
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        {/* Google Analytics */}
-        <script
-          async
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-        ></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '${GA_ID}', {
-                page_path: window.location.pathname,
-              });
-            `,
-          }}
-        />
+        {/* Google Analytics - Only load if GA_ID is configured */}
+        {GA_ID && (
+          <>
+            <script
+              async
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+            ></script>
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${GA_ID}', {
+                    page_path: window.location.pathname,
+                  });
+                `,
+              }}
+            />
+          </>
+        )}
 
         {/* JSON-LD Organization Schema */}
         <script
