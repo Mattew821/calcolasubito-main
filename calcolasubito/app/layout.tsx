@@ -8,11 +8,33 @@ export const metadata: Metadata = {
   description: 'Suite di calcolatori online gratuiti per l\'Italia: IVA, busta paga, IMU, codice fiscale e molti altri.',
   keywords: 'calcolatori online, calcolo IVA, busta paga, codice fiscale, IMU, TARI',
   authors: [{ name: 'CalcolaSubito.it' }],
+  metadataBase: new URL('https://calcolasubito.it'),
   openGraph: {
     type: 'website',
     locale: 'it_IT',
     url: 'https://calcolasubito.it',
     siteName: 'CalcolaSubito.it',
+    title: 'CalcolaSubito - Calcolatori Online Gratuiti',
+    description: 'Suite di calcolatori online gratuiti per l\'Italia: percentuali, IVA, codice fiscale, mutuo e molto altro.',
+    images: [
+      {
+        url: '/opengraph-image.svg',
+        width: 1200,
+        height: 630,
+        alt: 'CalcolaSubito - Calcolatori Online Gratuiti',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'CalcolaSubito',
+    description: 'Calcolatori online gratuiti per l\'Italia',
+    images: ['/twitter-image.svg'],
+  },
+  icons: {
+    icon: '/icon.svg',
+    apple: '/icon.svg',
+    shortcut: '/favicon.ico.svg',
   },
   robots: {
     index: true,

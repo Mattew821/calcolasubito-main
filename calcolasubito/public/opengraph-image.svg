@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#grad)"/>
+
+  <!-- Main Title -->
+  <text x="600" y="180" font-family="Arial, sans-serif" font-size="80" font-weight="bold" fill="white" text-anchor="middle">
+    CalcolaSubito
+  </text>
+
+  <!-- Subtitle -->
+  <text x="600" y="280" font-family="Arial, sans-serif" font-size="40" fill="rgba(255,255,255,0.9)" text-anchor="middle">
+    Calcolatori Online Gratuiti per l'Italia
+  </text>
+
+  <!-- Features -->
+  <text x="150" y="420" font-family="Arial, sans-serif" font-size="24" fill="white">✓ Percentuali</text>
+  <text x="550" y="420" font-family="Arial, sans-serif" font-size="24" fill="white">✓ IVA</text>
+  <text x="900" y="420" font-family="Arial, sans-serif" font-size="24" fill="white">✓ Codice Fiscale</text>
+  <text x="250" y="500" font-family="Arial, sans-serif" font-size="24" fill="white">✓ Giorni tra Date</text>
+  <text x="700" y="500" font-family="Arial, sans-serif" font-size="24" fill="white">✓ Mutuo</text>
+</svg>

@@ -24,7 +24,8 @@
       "Bash(grep -r \"setInterval\\\\|setTimeout\\\\|addEventListener\" /c/Users/matth/Desktop/work/calcolasubito --include=*.ts --include=*.tsx)",
       "WebFetch(domain:zod.dev)",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:www.developerway.com)"
+      "WebFetch(domain:www.developerway.com)",
+      "Bash(grep:*)"
     ]
   },
   "hooks": {
