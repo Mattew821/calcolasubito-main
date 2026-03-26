@@ -7,7 +7,12 @@
       "Bash(find ~/.claude/projects/C--Users-matth-Desktop-work/memory -name *.md -type f)",
       "Bash(bash \"$HOME/Desktop/work/.claude/hooks/session-loader.sh\")",
       "Bash(bash ~/.claude/hooks/session-loader.sh)",
-      "Bash(bash \"$HOME/.claude/hooks/session-loader.sh\")"
+      "Bash(bash \"$HOME/.claude/hooks/session-loader.sh\")",
+      "Bash(rm -rf node_modules package-lock.json)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "WebSearch",
+      "Bash(xargs kill:*)"
     ]
   },
   "hooks": {

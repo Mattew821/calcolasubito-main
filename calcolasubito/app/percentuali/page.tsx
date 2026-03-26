@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Calculator from '@/components/Calculator'
+import { Toast, useToast } from '@/components/Toast'
 import { calculatePercentage, calculatePercentageOf } from '@/lib/calculations'
 
 export default function CalcoloPercentuali() {
@@ -9,14 +10,32 @@ export default function CalcoloPercentuali() {
   const [number, setNumber] = useState<number>(100)
   const [percentage, setPercentage] = useState<number>(20)
   const [result, setResult] = useState<number | null>(null)
+  const { toast, showToast } = useToast()
 
   const handleCalculate = () => {
-    if (mode === 'calculate') {
-      const res = calculatePercentage(number, percentage)
-      setResult(res)
-    } else {
-      const res = calculatePercentageOf(number, percentage)
-      setResult(res)
+    // Validazione
+    if (!isFinite(number) || !isFinite(percentage)) {
+      showToast('Inserisci numeri validi', 'error')
+      return
+    }
+
+    if (number === 0 && mode === 'percentage-of') {
+      showToast('Il numero non può essere zero in questa modalità', 'warning')
+      return
+    }
+
+    try {
+      if (mode === 'calculate') {
+        const res = calculatePercentage(number, percentage)
+        setResult(res)
+        showToast('Calcolo completato!', 'success')
+      } else {
+        const res = calculatePercentageOf(number, percentage)
+        setResult(res)
+        showToast('Calcolo completato!', 'success')
+      }
+    } catch (error) {
+      showToast('Errore nel calcolo', 'error')
     }
   }
 
@@ -24,14 +43,17 @@ export default function CalcoloPercentuali() {
     setNumber(100)
     setPercentage(20)
     setResult(null)
+    showToast('Valori resettati', 'info')
   }
 
   return (
-    <Calculator
-      title="Calcolo Percentuali"
-      description="Calcola facilmente percentuali, sconti e proporzioni"
-    >
-      <div className="space-y-6">
+    <>
+      {toast && <Toast {...toast} />}
+      <Calculator
+        title="Calcolo Percentuali"
+        description="Calcola facilmente percentuali, sconti e proporzioni"
+      >
+        <div className="space-y-6">
         {/* Mode Selection */}
         <div className="flex gap-4">
           <label className="flex items-center cursor-pointer">
@@ -141,7 +163,94 @@ export default function CalcoloPercentuali() {
             <li>• 50 è quale percentuale di 200? Risposta: 25%</li>
           </ul>
         </div>
+
+        {/* SEO Content Section */}
+        <div className="space-y-8 mt-12 pt-8 border-t border-gray-200">
+          <section>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Come Funziona il Calcolo Percentuale</h2>
+            <p className="text-gray-600 mb-4">
+              Una percentuale rappresenta una proporzione espressa su una scala di 100. Viene utilizzata quotidianamente
+              per calcolare sconti nei negozi, tasse, interessi bancari, aumenti stipendiali e molti altri valori.
+            </p>
+            <p className="text-gray-600">
+              Il nostro calcolatore percentuale permette di ottenere risultati in millisecondi, eliminando il rischio
+              di errori di calcolo e risparmiando tempo prezioso.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">La Formula Matematica</h2>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-4">
+              <p className="font-mono text-lg text-blue-900 text-center mb-2">
+                Percentuale = (Numero × Percentuale) ÷ 100
+              </p>
+            </div>
+            <p className="text-gray-600 mb-4">
+              <strong>Esempio pratico:</strong> Vuoi calcolare il 20% di 150. Applichi la formula:
+            </p>
+            <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
+              <li>150 × 20 = 3.000</li>
+              <li>3.000 ÷ 100 = 30</li>
+              <li><strong>Risultato: Il 20% di 150 è 30</strong></li>
+            </ul>
+            <p className="text-gray-600">
+              <strong>Per il calcolo inverso</strong> (quale percentuale è un numero rispetto a un altro):
+            </p>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-4">
+              <p className="font-mono text-lg text-blue-900 text-center">
+                Percentuale = (Numero ÷ Totale) × 100
+              </p>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Casi di Utilizzo Comuni</h2>
+            <ul className="list-disc list-inside text-gray-600 space-y-2">
+              <li><strong>Sconti nei negozi:</strong> Un prodotto costa 100€ con sconto 30%. Risparmio: 30€, prezzo finale: 70€</li>
+              <li><strong>Margine di profitto:</strong> Calcola il markup su costi di produzione</li>
+              <li><strong>Aumenti stipendiali:</strong> Un aumento del 5% su 2.000€ = 100€ in più</li>
+              <li><strong>Voti scolastici:</strong> Se hai risposto 45 domande su 50, la percentuale è 90%</li>
+              <li><strong>Tasse:</strong> Calcola l&apos;IVA o altre aliquote percentuali</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Domande Frequenti</h2>
+            <div className="space-y-6">
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-2">📌 Come calcolare uno sconto percentuale?</h3>
+                <p className="text-gray-600">
+                  Calcola la percentuale del prezzo originale, poi sottrai dal totale. Esempio: prezzo 100€, sconto 20%.
+                  Sconto = 100 × 20 ÷ 100 = 20€. Prezzo finale = 100 - 20 = 80€.
+                </p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-2">📌 Quale percentuale è 15 su 60?</h3>
+                <p className="text-gray-600">
+                  Dividi 15 per 60 e moltiplica per 100: (15 ÷ 60) × 100 = 25%. Quindi 15 è il 25% di 60.
+                </p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-2">📌 Come calcolo un aumento percentuale?</h3>
+                <p className="text-gray-600">
+                  Se un valore è 100 e aumenta del 10%, il nuovo valore è 100 + (100 × 10 ÷ 100) = 110.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Scopri gli Altri Calcolatori</h2>
+            <ul className="list-disc list-inside text-blue-600 space-y-2">
+              <li><a href="/giorni-tra-date" className="hover:underline">Calcolo Giorni tra Date</a></li>
+              <li><a href="/scorporo-iva" className="hover:underline">Calcolo Scorporo IVA</a></li>
+              <li><a href="/codice-fiscale" className="hover:underline">Calcolo Codice Fiscale</a></li>
+              <li><a href="/rata-mutuo" className="hover:underline">Calcolo Rata Mutuo</a></li>
+            </ul>
+          </section>
+        </div>
       </div>
     </Calculator>
+    </>
   )
 }
