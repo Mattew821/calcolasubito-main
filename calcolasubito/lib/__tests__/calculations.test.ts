@@ -1,0 +1,147 @@
+import {
+  calculatePercentage,
+  calculatePercentageOf,
+  calculateDaysBetween,
+  calculateWeeksBetween,
+  calculateMonthsBetween,
+  calculateGrossFromNet,
+  calculateNetFromGross,
+  calculateMortgage,
+} from '../calculations'
+
+/**
+ * Test suite for CalcolaSubito utility functions
+ * Based on official documentation and WCAG guidelines
+ */
+
+describe('calculatePercentage', () => {
+  it('should calculate percentage correctly', () => {
+    expect(calculatePercentage(100, 20)).toBe(20)
+    expect(calculatePercentage(200, 15)).toBe(30)
+    expect(calculatePercentage(50, 50)).toBe(25)
+  })
+
+  it('should handle zero values', () => {
+    expect(calculatePercentage(0, 20)).toBe(0)
+    expect(calculatePercentage(100, 0)).toBe(0)
+  })
+
+  it('should handle decimal values', () => {
+    expect(calculatePercentage(100.5, 10.5)).toBeCloseTo(10.5525, 4)
+  })
+})
+
+describe('calculatePercentageOf', () => {
+  it('should calculate percentage of correctly', () => {
+    expect(calculatePercentageOf(20, 100)).toBe(20)
+    expect(calculatePercentageOf(30, 200)).toBe(15)
+    expect(calculatePercentageOf(25, 50)).toBe(50)
+  })
+
+  it('should handle edge cases', () => {
+    expect(calculatePercentageOf(0, 100)).toBe(0)
+  })
+})
+
+describe('calculateDaysBetween', () => {
+  it('should calculate days between two dates', () => {
+    const startDate = new Date('2024-01-01')
+    const endDate = new Date('2024-01-31')
+    expect(calculateDaysBetween(startDate, endDate)).toBe(30)
+  })
+
+  it('should return 0 for same date', () => {
+    const date = new Date('2024-01-01')
+    expect(calculateDaysBetween(date, date)).toBe(0)
+  })
+
+  it('should handle leap years', () => {
+    const startDate = new Date('2024-02-01')
+    const endDate = new Date('2024-03-01')
+    expect(calculateDaysBetween(startDate, endDate)).toBe(29) // 2024 is leap year
+  })
+})
+
+describe('calculateWeeksBetween', () => {
+  it('should calculate weeks correctly', () => {
+    const startDate = new Date('2024-01-01')
+    const endDate = new Date('2024-01-29') // 4 weeks exactly
+    expect(calculateWeeksBetween(startDate, endDate)).toBe(4)
+  })
+})
+
+describe('calculateMonthsBetween', () => {
+  it('should calculate months correctly', () => {
+    const startDate = new Date('2024-01-01')
+    const endDate = new Date('2024-12-01')
+    expect(calculateMonthsBetween(startDate, endDate)).toBe(11)
+  })
+
+  it('should handle year boundaries', () => {
+    const startDate = new Date('2023-12-01')
+    const endDate = new Date('2024-01-01')
+    expect(calculateMonthsBetween(startDate, endDate)).toBe(1)
+  })
+})
+
+describe('IVA Calculations', () => {
+  describe('calculateGrossFromNet', () => {
+    it('should calculate gross correctly from net', () => {
+      const result = calculateGrossFromNet(100, 22)
+      expect(result.net).toBe(100)
+      expect(result.vat).toBe(22)
+      expect(result.gross).toBe(122)
+    })
+
+    it('should handle different VAT rates', () => {
+      const result = calculateGrossFromNet(100, 4)
+      expect(result.vat).toBe(4)
+      expect(result.gross).toBe(104)
+    })
+
+    it('should handle zero VAT', () => {
+      const result = calculateGrossFromNet(100, 0)
+      expect(result.vat).toBe(0)
+      expect(result.gross).toBe(100)
+    })
+  })
+
+  describe('calculateNetFromGross', () => {
+    it('should calculate net correctly from gross (scorporo IVA)', () => {
+      const result = calculateNetFromGross(122, 22)
+      expect(result.gross).toBe(122)
+      expect(result.net).toBeCloseTo(100, 2)
+      expect(result.vat).toBeCloseTo(22, 2)
+    })
+
+    it('should be inverse of calculateGrossFromNet', () => {
+      const gross = calculateGrossFromNet(100, 22)
+      const net = calculateNetFromGross(gross.gross, 22)
+      expect(net.net).toBeCloseTo(100, 2)
+    })
+  })
+})
+
+describe('calculateMortgage', () => {
+  it('should calculate mortgage payment correctly', () => {
+    const result = calculateMortgage(200000, 5, 360) // 200k, 5% for 30 years
+    expect(result.monthlyPayment).toBeGreaterThan(1000)
+    expect(result.monthlyPayment).toBeLessThan(1200)
+    expect(result.totalAmountPaid).toBeGreaterThan(200000)
+    expect(result.amortizationSchedule.length).toBe(360)
+  })
+
+  it('should handle zero interest rate', () => {
+    const result = calculateMortgage(100000, 0, 120)
+    expect(result.monthlyPayment).toBe(100000 / 120)
+    expect(result.totalInterest).toBe(0)
+  })
+
+  it('should generate correct amortization schedule', () => {
+    const result = calculateMortgage(10000, 5, 12)
+    expect(result.amortizationSchedule[0].month).toBe(1)
+    expect(result.amortizationSchedule[result.amortizationSchedule.length - 1].month).toBe(12)
+    // Last payment should reduce balance to ~0
+    expect(result.amortizationSchedule[11].balance).toBeLessThan(1)
+  })
+})
