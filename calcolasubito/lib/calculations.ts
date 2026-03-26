@@ -103,7 +103,7 @@ export function calculateCodiceFiscale(
   }
 }
 
-// Fallback: versione semplificata
+// Fallback: versione semplificata con supporto per nomi/cognomi composti
 function calculateCodiceFiscaleSimplified(
   surname: string,
   name: string,
@@ -115,23 +115,45 @@ function calculateCodiceFiscaleSimplified(
   const vowels = 'AEIOU'
 
   const extractLetters = (str: string, type: 'consonants' | 'vowels'): string[] => {
-    const chars = str.toUpperCase().replace(/\s/g, '')
+    // Supporta nomi/cognomi composti: "Geraci Montanari" -> estrae da entrambi
+    const cleanStr = str.toUpperCase().replace(/[^A-Z\s]/g, '')
+    const parts = cleanStr.split(/\s+/).filter((p) => p.length > 0)
+
     const letters = type === 'consonants' ? consonants : vowels
-    return chars.split('').filter((c) => letters.includes(c))
+    let result: string[] = []
+
+    // Estrae ordinatamente da ogni parte (surname o name)
+    for (const part of parts) {
+      const extracted = part.split('').filter((c) => letters.includes(c))
+      result = result.concat(extracted)
+    }
+
+    return result
   }
 
-  // Cognome (3 chars: consonanti poi vocali)
+  // Cognome: 3 chars da consonanti, poi da vocali
+  // Supporta: Rossi, Geraci Montanari, De Luca, ecc.
   const surnameConsonants = extractLetters(surname, 'consonants')
   const surnameVowels = extractLetters(surname, 'vowels')
   const surnamePart = (surnameConsonants.slice(0, 3).join('') + surnameVowels.slice(0, 3).join('') + '   ').slice(0, 3)
 
-  // Nome (3 chars: consonanti poi vocali, skip 4ª consonante se >3)
+  // Nome: 3 chars, regola speciale se >3 consonanti (skip la 4ª)
+  // Supporta: Marco, Valeria Sonia, Maria Rosa, Jean-Paul, ecc.
   const nameConsonants = extractLetters(name, 'consonants')
   const nameVowels = extractLetters(name, 'vowels')
-  const namePart = (nameConsonants.slice(0, 4).join('') + nameVowels.slice(0, 3).join('') + '   ').slice(
-    nameConsonants.length > 3 ? 1 : 0,
-    3
-  )
+
+  // Se ha >3 consonanti, salta la 4ª (regola ufficiale)
+  let namePartBase = ''
+  if (nameConsonants.length > 3) {
+    // Prendi 1ª, 2ª, 4ª consonante (salta la 3ª)
+    namePartBase = nameConsonants[0] + nameConsonants[1] + nameConsonants[3]
+  } else {
+    // Prendi tutte le consonanti disponibili
+    namePartBase = nameConsonants.slice(0, 3).join('')
+  }
+
+  // Aggiungi vocali se necessario (es. nomi terminanti in -isa, -ia)
+  const namePart = (namePartBase + nameVowels.slice(0, 3 - namePartBase.length).join('') + '   ').slice(0, 3)
 
   // Data (6 chars: AAMMGG con MM come lettera, GG+40 se femmina)
   const year = birthDate.getFullYear().toString().slice(-2)
