@@ -121,10 +121,10 @@ export default function AboutPage() {
             <p className="text-gray-600">
               <strong>Email:</strong>{' '}
               <a
-                href="mailto:info@calcolasubito.it"
+                href="mailto:calcolasubito@gmail.com"
                 className="text-blue-600 hover:underline"
               >
-                info@calcolasubito.it
+                calcolasubito@gmail.com
               </a>
             </p>
           </section>

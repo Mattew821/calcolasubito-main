@@ -40,9 +40,15 @@ export default function Footer() {
           {/* Contact */}
           <div>
             <h3 className="font-semibold text-white mb-3">Contatti</h3>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-gray-400 mb-2">
               Hai domande? Contattaci via email per suggerimenti e feedback.
             </p>
+            <a
+              href="mailto:calcolasubito@gmail.com"
+              className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+            >
+              calcolasubito@gmail.com
+            </a>
           </div>
         </div>
 

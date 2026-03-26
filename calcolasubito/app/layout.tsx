@@ -42,7 +42,7 @@ const organizationSchema = {
   contactPoint: {
     '@type': 'ContactPoint',
     contactType: 'Customer Support',
-    email: 'info@calcolasubito.it',
+    email: 'calcolasubito@gmail.com',
   },
 }
 
