@@ -59,6 +59,20 @@ export default function CalcoloCodiceFiscale() {
             </p>
           </div>
 
+          {/* Guide Info */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <p className="text-sm text-blue-900 mb-3">
+              <strong>💡 Come inserire i dati:</strong>
+            </p>
+            <ul className="text-sm text-blue-800 space-y-1 ml-4">
+              <li>✓ <strong>Cognomi composti:</strong> Geraci Montanari, De Luca, Di Marino</li>
+              <li>✓ <strong>Nomi composti:</strong> Valeria Sonia, Maria Rosa, Jean Paul</li>
+              <li>✓ <strong>Nomi con vocali finali:</strong> Francisa, Laurisa, Rosalia, Alessia</li>
+              <li>✓ <strong>Usa gli spazi</strong> per separare nomi/cognomi multipli</li>
+              <li>✓ <strong>Maiuscole/minuscole:</strong> non importa, il sistema normalizza</li>
+            </ul>
+          </div>
+
           {/* Inputs */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -70,7 +84,7 @@ export default function CalcoloCodiceFiscale() {
                 value={surname}
                 onChange={(e) => setSurname(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Es. Rossi"
+                placeholder="Es. Rossi, Geraci Montanari, De Luca"
               />
             </div>
             <div>
@@ -82,7 +96,7 @@ export default function CalcoloCodiceFiscale() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Es. Marco"
+                placeholder="Es. Marco, Valeria Sonia, Francisa"
               />
             </div>
           </div>
@@ -201,6 +215,42 @@ export default function CalcoloCodiceFiscale() {
               <p className="text-gray-600 mb-4">
                 Il nostro calcolatore genera il codice fiscale basato sui dati personali forniti (nome, cognome, data e luogo di nascita, sesso).
                 Utilizza le regole ufficiali dell&apos;Agenzia delle Entrate per creare il codice.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Gestione Nomi e Cognomi Composti</h2>
+              <p className="text-gray-600 mb-4">
+                Il calcolatore è stato progettato per gestire correttamente i vari formati di nomi e cognomi italiani:
+              </p>
+              <div className="bg-gray-50 rounded-lg p-4 mb-4 border border-gray-200">
+                <h4 className="font-semibold text-gray-900 mb-3">Formati Supportati:</h4>
+                <ul className="space-y-2 text-gray-600">
+                  <li>
+                    <strong>Cognomi composti:</strong> Geraci Montanari, De Luca, Di Marino, Von Neurath
+                    <br />
+                    <span className="text-sm text-gray-500">Il sistema estrae consonanti da tutti i cognomi in ordine</span>
+                  </li>
+                  <li>
+                    <strong>Nomi composti:</strong> Valeria Sonia, Maria Rosa, Jean Paul, Anna Francesca
+                    <br />
+                    <span className="text-sm text-gray-500">Applica la regola ufficiale di skip della 4ª consonante se presenti &gt;3</span>
+                  </li>
+                  <li>
+                    <strong>Nomi con vocali finali:</strong> Francisa, Laurisa, Rosalia, Alessia, Giulia
+                    <br />
+                    <span className="text-sm text-gray-500">Include correttamente le vocali per nomi terminanti in -isa, -ia, -ella</span>
+                  </li>
+                  <li>
+                    <strong>Varianti maiuscole/minuscole:</strong> ROSSI, rossi, Rossi
+                    <br />
+                    <span className="text-sm text-gray-500">Normalizza automaticamente a maiuscole</span>
+                  </li>
+                </ul>
+              </div>
+              <p className="text-gray-600">
+                Quando inserisci nomi o cognomi multipli, separa sempre con uno <strong>spazio</strong>. Il sistema elaborerà
+                automaticamente tutte le consonanti e vocali secondo le regole ufficiali dell&apos;Agenzia delle Entrate.
               </p>
             </section>
 
