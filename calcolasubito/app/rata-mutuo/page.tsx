@@ -4,14 +4,14 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
-import { Toast, useToast } from '@/components/Toast'
+import { ToastContainer, useToast } from '@/components/Toast'
 import { useCalculatorWorker } from '@/hooks/useCalculatorWorker'
 import { type MortgageCalculation } from '@/lib/calculations'
 import { rataMutuoSchema, type RataMutuoInput } from '@/lib/validations'
 
 export default function CalcoloRataMutuo() {
   const [result, setResult] = useState<MortgageCalculation | null>(null)
-  const { toast, showToast } = useToast()
+  const { toasts, showToast, removeToast } = useToast()
   const { calculate, isLoading } = useCalculatorWorker()
 
   const {
@@ -51,7 +51,7 @@ export default function CalcoloRataMutuo() {
 
   return (
     <>
-      {toast && <Toast {...toast} />}
+      <ToastContainer toasts={toasts} onClose={removeToast} />
       <Calculator
         title="Calcolo Rata Mutuo"
         description="Calcola la rata mensile del tuo mutuo immobiliare"

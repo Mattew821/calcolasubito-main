@@ -48,12 +48,10 @@ export type ScorporoIvaInput = z.infer<typeof scorporoIvaSchema>
 // Codice Fiscale Calculator
 export const codiceFiscaleSchema = z.object({
   surname: z.string()
-    .min(1, 'Il cognome è obbligatorio')
     .min(2, 'Il cognome deve avere almeno 2 caratteri')
     .max(100, 'Il cognome non deve superare 100 caratteri')
     .regex(/^[a-zA-Z\s'-]+$/, 'Il cognome può contenere solo lettere, spazi, trattini e apostrofi'),
   name: z.string()
-    .min(1, 'Il nome è obbligatorio')
     .min(2, 'Il nome deve avere almeno 2 caratteri')
     .max(100, 'Il nome non deve superare 100 caratteri')
     .regex(/^[a-zA-Z\s'-]+$/, 'Il nome può contenere solo lettere, spazi, trattini e apostrofi'),
@@ -61,7 +59,6 @@ export const codiceFiscaleSchema = z.object({
     .min(1, 'Seleziona una data di nascita')
     .refine((date) => !isNaN(Date.parse(date)), 'Data di nascita non valida'),
   birthPlace: z.string()
-    .min(1, 'Seleziona un comune di nascita')
     .min(2, 'Il comune deve avere almeno 2 caratteri'),
   gender: z.enum(['M', 'F']),
 })

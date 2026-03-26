@@ -4,14 +4,14 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
-import { Toast, useToast } from '@/components/Toast'
+import { ToastContainer, useToast } from '@/components/Toast'
 import { useCalculatorWorker } from '@/hooks/useCalculatorWorker'
 import { giorniTraDateSchema, type GiorniTraDateInput } from '@/lib/validations'
 
 export default function CalcoloGiorni() {
   const today = new Date().toISOString().split('T')[0]
   const [result, setResult] = useState<number | null>(null)
-  const { toast, showToast } = useToast()
+  const { toasts, showToast, removeToast } = useToast()
   const { calculate, isLoading } = useCalculatorWorker()
 
   const {
@@ -52,7 +52,7 @@ export default function CalcoloGiorni() {
 
   return (
     <>
-      {toast && <Toast {...toast} />}
+      <ToastContainer toasts={toasts} onClose={removeToast} />
       <Calculator
         title="Calcolo Giorni tra Due Date"
         description="Scopri quanti giorni, mesi e anni passano tra due date qualsiasi"

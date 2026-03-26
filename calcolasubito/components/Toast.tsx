@@ -4,25 +4,30 @@ import { useState, useEffect } from 'react'
 
 export type ToastType = 'success' | 'error' | 'info' | 'warning'
 
-interface ToastProps {
+interface ToastItem {
+  id: string
   message: string
   type: ToastType
   duration?: number
-  onClose?: () => void
+  onClose?: (id: string) => void
 }
 
-export function Toast({ message, type, duration = 3000, onClose }: ToastProps) {
+interface ToastItemProps extends ToastItem {
+  onClose: (id: string) => void
+}
+
+function ToastItem({ id, message, type, duration = 3000, onClose }: ToastItemProps) {
   const [isVisible, setIsVisible] = useState(true)
 
   useEffect(() => {
     if (duration > 0) {
       const timer = setTimeout(() => {
         setIsVisible(false)
-        onClose?.()
+        onClose(id)
       }, duration)
       return () => clearTimeout(timer)
     }
-  }, [duration, onClose])
+  }, [id, duration, onClose])
 
   if (!isVisible) return null
 
@@ -41,19 +46,54 @@ export function Toast({ message, type, duration = 3000, onClose }: ToastProps) {
   }[type]
 
   return (
-    <div className={`fixed bottom-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-fadeIn`}>
+    <div className={`fixed bottom-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-fadeIn z-50`}>
       <span className="text-xl font-bold">{icon}</span>
       <span>{message}</span>
     </div>
   )
 }
 
+/**
+ * Toast Container component - renders all active toasts
+ * Usage: <ToastContainer toasts={toasts} onClose={removeToast} />
+ */
+export function ToastContainer({
+  toasts,
+  onClose,
+}: {
+  toasts: ToastItem[]
+  onClose: (id: string) => void
+}) {
+  if (toasts.length === 0) return null
+
+  return (
+    <>
+      {toasts.map((toast) => (
+        <ToastItem key={toast.id} {...toast} onClose={onClose} />
+      ))}
+    </>
+  )
+}
+
+/**
+ * Hook for managing multiple toasts with ID-based array approach
+ * Prevents duplicate messages and ensures proper cleanup
+ *
+ * Example:
+ * const { toasts, showToast, removeToast } = useToast()
+ * showToast('Success!', 'success', 3000)
+ */
 export function useToast() {
-  const [toast, setToast] = useState<ToastProps | null>(null)
+  const [toasts, setToasts] = useState<ToastItem[]>([])
 
   const showToast = (message: string, type: ToastType = 'info', duration = 3000) => {
-    setToast({ message, type, duration })
+    const id = `${Date.now()}-${Math.random()}`
+    setToasts((prev) => [...prev, { id, message, type, duration }])
   }
 
-  return { toast, showToast }
+  const removeToast = (id: string) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== id))
+  }
+
+  return { toasts, showToast, removeToast }
 }

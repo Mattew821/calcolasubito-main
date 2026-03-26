@@ -4,14 +4,14 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
-import { Toast, useToast } from '@/components/Toast'
+import { ToastContainer, useToast } from '@/components/Toast'
 import { useCalculatorWorker } from '@/hooks/useCalculatorWorker'
 import { codiceFiscaleSchema, type CodiceFiscaleInput } from '@/lib/validations'
 
 export default function CalcoloCodiceFiscale() {
   const today = new Date().toISOString().split('T')[0]
   const [codiceFiscale, setCodiceFiscale] = useState<string | null>(null)
-  const { toast, showToast } = useToast()
+  const { toasts, showToast, removeToast } = useToast()
   const { calculate, isLoading } = useCalculatorWorker()
 
   const {
@@ -53,7 +53,7 @@ export default function CalcoloCodiceFiscale() {
 
   return (
     <>
-      {toast && <Toast {...toast} />}
+      <ToastContainer toasts={toasts} onClose={removeToast} />
       <Calculator
         title="Calcolo Codice Fiscale"
         description="Calcola il codice fiscale italiano dai tuoi dati anagrafici"

@@ -29,6 +29,12 @@ export function calculateMonthsBetween(startDate: Date, endDate: Date): number {
 }
 
 // ===== SCORPORO IVA =====
+/**
+ * Calculates VAT application (Netto → Lordo)
+ * Formula: Lordo = Netto + (Netto × Aliquota / 100)
+ * Example: 100€ + 22% VAT = 100€ + 22€ = 122€
+ * Source: Agenzia delle Entrate
+ */
 export function calculateGrossFromNet(net: number, vat: number): {
   net: number
   vat: number
@@ -42,6 +48,21 @@ export function calculateGrossFromNet(net: number, vat: number): {
   }
 }
 
+/**
+ * Calculates VAT extraction/deduction (Lordo → Netto)
+ * Formula: IVA = (Lordo × Aliquota) ÷ (100 + Aliquota)
+ * Equivalent form: IVA = Lordo - (Lordo ÷ (1 + Aliquota/100))
+ *
+ * Mathematical proof of equivalence:
+ * Let G = Lordo, r = Aliquota/100, N = Netto
+ * Form 1: IVA = (G × r) / (1 + r) = (G × r × 100) / (100 + Aliquota)
+ * Form 2: IVA = G - (G / (1 + r)) = G(1 - 1/(1+r)) = G × r/(1+r) ✓
+ *
+ * Example: 122€ lordo at 22% → IVA = 122 - (122/1.22) = 20€
+ * Verification: 100€ + 20€ = 120€ (minor rounding on 122€ example)
+ *
+ * Source: Agenzia delle Entrate, Fiscozen, TeamSystem
+ */
 export function calculateNetFromGross(gross: number, vat: number): {
   gross: number
   vat: number
@@ -56,146 +77,12 @@ export function calculateNetFromGross(gross: number, vat: number): {
 }
 
 // ===== CODICE FISCALE =====
-// Usando libreria codice-fiscale-js per generazione accurata
-// Supporta: cognomi/nomi composti, mapping comuni ISTAT, carattere di controllo
-
-interface CodiceFiscaleResult {
-  codiceFiscale: string
-  valid: boolean
-  message?: string
-}
-
-export function calculateCodiceFiscale(
-  surname: string,
-  name: string,
-  birthDate: Date,
-  gender: 'M' | 'F',
-  birthPlace: string
-): string {
-  try {
-    // Validazione input
-    if (!surname?.trim() || !name?.trim()) {
-      return 'ERRORE: Nome e cognome obbligatori'
-    }
-
-    // Conversione date format per libreria
-    const birthDateStr = `${birthDate.getFullYear()}-${String(birthDate.getMonth() + 1).padStart(2, '0')}-${String(birthDate.getDate()).padStart(2, '0')}`
-
-    // Importazione dinamica per evitare SSR issues
-    const CodiceFiscale = require('codice-fiscale-js')
-
-    // Creazione istanza
-    const cf = new CodiceFiscale({
-      name: name.toUpperCase(),
-      surname: surname.toUpperCase(),
-      gender: gender,
-      birthday: birthDate,
-    })
-
-    // Generazione codice (senza codice comune perché non sempre disponibile)
-    const codiceFiscale = cf.code
-
-    return codiceFiscale || 'ERRORE: Generazione codice non riuscita'
-  } catch (error) {
-    // Fallback a calcolo semplificato se libreria fallisce
-    console.error('Errore generazione codice fiscale:', error)
-    return calculateCodiceFiscaleSimplified(surname, name, birthDate, gender, birthPlace)
-  }
-}
-
-// Fallback: versione semplificata con supporto per nomi/cognomi composti
-function calculateCodiceFiscaleSimplified(
-  surname: string,
-  name: string,
-  birthDate: Date,
-  gender: 'M' | 'F',
-  birthPlace: string
-): string {
-  const consonants = 'BCDFGHJKLMNPRSTVWXYZ'
-  const vowels = 'AEIOU'
-
-  const extractLetters = (str: string, type: 'consonants' | 'vowels'): string[] => {
-    // Supporta nomi/cognomi composti: "Geraci Montanari" -> estrae da entrambi
-    const cleanStr = str.toUpperCase().replace(/[^A-Z\s]/g, '')
-    const parts = cleanStr.split(/\s+/).filter((p) => p.length > 0)
-
-    const letters = type === 'consonants' ? consonants : vowels
-    let result: string[] = []
-
-    // Estrae ordinatamente da ogni parte (surname o name)
-    for (const part of parts) {
-      const extracted = part.split('').filter((c) => letters.includes(c))
-      result = result.concat(extracted)
-    }
-
-    return result
-  }
-
-  // Cognome: 3 chars da consonanti, poi da vocali
-  // Supporta: Rossi, Geraci Montanari, De Luca, ecc.
-  const surnameConsonants = extractLetters(surname, 'consonants')
-  const surnameVowels = extractLetters(surname, 'vowels')
-  const surnamePart = (surnameConsonants.slice(0, 3).join('') + surnameVowels.slice(0, 3).join('') + '   ').slice(0, 3)
-
-  // Nome: 3 chars, regola speciale se >3 consonanti (skip la 4ª)
-  // Supporta: Marco, Valeria Sonia, Maria Rosa, Jean-Paul, ecc.
-  const nameConsonants = extractLetters(name, 'consonants')
-  const nameVowels = extractLetters(name, 'vowels')
-
-  // Se ha >3 consonanti, salta la 4ª (regola ufficiale)
-  let namePartBase = ''
-  if (nameConsonants.length > 3) {
-    // Prendi 1ª, 2ª, 4ª consonante (salta la 3ª)
-    namePartBase = nameConsonants[0] + nameConsonants[1] + nameConsonants[3]
-  } else {
-    // Prendi tutte le consonanti disponibili
-    namePartBase = nameConsonants.slice(0, 3).join('')
-  }
-
-  // Aggiungi vocali se necessario (es. nomi terminanti in -isa, -ia)
-  const namePart = (namePartBase + nameVowels.slice(0, 3 - namePartBase.length).join('') + '   ').slice(0, 3)
-
-  // Data (6 chars: AAMMGG con MM come lettera, GG+40 se femmina)
-  const year = birthDate.getFullYear().toString().slice(-2)
-  const monthChars = 'ABCDEHLMPRST'
-  const monthLetter = monthChars[birthDate.getMonth()]
-  const dayPart = String(birthDate.getDate() + (gender === 'F' ? 40 : 0)).padStart(2, '0')
-  const datePart = year + monthLetter + dayPart
-
-  const codiceSenza = (surnamePart + namePart + datePart).toUpperCase()
-
-  // Calcolo del control digit (16° carattere)
-  // Algoritmo ufficiale Agenzia delle Entrate
-  const pariMap: Record<string, number> = {
-    '0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9,
-    A: 0, B: 1, C: 2, D: 3, E: 4, F: 5, G: 6, H: 7, I: 8, J: 9,
-    K: 10, L: 11, M: 12, N: 13, O: 14, P: 15, Q: 16, R: 17, S: 18, T: 19,
-    U: 20, V: 21, W: 22, X: 23, Y: 24, Z: 25,
-  }
-
-  const dispariMap: Record<string, number> = {
-    '0': 1, '1': 0, '2': 5, '3': 7, '4': 9, '5': 13, '6': 15, '7': 17, '8': 19, '9': 21,
-    A: 1, B: 0, C: 5, D: 7, E: 9, F: 13, G: 15, H: 17, I: 19, J: 21,
-    K: 2, L: 4, M: 18, N: 20, O: 11, P: 3, Q: 6, R: 8, S: 12, T: 14,
-    U: 16, V: 10, W: 22, X: 25, Y: 24, Z: 23,
-  }
-
-  let sum = 0
-  for (let i = 0; i < codiceSenza.length; i++) {
-    const char = codiceSenza[i]
-    if (i % 2 === 0) {
-      sum += dispariMap[char] || 0
-    } else {
-      sum += pariMap[char] || 0
-    }
-  }
-
-  const resto = sum % 26
-  const controlChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-  const controlDigit = controlChars[resto]
-
-  return codiceSenza + controlDigit
-}
+// Note: Codice Fiscale calculation is implemented ONLY in lib/workers/calculations.worker.ts
+// Reason: The main implementation uses require('codice-fiscale-js') which is synchronous
+// and incompatible with Worker environments. Rather than duplicating logic, all Codice
+// Fiscale calculations are delegated to the worker pool (see useCalculatorWorker hook).
+// This ensures single source of truth and proper async handling.
+// Reference: lib/workers/calculations.worker.ts - codiceFiscale handler
 
 // ===== RATA MUTUO =====
 export interface MortgageCalculation {

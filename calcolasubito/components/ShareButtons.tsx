@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef, useMemo } from 'react'
 import { Share2, Facebook, Linkedin, Twitter } from 'lucide-react'
 
 interface ShareButtonsProps {
@@ -9,6 +9,8 @@ interface ShareButtonsProps {
   url?: string
 }
 
+const THROTTLE_DELAY = 500 // milliseconds
+
 export function ShareButtons({
   title,
   description,
@@ -16,6 +18,8 @@ export function ShareButtons({
 }: ShareButtonsProps) {
   const [url, setUrl] = useState(providedUrl || '')
   const [isReady, setIsReady] = useState(false)
+  const [isSharing, setIsSharing] = useState(false)
+  const lastShareTimeRef = useRef(0)
 
   // Get URL from browser after hydration
   useEffect(() => {
@@ -24,6 +28,38 @@ export function ShareButtons({
     }
     setIsReady(true)
   }, [url])
+
+  const handleShare = useMemo(
+    () => async () => {
+      // Throttle: prevent rapid-clicking
+      const now = Date.now()
+      if (now - lastShareTimeRef.current < THROTTLE_DELAY) {
+        return
+      }
+      lastShareTimeRef.current = now
+
+      if (!navigator.share) {
+        return
+      }
+
+      try {
+        setIsSharing(true)
+        await navigator.share({
+          title,
+          text: description,
+          url,
+        })
+      } catch (error) {
+        // Ignore AbortError (user cancelled share dialog)
+        if (error instanceof Error && error.name !== 'AbortError') {
+          console.error('Share failed:', error)
+        }
+      } finally {
+        setIsSharing(false)
+      }
+    },
+    [title, description, url]
+  )
 
   // Don't render if URL is not available
   if (!isReady || !url) {
@@ -40,20 +76,6 @@ export function ShareButtons({
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
   }
 
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title,
-          text: description,
-          url,
-        })
-      } catch (error) {
-        console.error('Share failed:', error)
-      }
-    }
-  }
-
   return (
     <div className="flex items-center gap-3 mt-6 pt-6 border-t border-gray-200">
       <span className="text-sm font-medium text-gray-600">Condividi:</span>
@@ -62,7 +84,8 @@ export function ShareButtons({
       {typeof navigator !== 'undefined' && 'share' in navigator && (
         <button
           onClick={handleShare}
-          className="p-2 hover:bg-blue-100 rounded-lg transition-colors text-gray-600 hover:text-blue-600"
+          disabled={isSharing}
+          className="p-2 hover:bg-blue-100 rounded-lg transition-colors text-gray-600 hover:text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
           title="Condividi"
         >
           <Share2 className="w-5 h-5" />

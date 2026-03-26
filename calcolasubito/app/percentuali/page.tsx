@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
-import { Toast, useToast } from '@/components/Toast'
+import { ToastContainer, useToast } from '@/components/Toast'
 import { ShareButtons } from '@/components/ShareButtons'
 import { useCalculatorWorker } from '@/hooks/useCalculatorWorker'
 import { percentualiSchema, type PercentualiInput } from '@/lib/validations'
@@ -12,7 +12,7 @@ import { percentualiSchema, type PercentualiInput } from '@/lib/validations'
 export default function CalcoloPercentuali() {
   const [mode, setMode] = useState<'calculate' | 'percentage-of'>('calculate')
   const [result, setResult] = useState<number | null>(null)
-  const { toast, showToast } = useToast()
+  const { toasts, showToast, removeToast } = useToast()
   const { calculate, isLoading } = useCalculatorWorker()
 
   const {
@@ -62,7 +62,7 @@ export default function CalcoloPercentuali() {
 
   return (
     <>
-      {toast && <Toast {...toast} />}
+      <ToastContainer toasts={toasts} onClose={removeToast} />
       <Calculator
         title="Calcolo Percentuali"
         description="Calcola facilmente percentuali, sconti e proporzioni"

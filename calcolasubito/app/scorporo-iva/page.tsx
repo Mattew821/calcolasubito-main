@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
-import { Toast, useToast } from '@/components/Toast'
+import { ToastContainer, useToast } from '@/components/Toast'
 import { useCalculatorWorker } from '@/hooks/useCalculatorWorker'
 import { scorporoIvaSchema, type ScorporoIvaInput } from '@/lib/validations'
 
@@ -17,7 +17,7 @@ interface IVAResult {
 
 export default function ScorporoIVA() {
   const [result, setResult] = useState<IVAResult | null>(null)
-  const { toast, showToast } = useToast()
+  const { toasts, showToast, removeToast } = useToast()
   const { calculate, isLoading } = useCalculatorWorker()
 
   const {
@@ -68,7 +68,7 @@ export default function ScorporoIVA() {
 
   return (
     <>
-      {toast && <Toast {...toast} />}
+      <ToastContainer toasts={toasts} onClose={removeToast} />
       <Calculator
         title="Calcolo Scorporo IVA"
         description="Calcola l&apos;IVA da un importo lordo o l&apos;importo netto"
