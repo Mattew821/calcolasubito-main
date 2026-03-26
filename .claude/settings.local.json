@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(update-config)",
+      "Bash(find ~/.claude -type f -name *.json)",
+      "Bash(find ~/Desktop/work -name settings*.json -type f)",
+      "Bash(find ~/.claude/projects/C--Users-matth-Desktop-work/memory -name *.md -type f)",
+      "Bash(bash \"$HOME/Desktop/work/.claude/hooks/session-loader.sh\")",
+      "Bash(bash ~/.claude/hooks/session-loader.sh)",
+      "Bash(bash \"$HOME/.claude/hooks/session-loader.sh\")"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /c/Users/matth/Desktop/work/.claude/hooks/session-loader.sh",
+            "timeout": 30,
+            "statusMessage": "📚 Caricamento contesto CalcolaSubito..."
+          }
+        ]
+      }
+    ]
+  }
+}
