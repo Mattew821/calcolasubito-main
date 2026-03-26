@@ -1,36 +1,43 @@
 'use client'
 
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
 import { Toast, useToast } from '@/components/Toast'
 import { calculatePercentage, calculatePercentageOf } from '@/lib/calculations'
+import { percentualiSchema, type PercentualiInput } from '@/lib/validations'
 
 export default function CalcoloPercentuali() {
   const [mode, setMode] = useState<'calculate' | 'percentage-of'>('calculate')
-  const [number, setNumber] = useState<number>(100)
-  const [percentage, setPercentage] = useState<number>(20)
   const [result, setResult] = useState<number | null>(null)
   const { toast, showToast } = useToast()
 
-  const handleCalculate = () => {
-    // Validazione
-    if (!isFinite(number) || !isFinite(percentage)) {
-      showToast('Inserisci numeri validi', 'error')
-      return
-    }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset: resetForm,
+    watch,
+  } = useForm<PercentualiInput>({
+    resolver: zodResolver(percentualiSchema),
+    defaultValues: {
+      number: 100,
+      percentage: 20,
+    },
+  })
 
-    if (number === 0 && mode === 'percentage-of') {
-      showToast('Il numero non può essere zero in questa modalità', 'warning')
-      return
-    }
+  const number = watch('number')
+  const percentage = watch('percentage')
 
+  const onSubmit = (data: PercentualiInput) => {
     try {
       if (mode === 'calculate') {
-        const res = calculatePercentage(number, percentage)
+        const res = calculatePercentage(data.number, data.percentage)
         setResult(res)
         showToast('Calcolo completato!', 'success')
       } else {
-        const res = calculatePercentageOf(number, percentage)
+        const res = calculatePercentageOf(data.number, data.percentage)
         setResult(res)
         showToast('Calcolo completato!', 'success')
       }
@@ -40,8 +47,7 @@ export default function CalcoloPercentuali() {
   }
 
   const reset = () => {
-    setNumber(100)
-    setPercentage(20)
+    resetForm()
     setResult(null)
     showToast('Valori resettati', 'info')
   }
@@ -85,48 +91,61 @@ export default function CalcoloPercentuali() {
         </div>
 
         {/* Inputs */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {mode === 'calculate' ? 'Numero' : 'Numero'}
-            </label>
-            <input
-              type="number"
-              value={number}
-              onChange={(e) => setNumber(parseFloat(e.target.value) || 0)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Inserisci numero"
-            />
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {mode === 'calculate' ? 'Numero' : 'Numero'}
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                {...register('number', { valueAsNumber: true })}
+                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                  errors.number ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                }`}
+                placeholder="Inserisci numero"
+              />
+              {errors.number && (
+                <p className="mt-1 text-sm text-red-600">{errors.number.message}</p>
+              )}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {mode === 'calculate' ? 'Percentuale (%)' : 'Numero base'}
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                {...register('percentage', { valueAsNumber: true })}
+                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                  errors.percentage ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                }`}
+                placeholder="Inserisci percentuale"
+              />
+              {errors.percentage && (
+                <p className="mt-1 text-sm text-red-600">{errors.percentage.message}</p>
+              )}
+            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {mode === 'calculate' ? 'Percentuale (%)' : 'Numero base'}
-            </label>
-            <input
-              type="number"
-              value={percentage}
-              onChange={(e) => setPercentage(parseFloat(e.target.value) || 0)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Inserisci percentuale"
-            />
-          </div>
-        </div>
 
-        {/* Buttons */}
-        <div className="flex gap-4">
-          <button
-            onClick={handleCalculate}
-            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors"
-          >
-            Calcola
-          </button>
-          <button
-            onClick={reset}
-            className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 rounded-lg transition-colors"
-          >
-            Resetta
-          </button>
-        </div>
+          {/* Buttons */}
+          <div className="flex gap-4">
+            <button
+              type="submit"
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors"
+            >
+              Calcola
+            </button>
+            <button
+              type="button"
+              onClick={reset}
+              className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 rounded-lg transition-colors"
+            >
+              Resetta
+            </button>
+          </div>
+        </form>
 
         {/* Result */}
         {result !== null && (

@@ -1,43 +1,48 @@
 'use client'
 
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
 import { Toast, useToast } from '@/components/Toast'
 import { calculateCodiceFiscale } from '@/lib/calculations'
+import { codiceFiscaleSchema, type CodiceFiscaleInput } from '@/lib/validations'
 
 export default function CalcoloCodiceFiscale() {
   const today = new Date().toISOString().split('T')[0]
-  const [surname, setSurname] = useState<string>('')
-  const [name, setName] = useState<string>('')
-  const [birthDate, setBirthDate] = useState<string>(today)
-  const [gender, setGender] = useState<'M' | 'F'>('M')
-  const [birthPlace, setBirthPlace] = useState<string>('')
   const [codiceFiscale, setCodiceFiscale] = useState<string | null>(null)
   const { toast, showToast } = useToast()
 
-  const handleCalculate = () => {
-    if (!surname.trim() || !name.trim()) {
-      showToast('Inserisci nome e cognome', 'error')
-      return
-    }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset: resetForm,
+  } = useForm<CodiceFiscaleInput>({
+    resolver: zodResolver(codiceFiscaleSchema),
+    defaultValues: {
+      surname: '',
+      name: '',
+      birthDate: today,
+      gender: 'M',
+      birthPlace: '',
+    },
+  })
 
+  const onSubmit = (data: CodiceFiscaleInput) => {
     const result = calculateCodiceFiscale(
-      surname,
-      name,
-      new Date(birthDate),
-      gender,
-      birthPlace
+      data.surname,
+      data.name,
+      new Date(data.birthDate),
+      data.gender,
+      data.birthPlace
     )
     setCodiceFiscale(result)
     showToast('Codice fiscale generato!', 'success')
   }
 
   const reset = () => {
-    setSurname('')
-    setName('')
-    setBirthDate(today)
-    setGender('M')
-    setBirthPlace('')
+    resetForm()
     setCodiceFiscale(null)
     showToast('Valori resettati', 'info')
   }
@@ -74,88 +79,111 @@ export default function CalcoloCodiceFiscale() {
           </div>
 
           {/* Inputs */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Cognome
-              </label>
-              <input
-                type="text"
-                value={surname}
-                onChange={(e) => setSurname(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Es. Rossi, Geraci Montanari, De Luca"
-              />
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Cognome
+                </label>
+                <input
+                  type="text"
+                  {...register('surname')}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                    errors.surname ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                  }`}
+                  placeholder="Es. Rossi, Geraci Montanari, De Luca"
+                />
+                {errors.surname && (
+                  <p className="mt-1 text-sm text-red-600">{errors.surname.message}</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nome
+                </label>
+                <input
+                  type="text"
+                  {...register('name')}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                    errors.name ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                  }`}
+                  placeholder="Es. Marco, Valeria Sonia, Francisa"
+                />
+                {errors.name && (
+                  <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+                )}
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Nome
-              </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Es. Marco, Valeria Sonia, Francisa"
-              />
-            </div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Data di Nascita
+                </label>
+                <input
+                  type="date"
+                  {...register('birthDate')}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                    errors.birthDate ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                  }`}
+                />
+                {errors.birthDate && (
+                  <p className="mt-1 text-sm text-red-600">{errors.birthDate.message}</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Sesso
+                </label>
+                <select
+                  {...register('gender')}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                    errors.gender ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                  }`}
+                >
+                  <option value="M">Maschio</option>
+                  <option value="F">Femmina</option>
+                </select>
+                {errors.gender && (
+                  <p className="mt-1 text-sm text-red-600">{errors.gender.message}</p>
+                )}
+              </div>
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Data di Nascita
+                Comune di Nascita (Codice ISTAT)
               </label>
               <input
-                type="date"
-                value={birthDate}
-                onChange={(e) => setBirthDate(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                type="text"
+                {...register('birthPlace')}
+                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                  errors.birthPlace ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                }`}
+                placeholder="Es. H501 (Roma)"
               />
+              {errors.birthPlace && (
+                <p className="mt-1 text-sm text-red-600">{errors.birthPlace.message}</p>
+              )}
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Sesso
-              </label>
-              <select
-                value={gender}
-                onChange={(e) => setGender(e.target.value as 'M' | 'F')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+
+            {/* Buttons */}
+            <div className="flex gap-4">
+              <button
+                type="submit"
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors"
               >
-                <option value="M">Maschio</option>
-                <option value="F">Femmina</option>
-              </select>
+                Calcola
+              </button>
+              <button
+                type="button"
+                onClick={reset}
+                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 rounded-lg transition-colors"
+              >
+                Resetta
+              </button>
             </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Comune di Nascita (Codice ISTAT)
-            </label>
-            <input
-              type="text"
-              value={birthPlace}
-              onChange={(e) => setBirthPlace(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Es. H501 (Roma)"
-            />
-          </div>
-
-          {/* Buttons */}
-          <div className="flex gap-4">
-            <button
-              onClick={handleCalculate}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors"
-            >
-              Calcola
-            </button>
-            <button
-              onClick={reset}
-              className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 rounded-lg transition-colors"
-            >
-              Resetta
-            </button>
-          </div>
+          </form>
 
           {/* Result */}
           {codiceFiscale && (

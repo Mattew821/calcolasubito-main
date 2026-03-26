@@ -1,26 +1,35 @@
 'use client'
 
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
 import { Toast, useToast } from '@/components/Toast'
 import { calculateMortgage, type MortgageCalculation } from '@/lib/calculations'
+import { rataMutuoSchema, type RataMutuoInput } from '@/lib/validations'
 
 export default function CalcoloRataMutuo() {
-  const [principal, setPrincipal] = useState<number>(200000)
-  const [annualRate, setAnnualRate] = useState<number>(4.5)
-  const [years, setYears] = useState<number>(25)
   const [result, setResult] = useState<MortgageCalculation | null>(null)
   const { toast, showToast } = useToast()
 
-  const handleCalculate = () => {
-    if (principal <= 0 || annualRate < 0 || years <= 0) {
-      showToast('Inserisci valori validi', 'error')
-      return
-    }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset: resetForm,
+  } = useForm<RataMutuoInput>({
+    resolver: zodResolver(rataMutuoSchema),
+    defaultValues: {
+      principal: 200000,
+      annualRate: 4.5,
+      years: 25,
+    },
+  })
 
+  const onSubmit = (data: RataMutuoInput) => {
     try {
-      const months = years * 12
-      const res = calculateMortgage(principal, annualRate, months)
+      const months = data.years * 12
+      const res = calculateMortgage(data.principal, data.annualRate, months)
       setResult(res)
       showToast('Calcolo rata mutuo completato!', 'success')
     } catch (error) {
@@ -29,9 +38,7 @@ export default function CalcoloRataMutuo() {
   }
 
   const reset = () => {
-    setPrincipal(200000)
-    setAnnualRate(4.5)
-    setYears(25)
+    resetForm()
     setResult(null)
     showToast('Valori resettati', 'info')
   }
@@ -45,61 +52,76 @@ export default function CalcoloRataMutuo() {
       >
         <div className="space-y-6">
           {/* Inputs */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Importo (€)
-              </label>
-              <input
-                type="number"
-                value={principal}
-                onChange={(e) => setPrincipal(parseFloat(e.target.value) || 0)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="200000"
-              />
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Importo (€)
+                </label>
+                <input
+                  type="number"
+                  {...register('principal', { valueAsNumber: true })}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                    errors.principal ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                  }`}
+                  placeholder="200000"
+                />
+                {errors.principal && (
+                  <p className="mt-1 text-sm text-red-600">{errors.principal.message}</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Tasso Annuale (%)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  {...register('annualRate', { valueAsNumber: true })}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                    errors.annualRate ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                  }`}
+                  placeholder="4.5"
+                />
+                {errors.annualRate && (
+                  <p className="mt-1 text-sm text-red-600">{errors.annualRate.message}</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Anni
+                </label>
+                <input
+                  type="number"
+                  {...register('years', { valueAsNumber: true })}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                    errors.years ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                  }`}
+                  placeholder="25"
+                />
+                {errors.years && (
+                  <p className="mt-1 text-sm text-red-600">{errors.years.message}</p>
+                )}
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tasso Annuale (%)
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                value={annualRate}
-                onChange={(e) => setAnnualRate(parseFloat(e.target.value) || 0)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="4.5"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Anni
-              </label>
-              <input
-                type="number"
-                value={years}
-                onChange={(e) => setYears(parseFloat(e.target.value) || 0)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="25"
-              />
-            </div>
-          </div>
 
-          {/* Buttons */}
-          <div className="flex gap-4">
-            <button
-              onClick={handleCalculate}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors"
-            >
-              Calcola
-            </button>
-            <button
-              onClick={reset}
-              className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 rounded-lg transition-colors"
-            >
-              Resetta
-            </button>
-          </div>
+            {/* Buttons */}
+            <div className="flex gap-4">
+              <button
+                type="submit"
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors"
+              >
+                Calcola
+              </button>
+              <button
+                type="button"
+                onClick={reset}
+                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 rounded-lg transition-colors"
+              >
+                Resetta
+              </button>
+            </div>
+          </form>
 
           {/* Result */}
           {result && (

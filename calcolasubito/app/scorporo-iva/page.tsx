@@ -1,12 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
 import { Toast, useToast } from '@/components/Toast'
-import {
-  calculateGrossFromNet,
-  calculateNetFromGross,
-} from '@/lib/calculations'
+import { scorporoIvaSchema, type ScorporoIvaInput } from '@/lib/validations'
 
 interface IVAResult {
   gross: number
@@ -16,38 +15,50 @@ interface IVAResult {
 }
 
 export default function ScorporoIVA() {
-  const [mode, setMode] = useState<'gross' | 'net'>('gross')
-  const [amount, setAmount] = useState<number>(100)
-  const [ivaRate, setIvaRate] = useState<number>(22)
   const [result, setResult] = useState<IVAResult | null>(null)
   const { toast, showToast } = useToast()
 
-  const handleCalculate = () => {
-    if (amount <= 0) {
-      showToast('Inserisci un importo valido', 'error')
-      return
-    }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset: resetForm,
+    watch,
+    setValue,
+  } = useForm<ScorporoIvaInput>({
+    resolver: zodResolver(scorporoIvaSchema),
+    defaultValues: {
+      amount: 100,
+      rate: 22,
+      mode: 'gross',
+    },
+  })
 
+  const mode = watch('mode')
+  const amount = watch('amount')
+  const rate = watch('rate')
+
+  const onSubmit = (data: ScorporoIvaInput) => {
     try {
       let ivaResult: IVAResult
 
-      if (mode === 'gross') {
-        const ivaAmount = (amount * ivaRate) / (100 + ivaRate)
-        const netAmount = amount - ivaAmount
+      if (data.mode === 'gross') {
+        const ivaAmount = (data.amount * data.rate) / (100 + data.rate)
+        const netAmount = data.amount - ivaAmount
         ivaResult = {
-          gross: amount,
+          gross: data.amount,
           net: netAmount,
           iva: ivaAmount,
-          percentage: ivaRate,
+          percentage: data.rate,
         }
       } else {
-        const ivaAmount = (amount * ivaRate) / 100
-        const grossAmount = amount + ivaAmount
+        const ivaAmount = (data.amount * data.rate) / 100
+        const grossAmount = data.amount + ivaAmount
         ivaResult = {
           gross: grossAmount,
-          net: amount,
+          net: data.amount,
           iva: ivaAmount,
-          percentage: ivaRate,
+          percentage: data.rate,
         }
       }
 
@@ -59,8 +70,7 @@ export default function ScorporoIVA() {
   }
 
   const reset = () => {
-    setAmount(100)
-    setIvaRate(22)
+    resetForm()
     setResult(null)
     showToast('Valori resettati', 'info')
   }
@@ -84,10 +94,8 @@ export default function ScorporoIVA() {
             <label className="flex items-center cursor-pointer">
               <input
                 type="radio"
-                name="mode"
+                {...register('mode')}
                 value="gross"
-                checked={mode === 'gross'}
-                onChange={(e) => setMode(e.target.value as 'gross')}
                 className="mr-2"
               />
               <span className="text-sm font-medium text-gray-700">
@@ -97,10 +105,8 @@ export default function ScorporoIVA() {
             <label className="flex items-center cursor-pointer">
               <input
                 type="radio"
-                name="mode"
+                {...register('mode')}
                 value="net"
-                checked={mode === 'net'}
-                onChange={(e) => setMode(e.target.value as 'net')}
                 className="mr-2"
               />
               <span className="text-sm font-medium text-gray-700">
@@ -110,66 +116,80 @@ export default function ScorporoIVA() {
           </div>
 
           {/* Inputs */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Importo {mode === 'gross' ? 'Lordo' : 'Netto'} (€)
-              </label>
-              <input
-                type="number"
-                value={amount}
-                onChange={(e) => setAmount(parseFloat(e.target.value) || 0)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Inserisci importo"
-              />
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Importo {mode === 'gross' ? 'Lordo' : 'Netto'} (€)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  {...register('amount', { valueAsNumber: true })}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                    errors.amount ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                  }`}
+                  placeholder="Inserisci importo"
+                />
+                {errors.amount && (
+                  <p className="mt-1 text-sm text-red-600">{errors.amount.message}</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Aliquota IVA (%)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  {...register('rate', { valueAsNumber: true })}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                    errors.rate ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                  }`}
+                  placeholder="Inserisci aliquota"
+                />
+                {errors.rate && (
+                  <p className="mt-1 text-sm text-red-600">{errors.rate.message}</p>
+                )}
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Aliquota IVA (%)
-              </label>
-              <input
-                type="number"
-                value={ivaRate}
-                onChange={(e) => setIvaRate(parseFloat(e.target.value) || 0)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Inserisci aliquota"
-              />
-            </div>
-          </div>
 
-          {/* Quick IVA rates */}
-          <div>
-            <label className="text-sm font-medium text-gray-700 mb-2 block">
-              Aliquote comuni:
-            </label>
-            <div className="flex gap-2 flex-wrap">
-              {commonRates.map((rate) => (
-                <button
-                  key={rate.value}
-                  onClick={() => setIvaRate(rate.value)}
-                  className="px-3 py-1 text-sm bg-gray-200 hover:bg-blue-500 hover:text-white rounded transition-colors"
-                >
-                  {rate.label}
-                </button>
-              ))}
+            {/* Quick IVA rates */}
+            <div>
+              <label className="text-sm font-medium text-gray-700 mb-2 block">
+                Aliquote comuni:
+              </label>
+              <div className="flex gap-2 flex-wrap">
+                {commonRates.map((commonRate) => (
+                  <button
+                    key={commonRate.value}
+                    type="button"
+                    onClick={() => setValue('rate', commonRate.value)}
+                    className="px-3 py-1 text-sm bg-gray-200 hover:bg-blue-500 hover:text-white rounded transition-colors"
+                  >
+                    {commonRate.label}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Buttons */}
-          <div className="flex gap-4">
-            <button
-              onClick={handleCalculate}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors"
-            >
-              Calcola
-            </button>
-            <button
-              onClick={reset}
-              className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 rounded-lg transition-colors"
-            >
-              Resetta
-            </button>
-          </div>
+            {/* Buttons */}
+            <div className="flex gap-4">
+              <button
+                type="submit"
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors"
+              >
+                Calcola
+              </button>
+              <button
+                type="button"
+                onClick={reset}
+                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 rounded-lg transition-colors"
+              >
+                Resetta
+              </button>
+            </div>
+          </form>
 
           {/* Result */}
           {result && (

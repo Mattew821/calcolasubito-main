@@ -1,30 +1,38 @@
 'use client'
 
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
 import { Toast, useToast } from '@/components/Toast'
 import { calculateDaysBetween } from '@/lib/calculations'
+import { giorniTraDateSchema, type GiorniTraDateInput } from '@/lib/validations'
 
 export default function CalcoloGiorni() {
   const today = new Date().toISOString().split('T')[0]
-  const [startDate, setStartDate] = useState<string>(today)
-  const [endDate, setEndDate] = useState<string>(today)
   const [result, setResult] = useState<number | null>(null)
   const { toast, showToast } = useToast()
 
-  const handleCalculate = () => {
-    if (!startDate || !endDate) {
-      showToast('Seleziona entrambe le date', 'error')
-      return
-    }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset: resetForm,
+    watch,
+  } = useForm<GiorniTraDateInput>({
+    resolver: zodResolver(giorniTraDateSchema),
+    defaultValues: {
+      startDate: today,
+      endDate: today,
+    },
+  })
 
-    if (new Date(startDate) > new Date(endDate)) {
-      showToast('La data iniziale deve essere prima della data finale', 'warning')
-      return
-    }
+  const startDate = watch('startDate')
+  const endDate = watch('endDate')
 
+  const onSubmit = (data: GiorniTraDateInput) => {
     try {
-      const days = calculateDaysBetween(new Date(startDate), new Date(endDate))
+      const days = calculateDaysBetween(new Date(data.startDate), new Date(data.endDate))
       setResult(days)
       showToast('Calcolo completato!', 'success')
     } catch (error) {
@@ -33,8 +41,7 @@ export default function CalcoloGiorni() {
   }
 
   const reset = () => {
-    setStartDate(today)
-    setEndDate(today)
+    resetForm()
     setResult(null)
     showToast('Valori resettati', 'info')
   }
@@ -48,46 +55,57 @@ export default function CalcoloGiorni() {
       >
         <div className="space-y-6">
           {/* Inputs */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Data Inizio
-              </label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Data Inizio
+                </label>
+                <input
+                  type="date"
+                  {...register('startDate')}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                    errors.startDate ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                  }`}
+                />
+                {errors.startDate && (
+                  <p className="mt-1 text-sm text-red-600">{errors.startDate.message}</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Data Fine
+                </label>
+                <input
+                  type="date"
+                  {...register('endDate')}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                    errors.endDate ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                  }`}
+                />
+                {errors.endDate && (
+                  <p className="mt-1 text-sm text-red-600">{errors.endDate.message}</p>
+                )}
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Data Fine
-              </label>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          </div>
 
-          {/* Buttons */}
-          <div className="flex gap-4">
-            <button
-              onClick={handleCalculate}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors"
-            >
-              Calcola
-            </button>
-            <button
-              onClick={reset}
-              className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 rounded-lg transition-colors"
-            >
-              Resetta
-            </button>
-          </div>
+            {/* Buttons */}
+            <div className="flex gap-4">
+              <button
+                type="submit"
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors"
+              >
+                Calcola
+              </button>
+              <button
+                type="button"
+                onClick={reset}
+                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 rounded-lg transition-colors"
+              >
+                Resetta
+              </button>
+            </div>
+          </form>
 
           {/* Result */}
           {result !== null && (
