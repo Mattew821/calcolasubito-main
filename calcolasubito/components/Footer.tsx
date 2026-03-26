@@ -6,13 +6,45 @@ export default function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-300 mt-12">
       <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Company Info */}
           <div>
             <h3 className="font-semibold text-white mb-3">CalcolaSubito.it</h3>
             <p className="text-sm text-gray-400">
               Suite di calcolatori online gratuiti per l&apos;Italia. Calcola IVA, busta paga, IMU e molto altro.
             </p>
+          </div>
+
+          {/* Calcolatori */}
+          <div>
+            <h3 className="font-semibold text-white mb-3">Calcolatori</h3>
+            <ul className="text-sm space-y-2">
+              <li>
+                <Link href="/percentuali" className="text-gray-400 hover:text-white transition-colors">
+                  Percentuali
+                </Link>
+              </li>
+              <li>
+                <Link href="/scorporo-iva" className="text-gray-400 hover:text-white transition-colors">
+                  Scorporo IVA
+                </Link>
+              </li>
+              <li>
+                <Link href="/codice-fiscale" className="text-gray-400 hover:text-white transition-colors">
+                  Codice Fiscale
+                </Link>
+              </li>
+              <li>
+                <Link href="/giorni-tra-date" className="text-gray-400 hover:text-white transition-colors">
+                  Giorni tra Date
+                </Link>
+              </li>
+              <li>
+                <Link href="/rata-mutuo" className="text-gray-400 hover:text-white transition-colors">
+                  Rata Mutuo
+                </Link>
+              </li>
+            </ul>
           </div>
 
           {/* Links */}
@@ -22,6 +54,11 @@ export default function Footer() {
               <li>
                 <Link href="/" className="text-gray-400 hover:text-white transition-colors">
                   Home
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="text-gray-400 hover:text-white transition-colors">
+                  Chi Siamo
                 </Link>
               </li>
               <li>

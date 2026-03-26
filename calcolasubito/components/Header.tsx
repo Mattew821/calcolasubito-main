@@ -31,6 +31,9 @@ export default function Header() {
           <Link href="/" className="text-gray-600 hover:text-blue-600 transition-colors">
             Home
           </Link>
+          <Link href="/about" className="text-gray-600 hover:text-blue-600 transition-colors" aria-label="Chi siamo">
+            Chi Siamo
+          </Link>
           <a href="#calcolatori" className="text-gray-600 hover:text-blue-600 transition-colors">
             Calcolatori
           </a>
@@ -45,6 +48,9 @@ export default function Header() {
         <div className="md:hidden bg-white border-t px-4 py-3">
           <Link href="/" className="block py-2 text-gray-600 hover:text-blue-600">
             Home
+          </Link>
+          <Link href="/about" className="block py-2 text-gray-600 hover:text-blue-600">
+            Chi Siamo
           </Link>
           <a href="#calcolatori" className="block py-2 text-gray-600 hover:text-blue-600">
             Calcolatori
