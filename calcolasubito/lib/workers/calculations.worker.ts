@@ -90,7 +90,7 @@ function calculateCodiceFiscaleSimplified(
 
   let namePartBase = ''
   if (nameConsonants.length > 3) {
-    namePartBase = nameConsonants[0] + nameConsonants[1] + nameConsonants[3]
+    namePartBase = (nameConsonants[0] ?? '') + (nameConsonants[1] ?? '') + (nameConsonants[3] ?? '')
   } else {
     namePartBase = nameConsonants.slice(0, 3).join('')
   }
@@ -100,7 +100,7 @@ function calculateCodiceFiscaleSimplified(
   const date = new Date(birthDate)
   const year = date.getFullYear().toString().slice(-2)
   const monthChars = 'ABCDEHLMPRST'
-  const monthLetter = monthChars[date.getMonth()]
+  const monthLetter = monthChars.charAt(date.getMonth())
   const dayPart = String(date.getDate() + (gender === 'F' ? 40 : 0)).padStart(2, '0')
   const datePart = year + monthLetter + dayPart
 
@@ -124,11 +124,11 @@ function calculateCodiceFiscaleSimplified(
 
   let sum = 0
   for (let i = 0; i < codiceSenza.length; i++) {
-    const char = codiceSenza[i]
+    const char = codiceSenza.charAt(i)
     if (i % 2 === 0) {
-      sum += dispariMap[char] || 0
+      sum += dispariMap[char as keyof typeof dispariMap] || 0
     } else {
-      sum += pariMap[char] || 0
+      sum += pariMap[char as keyof typeof pariMap] || 0
     }
   }
 
