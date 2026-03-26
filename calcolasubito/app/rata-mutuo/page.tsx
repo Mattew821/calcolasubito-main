@@ -5,12 +5,14 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
 import { Toast, useToast } from '@/components/Toast'
-import { calculateMortgage, type MortgageCalculation } from '@/lib/calculations'
+import { useCalculatorWorker } from '@/hooks/useCalculatorWorker'
+import { type MortgageCalculation } from '@/lib/calculations'
 import { rataMutuoSchema, type RataMutuoInput } from '@/lib/validations'
 
 export default function CalcoloRataMutuo() {
   const [result, setResult] = useState<MortgageCalculation | null>(null)
   const { toast, showToast } = useToast()
+  const { calculate, isLoading } = useCalculatorWorker()
 
   const {
     register,
@@ -26,11 +28,15 @@ export default function CalcoloRataMutuo() {
     },
   })
 
-  const onSubmit = (data: RataMutuoInput) => {
+  const onSubmit = async (data: RataMutuoInput) => {
     try {
       const months = data.years * 12
-      const res = calculateMortgage(data.principal, data.annualRate, months)
-      setResult(res)
+      const res = await calculate('mortgage', {
+        principal: data.principal,
+        annualRate: data.annualRate,
+        months,
+      })
+      setResult(res as MortgageCalculation)
       showToast('Calcolo rata mutuo completato!', 'success')
     } catch (error) {
       showToast('Errore nel calcolo', 'error')
@@ -109,9 +115,17 @@ export default function CalcoloRataMutuo() {
             <div className="flex gap-4">
               <button
                 type="submit"
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors"
+                disabled={isLoading}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Calcola
+                {isLoading ? (
+                  <>
+                    <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    Calcolo...
+                  </>
+                ) : (
+                  'Calcola'
+                )}
               </button>
               <button
                 type="button"

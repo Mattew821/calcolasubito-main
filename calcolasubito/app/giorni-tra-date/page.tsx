@@ -5,13 +5,14 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
 import { Toast, useToast } from '@/components/Toast'
-import { calculateDaysBetween } from '@/lib/calculations'
+import { useCalculatorWorker } from '@/hooks/useCalculatorWorker'
 import { giorniTraDateSchema, type GiorniTraDateInput } from '@/lib/validations'
 
 export default function CalcoloGiorni() {
   const today = new Date().toISOString().split('T')[0]
   const [result, setResult] = useState<number | null>(null)
   const { toast, showToast } = useToast()
+  const { calculate, isLoading } = useCalculatorWorker()
 
   const {
     register,
@@ -30,9 +31,12 @@ export default function CalcoloGiorni() {
   const startDate = watch('startDate')
   const endDate = watch('endDate')
 
-  const onSubmit = (data: GiorniTraDateInput) => {
+  const onSubmit = async (data: GiorniTraDateInput) => {
     try {
-      const days = calculateDaysBetween(new Date(data.startDate), new Date(data.endDate))
+      const days = await calculate('daysBetween', {
+        startDate: data.startDate,
+        endDate: data.endDate,
+      })
       setResult(days)
       showToast('Calcolo completato!', 'success')
     } catch (error) {
@@ -93,9 +97,17 @@ export default function CalcoloGiorni() {
             <div className="flex gap-4">
               <button
                 type="submit"
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors"
+                disabled={isLoading}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Calcola
+                {isLoading ? (
+                  <>
+                    <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    Calcolo...
+                  </>
+                ) : (
+                  'Calcola'
+                )}
               </button>
               <button
                 type="button"

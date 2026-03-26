@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
 import { Toast, useToast } from '@/components/Toast'
+import { useCalculatorWorker } from '@/hooks/useCalculatorWorker'
 import { scorporoIvaSchema, type ScorporoIvaInput } from '@/lib/validations'
 
 interface IVAResult {
@@ -17,6 +18,7 @@ interface IVAResult {
 export default function ScorporoIVA() {
   const [result, setResult] = useState<IVAResult | null>(null)
   const { toast, showToast } = useToast()
+  const { calculate, isLoading } = useCalculatorWorker()
 
   const {
     register,
@@ -38,31 +40,14 @@ export default function ScorporoIVA() {
   const amount = watch('amount')
   const rate = watch('rate')
 
-  const onSubmit = (data: ScorporoIvaInput) => {
+  const onSubmit = async (data: ScorporoIvaInput) => {
     try {
-      let ivaResult: IVAResult
-
-      if (data.mode === 'gross') {
-        const ivaAmount = (data.amount * data.rate) / (100 + data.rate)
-        const netAmount = data.amount - ivaAmount
-        ivaResult = {
-          gross: data.amount,
-          net: netAmount,
-          iva: ivaAmount,
-          percentage: data.rate,
-        }
-      } else {
-        const ivaAmount = (data.amount * data.rate) / 100
-        const grossAmount = data.amount + ivaAmount
-        ivaResult = {
-          gross: grossAmount,
-          net: data.amount,
-          iva: ivaAmount,
-          percentage: data.rate,
-        }
-      }
-
-      setResult(ivaResult)
+      const ivaResult = await calculate('iva', {
+        amount: data.amount,
+        rate: data.rate,
+        mode: data.mode,
+      })
+      setResult(ivaResult as IVAResult)
       showToast('Calcolo IVA completato!', 'success')
     } catch (error) {
       showToast('Errore nel calcolo', 'error')
@@ -177,9 +162,17 @@ export default function ScorporoIVA() {
             <div className="flex gap-4">
               <button
                 type="submit"
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors"
+                disabled={isLoading}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Calcola
+                {isLoading ? (
+                  <>
+                    <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    Calcolo...
+                  </>
+                ) : (
+                  'Calcola'
+                )}
               </button>
               <button
                 type="button"

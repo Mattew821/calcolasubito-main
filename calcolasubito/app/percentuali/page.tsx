@@ -5,13 +5,14 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
 import { Toast, useToast } from '@/components/Toast'
-import { calculatePercentage, calculatePercentageOf } from '@/lib/calculations'
+import { useCalculatorWorker } from '@/hooks/useCalculatorWorker'
 import { percentualiSchema, type PercentualiInput } from '@/lib/validations'
 
 export default function CalcoloPercentuali() {
   const [mode, setMode] = useState<'calculate' | 'percentage-of'>('calculate')
   const [result, setResult] = useState<number | null>(null)
   const { toast, showToast } = useToast()
+  const { calculate, isLoading } = useCalculatorWorker()
 
   const {
     register,
@@ -30,14 +31,20 @@ export default function CalcoloPercentuali() {
   const number = watch('number')
   const percentage = watch('percentage')
 
-  const onSubmit = (data: PercentualiInput) => {
+  const onSubmit = async (data: PercentualiInput) => {
     try {
       if (mode === 'calculate') {
-        const res = calculatePercentage(data.number, data.percentage)
+        const res = await calculate('percentage', {
+          number: data.number,
+          percentage: data.percentage,
+        })
         setResult(res)
         showToast('Calcolo completato!', 'success')
       } else {
-        const res = calculatePercentageOf(data.number, data.percentage)
+        const res = await calculate('percentageOf', {
+          part: data.number,
+          total: data.percentage,
+        })
         setResult(res)
         showToast('Calcolo completato!', 'success')
       }
@@ -133,9 +140,17 @@ export default function CalcoloPercentuali() {
           <div className="flex gap-4">
             <button
               type="submit"
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors"
+              disabled={isLoading}
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              Calcola
+              {isLoading ? (
+                <>
+                  <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  Calcolo...
+                </>
+              ) : (
+                'Calcola'
+              )}
             </button>
             <button
               type="button"

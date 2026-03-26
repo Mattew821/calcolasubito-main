@@ -5,13 +5,14 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
 import { Toast, useToast } from '@/components/Toast'
-import { calculateCodiceFiscale } from '@/lib/calculations'
+import { useCalculatorWorker } from '@/hooks/useCalculatorWorker'
 import { codiceFiscaleSchema, type CodiceFiscaleInput } from '@/lib/validations'
 
 export default function CalcoloCodiceFiscale() {
   const today = new Date().toISOString().split('T')[0]
   const [codiceFiscale, setCodiceFiscale] = useState<string | null>(null)
   const { toast, showToast } = useToast()
+  const { calculate, isLoading } = useCalculatorWorker()
 
   const {
     register,
@@ -29,16 +30,19 @@ export default function CalcoloCodiceFiscale() {
     },
   })
 
-  const onSubmit = (data: CodiceFiscaleInput) => {
-    const result = calculateCodiceFiscale(
-      data.surname,
-      data.name,
-      new Date(data.birthDate),
-      data.gender,
-      data.birthPlace
-    )
-    setCodiceFiscale(result)
-    showToast('Codice fiscale generato!', 'success')
+  const onSubmit = async (data: CodiceFiscaleInput) => {
+    try {
+      const result = await calculate('codiceFiscale', {
+        surname: data.surname,
+        name: data.name,
+        birthDate: data.birthDate,
+        gender: data.gender,
+      })
+      setCodiceFiscale(result)
+      showToast('Codice fiscale generato!', 'success')
+    } catch (error) {
+      showToast('Errore nella generazione del codice fiscale', 'error')
+    }
   }
 
   const reset = () => {
@@ -171,9 +175,17 @@ export default function CalcoloCodiceFiscale() {
             <div className="flex gap-4">
               <button
                 type="submit"
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors"
+                disabled={isLoading}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Calcola
+                {isLoading ? (
+                  <>
+                    <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    Genero...
+                  </>
+                ) : (
+                  'Calcola'
+                )}
               </button>
               <button
                 type="button"
