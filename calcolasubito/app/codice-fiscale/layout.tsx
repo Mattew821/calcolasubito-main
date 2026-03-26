@@ -11,10 +11,51 @@ export const metadata: Metadata = {
   },
 }
 
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Il codice fiscale ha una scadenza?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No, il codice fiscale non scade mai. È valido per tutta la vita e rimane lo stesso dal momento dell\'assegnazione.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Cos\'è il control digit (ultimo carattere)?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'È una cifra di controllo calcolata in base ai 15 caratteri precedenti, utile per verificare la correttezza del codice.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Come ottengo il codice fiscale ufficiale?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Contatta l\'Agenzia delle Entrate più vicina oppure richiedilo online sul sito dell\'Agenzia.',
+      },
+    },
+  ],
+}
+
 export default function CodiceFiscaleLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  return children
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqSchema),
+        }}
+      />
+      {children}
+    </>
+  )
 }

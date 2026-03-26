@@ -11,10 +11,51 @@ export const metadata: Metadata = {
   },
 }
 
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Il calcolatore include entrambe le date?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Sì, il calcolo include sia la data iniziale che quella finale nel conteggio dei giorni.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Come si calcola il numero di mesi?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Dividi il numero di giorni per 30 (media dei giorni in un mese). Per un calcolo preciso, consulta il nostro calcolatore.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Cosa sono gli anni bisestili?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Un anno bisestile ha 366 giorni invece di 365, accade ogni 4 anni. Il nostro calcolatore tiene automaticamente conto di questo.',
+      },
+    },
+  ],
+}
+
 export default function GiorniTraDateLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  return children
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqSchema),
+        }}
+      />
+      {children}
+    </>
+  )
 }

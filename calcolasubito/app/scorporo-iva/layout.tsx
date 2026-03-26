@@ -11,10 +11,43 @@ export const metadata: Metadata = {
   },
 }
 
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Come si calcola il scorporo dall\'importo lordo?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Formula: IVA = (Importo Lordo × Aliquota) ÷ (100 + Aliquota). Importo Netto = Importo Lordo - IVA',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Qual è la differenza tra lordo e netto?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Lordo significa con IVA inclusa, netto significa senza IVA. Il nostro calcolatore converte tra i due.',
+      },
+    },
+  ],
+}
+
 export default function ScorporoIvaLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  return children
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqSchema),
+        }}
+      />
+      {children}
+    </>
+  )
 }
