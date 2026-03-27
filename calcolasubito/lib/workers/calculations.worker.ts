@@ -3,6 +3,80 @@
  * Offload dal main thread per garantire UI fluida a 60fps
  */
 
+// ===== CSV PARSER FOR COMUNI ISTAT =====
+let csvContent: string | null = null
+let csvCache: Map<string, string> = new Map()
+
+async function loadCSV(): Promise<void> {
+  if (csvContent) return
+
+  try {
+    // Load CSV from public data folder
+    const response = await fetch('/data/comuni.csv')
+    csvContent = await response.text()
+
+    // Parse and cache on first load
+    const lines = csvContent.split('\n')
+    if (lines.length < 2) return
+
+    const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim())
+    const nameIndex = headers.indexOf('denominazione_italiano')
+    const istatIndex = headers.indexOf('codice_catastale')
+
+    if (nameIndex === -1 || istatIndex === -1) return
+
+    // Build cache map for O(1) lookups
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim()
+      if (!line) continue
+
+      // Parse CSV line with quoted field handling
+      const fields: string[] = []
+      let current = ''
+      let inQuotes = false
+
+      for (let j = 0; j < line.length; j++) {
+        const char = line[j]
+        if (char === '"') {
+          inQuotes = !inQuotes
+        } else if (char === ',' && !inQuotes) {
+          fields.push(current.replace(/"/g, '').trim())
+          current = ''
+        } else {
+          current += char
+        }
+      }
+      fields.push(current.replace(/"/g, '').trim())
+
+      const denominazione = fields[nameIndex]?.trim().toUpperCase()
+      const catastale = fields[istatIndex]?.trim()
+
+      if (denominazione && catastale) {
+        csvCache.set(denominazione, catastale)
+      }
+    }
+  } catch (error) {
+    console.warn('Failed to load CSV:', error)
+  }
+}
+
+function searchCodiceCatastale(nomeComune: string): string {
+  if (!csvCache.size) {
+    // Fallback if CSV not loaded
+    const fallback: Record<string, string> = {
+      'TARANTO': 'L049',
+      'ROMA': 'H501',
+      'MILANO': 'F205',
+      'NAPOLI': 'N641',
+      'TORINO': 'L219',
+    }
+    return fallback[nomeComune.trim().toUpperCase()] || 'XXXX'
+  }
+
+  const nome = nomeComune?.trim().toUpperCase()
+  return csvCache.get(nome) || 'XXXX'
+}
+
 // ===== PERCENTUALI =====
 function calculatePercentage(number: number, percentage: number): number {
   return (number * percentage) / 100
@@ -60,34 +134,6 @@ function calculateIVA(
 }
 
 // ===== CODICE FISCALE =====
-// Note: COMUNI_ISTAT is imported from lib/data/comuni.ts
-// This is a mapping of 7904 Italian municipalities to their ISTAT codes
-// For development/testing, we use a fallback map since Web Workers can't directly import TypeScript
-// In production, this should be loaded from the comuni.ts file
-
-// Fallback function - in production use full database from comuni.ts
-function getIstatCode(nomeComune: string): string {
-  const nome = nomeComune?.trim().toUpperCase() || ''
-
-  // Common municipalities (fallback for development)
-  const comuni: Record<string, string> = {
-    'TARANTO': 'L049',
-    'ROMA': 'H501',
-    'MILANO': 'F205',
-    'NAPOLI': 'G273',
-    'TORINO': 'L219',
-    'PALERMO': 'G273',
-    'FIRENZE': 'D612',
-    'BOLOGNA': 'A337',
-    'GENOVA': 'D969',
-    'VENEZIA': 'L781',
-    'BARI': 'A662',
-    'CATANIA': 'C337',
-    'REGGIO CALABRIA': 'I741',
-  }
-
-  return comuni[nome] || 'XXXX'
-}
 
 function calculateCodiceFiscaleSimplified(
   surname: string,
@@ -139,8 +185,8 @@ function calculateCodiceFiscaleSimplified(
   const dayPart = String(date.getDate() + (gender === 'F' ? 40 : 0)).padStart(2, '0')
   const datePart = year + monthLetter + dayPart
 
-  // Get ISTAT code for municipality
-  const istatCode = getIstatCode(birthPlace)
+  // Get ISTAT code for municipality - search in CSV
+  const istatCode = searchCodiceCatastale(birthPlace)
 
   const codiceSenza = (surnamePart + namePart + datePart + istatCode).toUpperCase()
 
@@ -244,11 +290,17 @@ function calculateMortgage(
   }
 }
 
+// Initialize: Load CSV on first worker startup
+loadCSV().catch(err => console.warn('CSV loading error:', err))
+
 // Worker message handler
 self.onmessage = async (event: MessageEvent) => {
   const { id, type, payload } = event.data
 
   try {
+    // Ensure CSV is loaded before processing
+    await loadCSV()
+
     let result: any
 
     switch (type) {
