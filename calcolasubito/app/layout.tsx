@@ -100,6 +100,7 @@ export default function RootLayout({
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="google-site-verification" content="35trzUPu96FBBZV6byuA-J6D3cs2ewPLUNhURQHf0_Y" />
 
         {/* Google Analytics - Only load if GA_ID is configured */}
         {GA_ID && (
