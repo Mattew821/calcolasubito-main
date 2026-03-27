@@ -61,18 +61,6 @@ async function loadCSV(): Promise<void> {
 }
 
 function searchCodiceCatastale(nomeComune: string): string {
-  if (!csvCache.size) {
-    // Fallback if CSV not loaded
-    const fallback: Record<string, string> = {
-      'TARANTO': 'L049',
-      'ROMA': 'H501',
-      'MILANO': 'F205',
-      'NAPOLI': 'N641',
-      'TORINO': 'L219',
-    }
-    return fallback[nomeComune.trim().toUpperCase()] || 'XXXX'
-  }
-
   const nome = nomeComune?.trim().toUpperCase()
   return csvCache.get(nome) || 'XXXX'
 }
