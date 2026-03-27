@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
 import { ToastContainer, useToast } from '@/components/Toast'
+import AdUnit from '@/components/AdUnit'
 import { useCalculatorWorker } from '@/hooks/useCalculatorWorker'
 import { useRateLimit } from '@/lib/hooks/useRateLimit'
 import { codiceFiscaleSchema, type CodiceFiscaleInput } from '@/lib/validations'
@@ -234,6 +235,9 @@ export default function CalcoloCodiceFiscale() {
             )}
           </form>
 
+          {/* Ad 1 */}
+          <AdUnit adSlot="1234567899" />
+
           {/* Result */}
           {codiceFiscale && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
@@ -276,6 +280,9 @@ export default function CalcoloCodiceFiscale() {
               </li>
             </ul>
           </div>
+
+          {/* Ad 2 */}
+          <AdUnit adSlot="1234567900" />
 
           {/* SEO Content */}
           <div className="space-y-8 mt-12 pt-8 border-t border-gray-200">
