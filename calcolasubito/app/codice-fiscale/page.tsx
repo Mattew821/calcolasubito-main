@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
 import { ToastContainer, useToast } from '@/components/Toast'
 import { useCalculatorWorker } from '@/hooks/useCalculatorWorker'
+import { useRateLimit } from '@/lib/hooks/useRateLimit'
 import { codiceFiscaleSchema, type CodiceFiscaleInput } from '@/lib/validations'
 
 export default function CalcoloCodiceFiscale() {
@@ -13,6 +14,12 @@ export default function CalcoloCodiceFiscale() {
   const [codiceFiscale, setCodiceFiscale] = useState<string | null>(null)
   const { toasts, showToast, removeToast } = useToast()
   const { calculate, isLoading } = useCalculatorWorker()
+
+  // Rate limiting: 10 calculations per minute
+  const { checkRateLimit, isLimited, remainingRequests, resetTime } = useRateLimit({
+    maxRequests: 10,
+    windowMs: 60000, // 1 minute
+  })
 
   const {
     register,
@@ -31,12 +38,23 @@ export default function CalcoloCodiceFiscale() {
   })
 
   const onSubmit = async (data: CodiceFiscaleInput) => {
+    // Check rate limit
+    if (!checkRateLimit()) {
+      const secondsLeft = resetTime ? Math.ceil((resetTime - Date.now()) / 1000) : 0
+      showToast(
+        `Troppi calcoli. Riprova tra ${secondsLeft}s`,
+        'error'
+      )
+      return
+    }
+
     try {
       const result = await calculate('codiceFiscale', {
         surname: data.surname,
         name: data.name,
         birthDate: data.birthDate,
         gender: data.gender,
+        birthPlace: data.birthPlace,
       })
       setCodiceFiscale(result)
       showToast('Codice fiscale generato!', 'success')
@@ -175,9 +193,8 @@ export default function CalcoloCodiceFiscale() {
             <div className="flex gap-4">
               <button
                 type="submit"
-                disabled={isLoading}
-              aria-busy={isLoading}
-              aria-label={isLoading ? "Calcolo in corso" : "Calcola"}
+                disabled={isLoading || isLimited}
+                aria-label={isLoading ? "Calcolo in corso" : isLimited ? "Limite di calcoli raggiunto" : "Calcola"}
                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {isLoading ? (
@@ -185,6 +202,8 @@ export default function CalcoloCodiceFiscale() {
                     <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" aria-hidden="true"></span>
                     Genero...
                   </>
+                ) : isLimited ? (
+                  'Limite raggiunto'
                 ) : (
                   'Calcola'
                 )}
@@ -197,6 +216,22 @@ export default function CalcoloCodiceFiscale() {
                 Resetta
               </button>
             </div>
+
+            {/* Rate limit warning */}
+            {remainingRequests <= 2 && remainingRequests > 0 && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <p className="text-sm text-yellow-800">
+                  ⚠️ <strong>{remainingRequests}</strong> calcolo{remainingRequests === 1 ? '' : 'i'} rimasto{remainingRequests === 1 ? '' : 'i'} in questo minuto
+                </p>
+              </div>
+            )}
+            {isLimited && resetTime && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <p className="text-sm text-red-800">
+                  🚫 Limite raggiunto. Riprova tra {Math.ceil((resetTime - Date.now()) / 1000)} secondi
+                </p>
+              </div>
+            )}
           </form>
 
           {/* Result */}

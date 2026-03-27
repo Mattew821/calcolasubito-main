@@ -7,6 +7,7 @@ import Calculator from '@/components/Calculator'
 import { ToastContainer, useToast } from '@/components/Toast'
 import { ShareButtons } from '@/components/ShareButtons'
 import { useCalculatorWorker } from '@/hooks/useCalculatorWorker'
+import { useRateLimit } from '@/lib/hooks/useRateLimit'
 import { percentualiSchema, type PercentualiInput } from '@/lib/validations'
 
 export default function CalcoloPercentuali() {
@@ -14,6 +15,12 @@ export default function CalcoloPercentuali() {
   const [result, setResult] = useState<number | null>(null)
   const { toasts, showToast, removeToast } = useToast()
   const { calculate, isLoading } = useCalculatorWorker()
+
+  // Rate limiting: 10 calculations per minute
+  const { checkRateLimit, isLimited, remainingRequests, resetTime } = useRateLimit({
+    maxRequests: 10,
+    windowMs: 60000, // 1 minute
+  })
 
   const {
     register,
@@ -33,6 +40,16 @@ export default function CalcoloPercentuali() {
   const percentage = watch('percentage')
 
   const onSubmit = async (data: PercentualiInput) => {
+    // Check rate limit
+    if (!checkRateLimit()) {
+      const secondsLeft = resetTime ? Math.ceil((resetTime - Date.now()) / 1000) : 0
+      showToast(
+        `Troppi calcoli. Riprova tra ${secondsLeft}s`,
+        'error'
+      )
+      return
+    }
+
     try {
       if (mode === 'calculate') {
         const res = await calculate('percentage', {
@@ -103,7 +120,7 @@ export default function CalcoloPercentuali() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {mode === 'calculate' ? 'Numero' : 'Numero'}
+                {mode === 'calculate' ? 'Numero' : 'Parte'}
               </label>
               <input
                 type="number"
@@ -141,9 +158,9 @@ export default function CalcoloPercentuali() {
           <div className="flex gap-4">
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || isLimited}
               aria-busy={isLoading}
-              aria-label={isLoading ? 'Calcolo in corso' : 'Calcola percentuale'}
+              aria-label={isLoading ? 'Calcolo in corso' : isLimited ? 'Limite di calcoli raggiunto' : 'Calcola percentuale'}
               className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isLoading ? (
@@ -151,6 +168,8 @@ export default function CalcoloPercentuali() {
                   <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" aria-hidden="true"></span>
                   Calcolo...
                 </>
+              ) : isLimited ? (
+                'Limite raggiunto'
               ) : (
                 'Calcola'
               )}
@@ -158,11 +177,28 @@ export default function CalcoloPercentuali() {
             <button
               type="button"
               onClick={reset}
-              className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 rounded-lg transition-colors"
+              disabled={isLoading}
+              className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
               Resetta
             </button>
           </div>
+
+          {/* Rate limit warning */}
+          {remainingRequests <= 2 && remainingRequests > 0 && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <p className="text-sm text-yellow-800">
+                ⚠️ <strong>{remainingRequests}</strong> calcolo{remainingRequests === 1 ? '' : 'i'} rimasto{remainingRequests === 1 ? '' : 'i'} in questo minuto
+              </p>
+            </div>
+          )}
+          {isLimited && resetTime && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <p className="text-sm text-red-800">
+                🚫 Limite raggiunto. Riprova tra {Math.ceil((resetTime - Date.now()) / 1000)} secondi
+              </p>
+            </div>
+          )}
         </form>
 
         {/* Result */}
