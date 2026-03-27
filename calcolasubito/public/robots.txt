@@ -1,4 +1,4 @@
-# CalcolaSubito.it - Robots.txt per massima indicizzazione
+# CalcolaSubito - Robots.txt per massima indicizzazione
 
 # Default rule - Allow all crawlers
 User-agent: *
@@ -7,7 +7,7 @@ Disallow: /.next/
 Disallow: /api/
 
 # Sitemap - Next.js genera dinamicamente /sitemap.xml
-Sitemap: https://calcolasubito.it/sitemap.xml
+Sitemap: https://calcolasubito.vercel.app/sitemap.xml
 
 # Crawl delay - 1ms tra richieste (amichevole)
 Crawl-delay: 1
