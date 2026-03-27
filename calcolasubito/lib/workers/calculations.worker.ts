@@ -60,11 +60,38 @@ function calculateIVA(
 }
 
 // ===== CODICE FISCALE =====
+// ISTAT codes for major Italian municipalities
+const istatCodes: Record<string, string> = {
+  'TARANTO': 'L049',
+  'ROMA': 'H501',
+  'MILANO': 'F205',
+  'NAPOLI': 'G273',
+  'TORINO': 'I726',
+  'PALERMO': 'G273',
+  'FIRENZE': 'D612',
+  'BOLOGNA': 'A337',
+  'GENOVA': 'D969',
+  'VENEZIA': 'L781',
+  'BARI': 'A662',
+  'CATANIA': 'C337',
+  'REGGIO CALABRIA': 'I741',
+  'PERUGIA': 'G921',
+  'ANCONA': 'A369',
+  'PISA': 'G702',
+  'FERRARA': 'D548',
+  'RAVENNA': 'H224',
+  'REGGIO EMILIA': 'H224',
+  'PARMA': 'G480',
+  'MODENA': 'F952',
+  // Add more as needed - this is a partial list
+}
+
 function calculateCodiceFiscaleSimplified(
   surname: string,
   name: string,
   birthDate: string,
-  gender: 'M' | 'F'
+  gender: 'M' | 'F',
+  birthPlace: string = ''
 ): string {
   const consonants = 'BCDFGHJKLMNPRSTVWXYZ'
   const vowels = 'AEIOU'
@@ -109,7 +136,10 @@ function calculateCodiceFiscaleSimplified(
   const dayPart = String(date.getDate() + (gender === 'F' ? 40 : 0)).padStart(2, '0')
   const datePart = year + monthLetter + dayPart
 
-  const codiceSenza = (surnamePart + namePart + datePart).toUpperCase()
+  // Get ISTAT code for municipality
+  const istatCode = istatCodes[birthPlace.toUpperCase()] || 'XXXX' // Placeholder if not found
+
+  const codiceSenza = (surnamePart + namePart + datePart + istatCode).toUpperCase()
 
   // Calcolo del control digit (16° carattere)
   // Algoritmo ufficiale Agenzia delle Entrate
@@ -236,7 +266,8 @@ self.onmessage = async (event: MessageEvent) => {
           payload.surname,
           payload.name,
           payload.birthDate,
-          payload.gender
+          payload.gender,
+          payload.birthPlace
         )
         break
       case 'mortgage':
