@@ -47,12 +47,12 @@ export class CSVLoader {
   private analyzeStructure(): void {
     const lines = this.content.split('\n')
 
-    if (lines.length < 1) {
+    if (lines.length < 1 || !lines[0]) {
       throw new Error('Empty CSV')
     }
 
     // Parse header
-    const headers = this.parseCSVLine(lines[0])
+    const headers = this.parseCSVLine(lines[0]!)
 
     this.structure = {
       headers,
@@ -120,7 +120,7 @@ export class CSVLoader {
     const lines = this.content.split('\n')
 
     for (let i = 1; i < lines.length; i++) {
-      const line = lines[i].trim()
+      const line = lines[i]?.trim()
       if (!line) continue
 
       const fields = this.parseCSVLine(line)
@@ -156,7 +156,7 @@ export class CSVLoader {
     const index = this.cache.get(searchColumn)
     if (!index) return null
 
-    const searchKey = searchValue.trim().toUpperCase()
+    const searchKey = searchValue?.trim().toUpperCase() || ''
     return index.get(searchKey) || null
   }
 
@@ -181,7 +181,7 @@ export class CSVLoader {
     const lines = this.content.split('\n')
 
     for (let i = 1; i < lines.length; i++) {
-      const line = lines[i].trim()
+      const line = lines[i]?.trim()
       if (!line) continue
 
       const fields = this.parseCSVLine(line)

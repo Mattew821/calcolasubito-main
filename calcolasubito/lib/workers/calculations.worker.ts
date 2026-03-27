@@ -21,10 +21,10 @@ class GenericCSVLoader {
       const content = await response.text()
       const lines = content.split('\n')
 
-      if (lines.length < 1) return
+      if (lines.length < 1 || !lines[0]) return
 
       // Parse header
-      this.headers = this.parseCSVLine(lines[0])
+      this.headers = this.parseCSVLine(lines[0]!)
 
       // Build index for first search column (denominazione_italiano)
       const searchIndex = this.headers.indexOf('denominazione_italiano')
@@ -34,7 +34,7 @@ class GenericCSVLoader {
 
       // Parse all data rows
       for (let i = 1; i < lines.length; i++) {
-        const line = lines[i].trim()
+        const line = (lines[i] || '').trim()
         if (!line) continue
 
         const fields = this.parseCSVLine(line)
