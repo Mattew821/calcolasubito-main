@@ -40,6 +40,9 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  verification: {
+    google: '35trzUPu96FBBZV6byuA-J6D3cs2ewPLUNhURQHf0_Y',
+  },
 }
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID || null
