@@ -4,16 +4,16 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
-  title: 'CalcolaSubito.it | Calcolatori Online Gratuiti',
+  title: 'CalcolaSubito | Calcolatori Online Gratuiti',
   description: 'Suite di calcolatori online gratuiti per l\'Italia: IVA, busta paga, IMU, codice fiscale e molti altri.',
   keywords: 'calcolatori online, calcolo IVA, busta paga, codice fiscale, IMU, TARI',
-  authors: [{ name: 'CalcolaSubito.it' }],
+  authors: [{ name: 'CalcolaSubito' }],
   metadataBase: new URL('https://calcolasubito.it'),
   openGraph: {
     type: 'website',
     locale: 'it_IT',
     url: 'https://calcolasubito.it',
-    siteName: 'CalcolaSubito.it',
+    siteName: 'CalcolaSubito',
     title: 'CalcolaSubito - Calcolatori Online Gratuiti',
     description: 'Suite di calcolatori online gratuiti per l\'Italia: percentuali, IVA, codice fiscale, mutuo e molto altro.',
     images: [
@@ -54,7 +54,7 @@ if (!GA_ID && process.env.NODE_ENV === 'development') {
 const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'CalcolaSubito.it',
+  name: 'CalcolaSubito',
   url: 'https://calcolasubito.it',
   logo: 'https://calcolasubito.vercel.app/logo.png',
   sameAs: [
@@ -71,7 +71,7 @@ const organizationSchema = {
 const webApplicationSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
-  name: 'CalcolaSubito.it',
+  name: 'CalcolaSubito',
   url: 'https://calcolasubito.it',
   description: 'Suite di calcolatori online gratuiti per l\'Italia',
   applicationCategory: 'UtilityApplication',

@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* Company Info */}
           <div>
-            <h3 className="font-semibold text-white mb-3">CalcolaSubito.it</h3>
+            <h3 className="font-semibold text-white mb-3">CalcolaSubito</h3>
             <p className="text-sm text-gray-400">
               Suite di calcolatori online gratuiti per l&apos;Italia. Calcola IVA, busta paga, IMU e molto altro.
             </p>
@@ -60,7 +60,7 @@ export default function Footer() {
         {/* Bottom */}
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-gray-400">
-            © {currentYear} CalcolaSubito.it. Tutti i diritti riservati.
+            © {currentYear} CalcolaSubito. Tutti i diritti riservati.
           </p>
           <p className="text-sm text-gray-400 mt-4 md:mt-0">
             I calcoli sono eseguiti nel tuo browser. Nessun dato viene memorizzato.
