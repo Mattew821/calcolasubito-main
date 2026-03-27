@@ -8,11 +8,11 @@ export const metadata: Metadata = {
   description: 'Suite di calcolatori online gratuiti per l\'Italia: IVA, busta paga, IMU, codice fiscale e molti altri.',
   keywords: 'calcolatori online, calcolo IVA, busta paga, codice fiscale, IMU, TARI',
   authors: [{ name: 'CalcolaSubito' }],
-  metadataBase: new URL('https://calcolasubito.it'),
+  metadataBase: new URL('https://calcolasubito.vercel.app'),
   openGraph: {
     type: 'website',
     locale: 'it_IT',
-    url: 'https://calcolasubito.it',
+    url: 'https://calcolasubito.vercel.app',
     siteName: 'CalcolaSubito',
     title: 'CalcolaSubito - Calcolatori Online Gratuiti',
     description: 'Suite di calcolatori online gratuiti per l\'Italia: percentuali, IVA, codice fiscale, mutuo e molto altro.',
@@ -55,7 +55,7 @@ const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'CalcolaSubito',
-  url: 'https://calcolasubito.it',
+  url: 'https://calcolasubito.vercel.app',
   logo: 'https://calcolasubito.vercel.app/logo.png',
   sameAs: [
     'https://www.facebook.com/calcolasubito',
@@ -72,7 +72,7 @@ const webApplicationSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
   name: 'CalcolaSubito',
-  url: 'https://calcolasubito.it',
+  url: 'https://calcolasubito.vercel.app',
   description: 'Suite di calcolatori online gratuiti per l\'Italia',
   applicationCategory: 'UtilityApplication',
   offers: {

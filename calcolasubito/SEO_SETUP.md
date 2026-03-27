@@ -1,4 +1,4 @@
-# 📊 Guida SEO Completa - CalcolaSubito.it
+# 📊 Guida SEO Completa - CalcolaSubito
 
 Questa guida copre la strategia ufficiale per aumentare la visibilità su Google e gli altri motori di ricerca.
 
@@ -12,10 +12,10 @@ Questa guida copre la strategia ufficiale per aumentare la visibilità su Google
 **Come fare:**
 1. Vai su [Google Search Console](https://search.google.com/search-console)
 2. Clicca "Aggiungi proprietà"
-3. Scegli "URL prefix" e inserisci: `https://calcolasubito.it`
+3. Scegli "URL prefix" e inserisci: `https://calcolasubito.vercel.app`
 4. Verifica il dominio (varie opzioni disponibili)
 5. Vai su "Sitemap" → "Aggiungi sitemap"
-6. Inserisci: `https://calcolasubito.it/sitemap.xml`
+6. Inserisci: `https://calcolasubito.vercel.app/sitemap.xml`
 7. Verifica che sia stata inviata correttamente
 
 **Cosa farà:**
@@ -38,7 +38,7 @@ Questa guida copre la strategia ufficiale per aumentare la visibilità su Google
 1. Vai su [Google Business Profile](https://business.google.com)
 2. Seleziona "Crea un profilo aziendale"
 3. Compila:
-   - Nome: CalcolaSubito.it
+   - Nome: CalcolaSubito
    - Categoria: Servizio online / Strumenti web
    - Descrizione: Calcolatori online gratuiti per l'Italia
 4. Verifica il numero di telefono
@@ -55,7 +55,7 @@ Questa guida copre la strategia ufficiale per aumentare la visibilità su Google
 
 **Come verificare:**
 1. Vai su [PageSpeed Insights](https://pagespeed.web.dev)
-2. Inserisci: `https://calcolasubito.it`
+2. Inserisci: `https://calcolasubito.vercel.app`
 3. Analizza:
    - **Core Web Vitals** (LCP, FID, CLS)
    - **Performance Score** (100 è perfetto)
@@ -272,7 +272,7 @@ Questa guida copre la strategia ufficiale per aumentare la visibilità su Google
 - [ ] Verificare il sito in Google Search Console
 - [ ] Inviare sitemap.xml
 - [ ] Testare in PageSpeed Insights
-- [ ] Verificare che tutte le pagine siano indicizzate (site:calcolasubito.it in Google)
+- [ ] Verificare che tutte le pagine siano indicizzate (site:calcolasubito.vercel.app in Google)
 
 ### Breve termine (1 mese)
 - [ ] Aggiornare i contenuti delle 5 pagine con nuovo materiale
