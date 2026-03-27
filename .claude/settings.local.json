@@ -32,7 +32,24 @@
       "Bash(sed -i 's/disabled={isLoading}/disabled={isLoading}\\\\n              aria-busy={isLoading}\\\\n              aria-label={isLoading ? \"\"Calcolo in corso\"\" : \"\"Calcola\"\"}/g' \"$file\")",
       "Bash(sed -i 's/<span className=\"\"inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin\"\"><\\\\/span>/<span className=\"\"inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin\"\" aria-hidden=\"\"true\"\"><\\\\/span>/g' \"$file\")",
       "Bash(done)",
-      "Bash(npm test:*)"
+      "Bash(npm test:*)",
+      "Bash(find C:UsersmatthDesktopworkcalcolasubito -name *.tsx -path */hooks/* -o -name *.ts -path */hooks/*)",
+      "Bash(curl -s http://localhost:3002/percentuali)",
+      "Bash(curl -s http://localhost:3002/giorni-tra-date)",
+      "Bash(curl -s http://localhost:3002/codice-fiscale)",
+      "Bash(curl -s http://localhost:3002/scorporo-iva)",
+      "Bash(curl -s http://localhost:3002/rata-mutuo)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Read(//c/Users/matth/calcolasubito/**)",
+      "Bash(mv calcolasubito/* .)",
+      "Bash(rmdir calcolasubito:*)",
+      "Bash(mv calcolasubito/.[!.]* .)",
+      "Bash(rm -rf calcolasubito)",
+      "WebFetch(domain:calcolasubito.vercel.app)",
+      "Bash(git fetch:*)",
+      "Bash(git remote:*)"
     ]
   },
   "hooks": {

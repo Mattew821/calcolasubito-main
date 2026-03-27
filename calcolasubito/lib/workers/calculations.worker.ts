@@ -83,7 +83,12 @@ function calculateCodiceFiscaleSimplified(
 
   const surnameConsonants = extractLetters(surname, 'consonants')
   const surnameVowels = extractLetters(surname, 'vowels')
-  const surnamePart = (surnameConsonants.slice(0, 3).join('') + surnameVowels.slice(0, 3).join('') + '   ').slice(0, 3)
+  // Fixed: Only add vowels if consonants < 3 (don't include extra vowels)
+  let surnamePart = surnameConsonants.slice(0, 3).join('')
+  if (surnamePart.length < 3) {
+    surnamePart += surnameVowels.slice(0, 3 - surnamePart.length).join('')
+  }
+  surnamePart = (surnamePart + '   ').slice(0, 3)
 
   const nameConsonants = extractLetters(name, 'consonants')
   const nameVowels = extractLetters(name, 'vowels')
