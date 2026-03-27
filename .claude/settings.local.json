@@ -49,7 +49,9 @@
       "Bash(rm -rf calcolasubito)",
       "WebFetch(domain:calcolasubito.vercel.app)",
       "Bash(git fetch:*)",
-      "Bash(git remote:*)"
+      "Bash(git remote:*)",
+      "Read(//c/Users/matth/Desktop/**)",
+      "Read(//c/Users/matth/Desktop//**)"
     ]
   },
   "hooks": {
