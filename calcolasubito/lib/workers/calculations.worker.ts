@@ -3,66 +3,97 @@
  * Offload dal main thread per garantire UI fluida a 60fps
  */
 
-// ===== CSV PARSER FOR COMUNI ISTAT =====
-let csvContent: string | null = null
-let csvCache: Map<string, string> = new Map()
+// ===== GENERIC CSV LOADER =====
+interface CSVRecord {
+  [key: string]: string
+}
 
-async function loadCSV(): Promise<void> {
-  if (csvContent) return
+class GenericCSVLoader {
+  private headers: string[] = []
+  private cache: Map<string, Map<string, CSVRecord>> = new Map()
+  private initialized = false
 
-  try {
-    // Load CSV from public data folder
-    const response = await fetch('/data/comuni.csv')
-    csvContent = await response.text()
+  async load(csvPath: string): Promise<void> {
+    if (this.initialized) return
 
-    // Parse and cache on first load
-    const lines = csvContent.split('\n')
-    if (lines.length < 2) return
+    try {
+      const response = await fetch(csvPath)
+      const content = await response.text()
+      const lines = content.split('\n')
 
-    const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim())
-    const nameIndex = headers.indexOf('denominazione_italiano')
-    const istatIndex = headers.indexOf('codice_catastale')
+      if (lines.length < 1) return
 
-    if (nameIndex === -1 || istatIndex === -1) return
+      // Parse header
+      this.headers = this.parseCSVLine(lines[0])
 
-    // Build cache map for O(1) lookups
-    for (let i = 1; i < lines.length; i++) {
-      const line = lines[i].trim()
-      if (!line) continue
+      // Build index for first search column (denominazione_italiano)
+      const searchIndex = this.headers.indexOf('denominazione_italiano')
+      if (searchIndex === -1) return
 
-      // Parse CSV line with quoted field handling
-      const fields: string[] = []
-      let current = ''
-      let inQuotes = false
+      const index = new Map<string, CSVRecord>()
 
-      for (let j = 0; j < line.length; j++) {
-        const char = line[j]
-        if (char === '"') {
-          inQuotes = !inQuotes
-        } else if (char === ',' && !inQuotes) {
-          fields.push(current.replace(/"/g, '').trim())
-          current = ''
-        } else {
-          current += char
+      // Parse all data rows
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim()
+        if (!line) continue
+
+        const fields = this.parseCSVLine(line)
+        const keyValue = fields[searchIndex]?.trim().toUpperCase()
+
+        if (keyValue) {
+          const record: CSVRecord = {}
+          this.headers.forEach((header, idx) => {
+            record[header] = fields[idx] || ''
+          })
+          index.set(keyValue, record)
         }
       }
-      fields.push(current.replace(/"/g, '').trim())
 
-      const denominazione = fields[nameIndex]?.trim().toUpperCase()
-      const catastale = fields[istatIndex]?.trim()
+      this.cache.set('denominazione_italiano', index)
+      this.initialized = true
+    } catch (error) {
+      console.warn('CSV loading failed:', error)
+    }
+  }
 
-      if (denominazione && catastale) {
-        csvCache.set(denominazione, catastale)
+  private parseCSVLine(line: string): string[] {
+    const fields: string[] = []
+    let current = ''
+    let inQuotes = false
+
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i]
+      if (char === '"') {
+        inQuotes = !inQuotes
+      } else if (char === ',' && !inQuotes) {
+        fields.push(current.replace(/"/g, '').trim())
+        current = ''
+      } else {
+        current += char
       }
     }
-  } catch (error) {
-    console.warn('Failed to load CSV:', error)
+    fields.push(current.replace(/"/g, '').trim())
+    return fields
+  }
+
+  search(columnName: string, searchValue: string, returnColumn: string): string {
+    const index = this.cache.get(columnName)
+    if (!index) return 'XXXX'
+
+    const record = index.get(searchValue.trim().toUpperCase())
+    return record?.[returnColumn] || 'XXXX'
   }
 }
 
+// Create instance
+const csvLoader = new GenericCSVLoader()
+
+async function loadComuniCSV(): Promise<void> {
+  await csvLoader.load('/data/comuni.csv')
+}
+
 function searchCodiceCatastale(nomeComune: string): string {
-  const nome = nomeComune?.trim().toUpperCase()
-  return csvCache.get(nome) || 'XXXX'
+  return csvLoader.search('denominazione_italiano', nomeComune, 'codice_catastale')
 }
 
 // ===== PERCENTUALI =====
@@ -279,7 +310,7 @@ function calculateMortgage(
 }
 
 // Initialize: Load CSV on first worker startup
-loadCSV().catch(err => console.warn('CSV loading error:', err))
+loadComuniCSV().catch(err => console.warn('CSV loading error:', err))
 
 // Worker message handler
 self.onmessage = async (event: MessageEvent) => {
@@ -287,7 +318,7 @@ self.onmessage = async (event: MessageEvent) => {
 
   try {
     // Ensure CSV is loaded before processing
-    await loadCSV()
+    await loadComuniCSV()
 
     let result: any
 
