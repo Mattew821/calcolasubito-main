@@ -52,7 +52,7 @@ export function searchComuneInCSV(csvContent: string, searchName: string): strin
   if (lines.length < 2) return 'XXXX'
 
   // Parse header
-  const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim())
+  const headers = (lines[0] || '').split(',').map(h => h.replace(/"/g, '').trim())
   const nameIndex = headers.indexOf('denominazione_italiano')
   const istatIndex = headers.indexOf('codice_catastale')
 
@@ -65,7 +65,7 @@ export function searchComuneInCSV(csvContent: string, searchName: string): strin
 
   // Linear search through CSV
   for (let i = 1; i < lines.length; i++) {
-    const line = lines[i].trim()
+    const line = (lines[i] || '').trim()
     if (!line) continue
 
     const record = parseCSVLine(line, headers)
@@ -101,7 +101,7 @@ export class ComuniSearcher {
     }
 
     // Parse header
-    const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim())
+    const headers = ((lines[0] || '') as string).split(',').map(h => h.replace(/"/g, '').trim())
     const nameIndex = headers.indexOf('denominazione_italiano')
     const istatIndex = headers.indexOf('codice_catastale')
 
@@ -112,7 +112,7 @@ export class ComuniSearcher {
 
     // Build cache
     for (let i = 1; i < lines.length; i++) {
-      const line = lines[i].trim()
+      const line = ((lines[i] || '') as string).trim()
       if (!line) continue
 
       const record = parseCSVLine(line, headers)

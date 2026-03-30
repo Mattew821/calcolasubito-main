@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Calculator } from 'lucide-react'
+import AdUnit from '@/components/AdUnit'
 
 const calculators = [
   { id: 'percentuali', title: 'Calcolo Percentuali', volume: 'Alto' },
@@ -25,6 +26,9 @@ export default function Home() {
             Tutti i calcoli sono eseguiti direttamente nel tuo browser. Nessun dato viene memorizzato.
           </p>
         </div>
+
+        {/* Ad 1 */}
+        <AdUnit adSlot="1234567890" />
 
         {/* Calcolatori Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
@@ -53,6 +57,9 @@ export default function Home() {
           ))}
         </div>
 
+        {/* Ad 2 */}
+        <AdUnit adSlot="1234567891" />
+
         {/* CTA Section */}
         <div className="bg-white rounded-lg shadow-lg p-8 text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
@@ -62,6 +69,9 @@ export default function Home() {
             Stiamo aggiungendo continuamente nuovi calcolatori. Visita regolarmente il sito per trovare nuovi strumenti.
           </p>
         </div>
+
+        {/* Ad 3 */}
+        <AdUnit adSlot="1234567892" />
       </div>
     </div>
   )

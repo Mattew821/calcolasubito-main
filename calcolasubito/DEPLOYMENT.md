@@ -1,4 +1,4 @@
-# CalcolaSubito.it - Guida Deploy Vercel + Google Search Console
+# CalcolaSubito - Guida Deploy Vercel + Google Search Console
 
 ## 📋 Pre-Deploy Checklist
 
@@ -52,7 +52,7 @@ Nel Vercel dashboard:
 
 ### 2.2 (Opzionale) Custom Domain
 1. Vai a **Settings → Domains**
-2. Aggiungi: `calcolasubito.it` (tuo dominio registrato)
+2. Aggiungi il tuo dominio personalizzato
 3. Configura DNS sul tuo registrar
 4. Verifica possesso dominio
 

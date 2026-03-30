@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
 import { ToastContainer, useToast } from '@/components/Toast'
 import { ShareButtons } from '@/components/ShareButtons'
+import AdUnit from '@/components/AdUnit'
 import { useCalculatorWorker } from '@/hooks/useCalculatorWorker'
 import { useRateLimit } from '@/lib/hooks/useRateLimit'
 import { percentualiSchema, type PercentualiInput } from '@/lib/validations'
@@ -206,6 +207,9 @@ export default function CalcoloPercentuali() {
           )}
         </form>
 
+        {/* Ad 1 */}
+        <AdUnit adSlot="1234567893" />
+
         {/* Result */}
         {result !== null && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
@@ -248,6 +252,9 @@ export default function CalcoloPercentuali() {
             <li>• 50 è quale percentuale di 200? Risposta: 25%</li>
           </ul>
         </div>
+
+        {/* Ad 2 */}
+        <AdUnit adSlot="1234567894" />
 
         {/* SEO Content Section */}
         <div className="space-y-8 mt-12 pt-8 border-t border-gray-200">

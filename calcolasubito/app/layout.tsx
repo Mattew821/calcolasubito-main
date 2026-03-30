@@ -4,19 +4,19 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
-  title: 'CalcolaSubito.it | Calcolatori Online Gratuiti',
+  title: 'CalcolaSubito | Calcolatori Online Gratuiti',
   description: 'Suite di calcolatori online gratuiti per l\'Italia: IVA, busta paga, IMU, codice fiscale e molti altri.',
   keywords: 'calcolatori online, calcolo IVA, busta paga, codice fiscale, IMU, TARI',
-  authors: [{ name: 'CalcolaSubito.it' }],
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://calcolasubito.it'),
+  authors: [{ name: 'CalcolaSubito' }],
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://calcolasubito.vercel.app'),
   alternates: {
-    canonical: process.env.NEXT_PUBLIC_BASE_URL || 'https://calcolasubito.it',
+    canonical: process.env.NEXT_PUBLIC_BASE_URL || 'https://calcolasubito.vercel.app',
   },
   openGraph: {
     type: 'website',
     locale: 'it_IT',
-    url: 'https://calcolasubito.it',
-    siteName: 'CalcolaSubito.it',
+    url: 'https://calcolasubito.vercel.app',
+    siteName: 'CalcolaSubito',
     title: 'CalcolaSubito - Calcolatori Online Gratuiti',
     description: 'Suite di calcolatori online gratuiti per l\'Italia: percentuali, IVA, codice fiscale, mutuo e molto altro.',
     images: [
@@ -43,6 +43,9 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  verification: {
+    google: '35trzUPu96FBBZV6byuA-J6D3cs2ewPLUNhURQHf0_Y',
+  },
 }
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID || null
@@ -57,8 +60,8 @@ if (!GA_ID && process.env.NODE_ENV === 'development') {
 const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'CalcolaSubito.it',
-  url: 'https://calcolasubito.it',
+  name: 'CalcolaSubito',
+  url: 'https://calcolasubito.vercel.app',
   logo: 'https://calcolasubito.vercel.app/logo.png',
   sameAs: [
     'https://www.facebook.com/calcolasubito',
@@ -74,8 +77,8 @@ const organizationSchema = {
 const webApplicationSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
-  name: 'CalcolaSubito.it',
-  url: 'https://calcolasubito.it',
+  name: 'CalcolaSubito',
+  url: 'https://calcolasubito.vercel.app',
   description: 'Suite di calcolatori online gratuiti per l\'Italia',
   applicationCategory: 'UtilityApplication',
   offers: {
@@ -100,6 +103,14 @@ export default function RootLayout({
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="google-site-verification" content="35trzUPu96FBBZV6byuA-J6D3cs2ewPLUNhURQHf0_Y" />
+
+        {/* Google AdSense */}
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4449622526771169"
+          crossOrigin="anonymous"
+        ></script>
 
         {/* Google Analytics - Only load if GA_ID is configured */}
         {GA_ID && (

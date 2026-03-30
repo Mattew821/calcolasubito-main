@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
 import { ToastContainer, useToast } from '@/components/Toast'
+import AdUnit from '@/components/AdUnit'
 import { useCalculatorWorker } from '@/hooks/useCalculatorWorker'
 import { useRateLimit } from '@/lib/hooks/useRateLimit'
 import { type MortgageCalculation } from '@/lib/calculations'
@@ -145,6 +146,9 @@ export default function CalcoloRataMutuo() {
             </div>
           </form>
 
+          {/* Ad 1 */}
+          <AdUnit adSlot="1234567901" />
+
           {/* Result */}
           {result && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 space-y-4">
@@ -170,6 +174,9 @@ export default function CalcoloRataMutuo() {
               </div>
             </div>
           )}
+
+          {/* Ad 2 */}
+          <AdUnit adSlot="1234567902" />
 
           {/* SEO Content */}
           <div className="space-y-8 mt-12 pt-8 border-t border-gray-200">
