@@ -106,7 +106,6 @@ export default function CalcoloCodiceFiscale() {
               <label className="flex items-center cursor-pointer">
                 <input
                   type="radio"
-                  name="mode"
                   value="italian"
                   checked={currentMode === 'italian'}
                   onChange={() => handleModeChange('italian')}
@@ -120,7 +119,6 @@ export default function CalcoloCodiceFiscale() {
               <label className="flex items-center cursor-pointer">
                 <input
                   type="radio"
-                  name="mode"
                   value="foreigner_italy"
                   checked={currentMode === 'foreigner_italy'}
                   onChange={() => handleModeChange('foreigner_italy')}
@@ -134,7 +132,6 @@ export default function CalcoloCodiceFiscale() {
               <label className="flex items-center cursor-pointer">
                 <input
                   type="radio"
-                  name="mode"
                   value="foreigner_abroad"
                   checked={currentMode === 'foreigner_abroad'}
                   onChange={() => handleModeChange('foreigner_abroad')}
