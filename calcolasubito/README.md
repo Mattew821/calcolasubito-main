@@ -1,4 +1,4 @@
-﻿# CalcolaSubito
+# CalcolaSubito
 
 Portale di calcolatori online gratuiti in italiano, ottimizzato per SEO, performance e UX.
 
@@ -50,7 +50,7 @@ Il dominio base del portale e centralizzato:
 Esempio `.env.local`:
 
 ```bash
-NEXT_PUBLIC_BASE_URL=https://vercel.vercel.app
+NEXT_PUBLIC_BASE_URL=https://calcolasubito.vercel.app
 ```
 
 ## Calcolatori disponibili (21)

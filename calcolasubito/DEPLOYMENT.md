@@ -1,8 +1,8 @@
-﻿# CalcolaSubito - Guida Deploy Vercel + Google Search Console
+# CalcolaSubito - Guida Deploy Vercel + Google Search Console
 
 ## ðŸ“‹ Pre-Deploy Checklist
 
-- [x] Tutti i 5 calcolatori funzionano localmente (`npm run dev`/`npm run start`)
+- [x] Tutti i calcolatori disponibili funzionano localmente (`npm run dev`/`npm run start`)
 - [x] `.env.local` creato con NEXT_PUBLIC_GA_ID (opzionale per deploy)
 - [x] Git repo inizializzato e committed
 - [x] Nessun errore di build: `npm run build`
@@ -197,14 +197,14 @@ git push origin main
 
 Dopo deploy:
 - [x] Sito raggiungibile da produzione URL
-- [x] Tutti i 5 calcolatori funzionano
+- [x] Tutti i calcolatori disponibili funzionano
 - [x] Sitemap.xml generato correttamente
 - [ ] Google Analytics traccia visite (bloccato: script GA non presente in produzione)
 - [ ] Schema markup è valid (JSON-LD valido sintatticamente; conferma finale su validator esterno da account/browser)
 - [ ] GSC indica "Sito verificato" (bloccato: richiede accesso account Google Search Console)
 - [ ] GSC ha ricevuto sitemap (bloccato: richiede accesso account Google Search Console)
 
-**Congratulazioni! CalcolaSubito.it Ã¨ LIVE! ðŸŽ‰**
+**Congratulazioni! CalcolaSubito è LIVE!**
 
 ---
 

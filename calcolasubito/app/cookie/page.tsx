@@ -1,6 +1,6 @@
 export const metadata = {
-  title: 'Cookie Policy | CalcolaSubito.it',
-  description: 'Informativa sui cookie di CalcolaSubito.it',
+  title: 'Cookie Policy | CalcolaSubito',
+  description: 'Informativa sui cookie di CalcolaSubito',
 }
 
 export default function CookiePolicy() {
@@ -88,3 +88,4 @@ export default function CookiePolicy() {
     </div>
   )
 }
+

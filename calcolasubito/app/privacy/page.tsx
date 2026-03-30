@@ -1,6 +1,6 @@
 export const metadata = {
-  title: 'Privacy Policy | CalcolaSubito.it',
-  description: 'Informativa sulla privacy di CalcolaSubito.it',
+  title: 'Privacy Policy | CalcolaSubito',
+  description: 'Informativa sulla privacy di CalcolaSubito',
 }
 
 export default function PrivacyPolicy() {
@@ -12,10 +12,10 @@ export default function PrivacyPolicy() {
         <div className="bg-white rounded-lg shadow-lg p-5 md:p-8 space-y-8">
           <section>
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              1. Informazioni su CalcolaSubito.it
+              1. Informazioni su CalcolaSubito
             </h2>
             <p className="text-gray-600 mb-4">
-              CalcolaSubito.it è un sito web che fornisce strumenti di calcolo online
+              CalcolaSubito è un sito web che fornisce strumenti di calcolo online
               gratuiti. Questa privacy policy descrive come trattiamo i dati personali.
             </p>
           </section>
@@ -83,3 +83,4 @@ export default function PrivacyPolicy() {
     </div>
   )
 }
+

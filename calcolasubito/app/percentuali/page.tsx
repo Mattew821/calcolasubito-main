@@ -236,7 +236,7 @@ export default function CalcoloPercentuali() {
             {/* Share Buttons */}
             {result !== null && (
               <ShareButtons
-                title="Calcolo Percentuali - CalcolaSubito.it"
+                title="Calcolo Percentuali - CalcolaSubito"
                 description="Ho appena calcolato una percentuale con questo tool gratuito. Prova anche tu!"
               />
             )}
@@ -346,3 +346,4 @@ export default function CalcoloPercentuali() {
     </>
   )
 }
+

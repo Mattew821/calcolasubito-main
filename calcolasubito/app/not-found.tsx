@@ -1,7 +1,7 @@
-﻿import Link from 'next/link'
+import Link from 'next/link'
 
 export const metadata = {
-  title: '404 - Pagina non trovata | CalcolaSubito.it',
+  title: '404 - Pagina non trovata | CalcolaSubito',
   description: 'La pagina che stai cercando non esiste',
 }
 
@@ -11,7 +11,7 @@ export default function NotFound() {
       <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6 sm:p-8 text-center">
         <div className="text-6xl sm:text-8xl font-bold text-blue-600 mb-4">404</div>
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Pagina non trovata</h1>
-        <p className="text-gray-600 mb-6">La pagina che stai cercando non esiste o e stata spostata.</p>
+        <p className="text-gray-600 mb-6">La pagina che stai cercando non esiste o è stata spostata.</p>
 
         <div className="space-y-3">
           <Link

@@ -1,4 +1,4 @@
-# 🚀 Setup CalcolaSubito.it
+# 🚀 Setup CalcolaSubito
 
 ## Step 1: Installazione Locale
 
@@ -18,7 +18,7 @@ Accedi a `http://localhost:3000`
 ## Step 3: Verifica Struttura
 
 La cartella `calcolasubito/` contiene:
-- ✅ `app/` - Pagine Next.js (5 calcolatori + privacy + sitemap)
+- ✅ `app/` - Pagine Next.js (calcolatori, privacy, cookie, sitemap)
 - ✅ `components/` - Header, Footer, Calculator wrapper
 - ✅ `lib/` - Utility funzioni di calcolo
 - ✅ `styles/` - CSS globali Tailwind
@@ -92,3 +92,4 @@ npm install
 npm run build
 npm run start
 ```
+

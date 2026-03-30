@@ -249,7 +249,7 @@ export default function ScorporoIVA() {
               </div>
               {/* Share Buttons */}
               <ShareButtons
-                title="Calcolo Scorporo IVA - CalcolaSubito.it"
+                title="Calcolo Scorporo IVA - CalcolaSubito"
                 description="Ho appena calcolato il scorporo IVA con questo tool gratuito. Prova anche tu!"
               />
             </div>
@@ -311,3 +311,4 @@ export default function ScorporoIVA() {
     </>
   )
 }
+

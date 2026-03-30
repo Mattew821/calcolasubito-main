@@ -19,8 +19,10 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: 'CalcolaSubito | Calcolatori Online Gratuiti',
-  description: 'Suite di calcolatori online gratuiti per l\'Italia: IVA, busta paga, IMU, codice fiscale e molti altri.',
-  keywords: 'calcolatori online, calcolo IVA, busta paga, codice fiscale, IMU, TARI',
+  description:
+    'Suite di calcolatori online gratuiti per l\'Italia: percentuali, IVA, codice fiscale, mutuo, prestito, BMI e molti altri.',
+  keywords:
+    'calcolatori online, calcolo percentuali, scorporo IVA, codice fiscale, rata mutuo, rata prestito, BMI',
   authors: [{ name: 'CalcolaSubito' }],
   metadataBase: new URL(BASE_URL),
   alternates: {
