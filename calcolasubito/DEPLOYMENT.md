@@ -367,3 +367,22 @@ Stato task esterni:
       - `/sitemap.xml` -> 200
       - `/robots.txt` -> 200
 
+- Recursive verification cycle (2026-03-30, run 7):
+  - Quality gates ripetuti:
+    - `npm test -- --runInBand` -> PASS (80/80)
+    - `npm run lint` -> PASS
+    - `npm run build` -> PASS
+    - `python validation_framework.py --no-interactive --no-auto-git-push --max-attempts-per-problem 3 --max-global-iterations 3` -> PASS (0 problemi)
+  - Stress loop deterministico:
+    - 3 iterazioni consecutive `test + lint + build` -> PASS 3/3
+  - Smoke runtime locale (`next start`, porta 3100):
+    - tutte le route del portale (home, pagine statiche, 21 calcolatori, `sitemap.xml`, `robots.txt`) -> 200
+  - Smoke runtime produzione (`https://calcolasubito.vercel.app`):
+    - home, pagine statiche, 21 calcolatori, `sitemap.xml`, `robots.txt` -> 200
+  - SEO/coerenza URL:
+    - canonical presente e corretto su tutte le pagine principali verificate
+    - `sitemap.xml`: `sitemap_count=25`, `missing_count=0`, `extra_count=0`
+    - `robots.txt` valido e allineato al dominio `calcolasubito.vercel.app`
+  - Esito:
+    - nessun bug riproducibile emerso in questo ciclo; nessuna correzione codice necessaria.
+
