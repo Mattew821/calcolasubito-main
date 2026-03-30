@@ -181,7 +181,7 @@ export default function CalcoloCodiceFiscale() {
                       }`}
                       placeholder="Es. Rossi, Geraci Montanari, De Luca"
                     />
-                    {errors.surname && (
+                    {errors.surname?.message && (
                       <p className="mt-1 text-sm text-red-600">{errors.surname.message}</p>
                     )}
                   </div>
@@ -197,7 +197,7 @@ export default function CalcoloCodiceFiscale() {
                       }`}
                       placeholder="Es. Marco, Valeria Sonia, Francisa"
                     />
-                    {errors.name && (
+                    {errors.name?.message && (
                       <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
                     )}
                   </div>
@@ -215,7 +215,7 @@ export default function CalcoloCodiceFiscale() {
                         errors.birthDate ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
                       }`}
                     />
-                    {errors.birthDate && (
+                    {errors.birthDate?.message && (
                       <p className="mt-1 text-sm text-red-600">{errors.birthDate.message}</p>
                     )}
                   </div>
@@ -232,7 +232,7 @@ export default function CalcoloCodiceFiscale() {
                       <option value="M">Maschio</option>
                       <option value="F">Femmina</option>
                     </select>
-                    {errors.gender && (
+                    {errors.gender?.message && (
                       <p className="mt-1 text-sm text-red-600">{errors.gender.message}</p>
                     )}
                   </div>
@@ -250,7 +250,7 @@ export default function CalcoloCodiceFiscale() {
                     }`}
                     placeholder="Es. H501 (Roma)"
                   />
-                  {errors.birthPlace && (
+                  {errors.birthPlace?.message && (
                     <p className="mt-1 text-sm text-red-600">{errors.birthPlace.message}</p>
                   )}
                 </div>
@@ -328,7 +328,7 @@ export default function CalcoloCodiceFiscale() {
                     placeholder="Es. RSSMRC92A01H501T"
                     maxLength={16}
                   />
-                  {errors.codiceFiscale && (
+                  {errors.codiceFiscale?.message && (
                     <p className="mt-1 text-sm text-red-600">{errors.codiceFiscale.message}</p>
                   )}
                   <p className="mt-2 text-xs text-gray-500">
