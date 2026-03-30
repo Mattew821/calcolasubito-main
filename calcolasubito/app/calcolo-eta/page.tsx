@@ -28,15 +28,15 @@ export default function CalcoloEtaPage() {
       setResult(output)
     } catch (err) {
       setResult(null)
-      setError(err instanceof Error ? err.message : 'Errore di calcolo eta')
+      setError(err instanceof Error ? err.message : 'Errore di calcolo età')
     }
   }
 
   return (
     <Calculator
-      title="Calcolo Eta"
-      description="Calcola eta precisa in anni, mesi e giorni a partire dalla data di nascita."
-      keyword="eta"
+      title="Calcolo Età"
+      description="Calcola età precisa in anni, mesi e giorni a partire dalla data di nascita."
+      keyword="età"
     >
       <form onSubmit={onCalculate} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -66,7 +66,7 @@ export default function CalcoloEtaPage() {
           type="submit"
           className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-semibold py-3 rounded-lg transition-colors"
         >
-          Calcola Eta
+          Calcola Età
         </button>
       </form>
 

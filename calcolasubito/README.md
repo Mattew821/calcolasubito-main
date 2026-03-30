@@ -72,7 +72,7 @@ NEXT_PUBLIC_BASE_URL=https://vercel.vercel.app
 16. Media Voti Ponderata
 17. Conversione Temperatura
 18. Convertitore Lunghezze
-19. Calcolo Eta
+19. Calcolo Età
 20. Calcolo Mancia
 
 ## Stack

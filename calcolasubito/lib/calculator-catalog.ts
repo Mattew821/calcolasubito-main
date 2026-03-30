@@ -154,11 +154,11 @@ export const CALCULATOR_CATALOG: CalculatorCatalogEntry[] = [
   },
   {
     id: 'calcolo-eta',
-    title: 'Calcolo Eta',
+    title: 'Calcolo Età',
     category: 'Utilita',
     popularity: 'Molto Alto',
-    description: 'Calcola eta precisa in anni, mesi e giorni.',
-    tags: ['eta', 'nascita', 'anni', 'date'],
+    description: 'Calcola età precisa in anni, mesi e giorni.',
+    tags: ['età', 'nascita', 'anni', 'date'],
   },
   {
     id: 'calcolo-mancia',
