@@ -211,9 +211,10 @@ export default function CalcoloGiorni() {
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Domande Frequenti</h2>
               <div className="space-y-6">
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">📌 Il calcolatore include entrambe le date?</h3>
+                  <h3 className="font-semibold text-gray-900 mb-2">📌 Come funziona il conteggio dei giorni?</h3>
                   <p className="text-gray-600">
-                    Sì, il calcolo include sia la data iniziale che quella finale nel conteggio dei giorni.
+                    Il calcolatore restituisce la differenza in giorni tra le due date.
+                    Esempio: dal 1 gennaio al 3 gennaio il risultato è 2 giorni.
                   </p>
                 </div>
                 <div>

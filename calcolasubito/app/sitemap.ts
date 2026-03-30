@@ -26,6 +26,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.9,
   }))
 
+  // About page
+  const aboutEntry: MetadataRoute.Sitemap[0] = {
+    url: `${BASE_URL}/about`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }
+
   // Policy pages
   const policyEntries: MetadataRoute.Sitemap = [
     {
@@ -42,5 +50,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ]
 
-  return [homeEntry, ...calculatorEntries, ...policyEntries]
+  return [homeEntry, ...calculatorEntries, aboutEntry, ...policyEntries]
 }

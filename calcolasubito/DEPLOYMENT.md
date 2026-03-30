@@ -286,3 +286,29 @@ Stato task esterni:
     - JSON-LD su `/percentuali`: 3 blocchi, parse OK 3/3
     - `GA_SCRIPT_LOADED=False` (task esterno ancora aperto)
 
+- Recursive verification cycle (2026-03-30, run 3):
+  - Revisione modifiche utente su:
+    - `app/giorni-tra-date/layout.tsx`
+    - `app/sitemap.ts`
+    - `components/Toast.tsx`
+    - `lib/validations.ts`
+  - Bug fix applicati:
+    - validazione date resa stretta ISO (`YYYY-MM-DD`) con rifiuto date impossibili (`2024-02-30`)
+    - allineamento FAQ UI di `giorni-tra-date` al comportamento reale (differenza in giorni)
+    - hardening worker su `daysBetween`, `mortgage` e mappa check-digit CF
+  - Test aggiunti:
+    - `lib/__tests__/validations.test.ts` (date edge case + check-digit CF randomizzato)
+  - Risultato quality gates:
+    - `npm test -- --runInBand` -> PASS (34/34)
+    - `npm run lint` -> PASS
+    - `npm run build` -> PASS
+    - Stress loop `test/lint/build` -> 5/5 PASS
+    - `validation_framework.py --no-interactive --max-attempts-per-problem 0 --max-global-iterations 0` -> PASS (0 problemi)
+  - Runtime check locale in start mode:
+    - `/`, `/about`, `/percentuali`, `/giorni-tra-date`, `/scorporo-iva`, `/codice-fiscale`, `/rata-mutuo`, `/sitemap.xml`, `/robots.txt` -> 200
+    - `sitemap.xml` contiene `/about` -> True
+  - Runtime check produzione `${NEXT_PUBLIC_BASE_URL}`:
+    - `/`, `/about`, `/percentuali`, `/giorni-tra-date`, `/scorporo-iva`, `/codice-fiscale`, `/rata-mutuo`, `/sitemap.xml`, `/robots.txt` -> 200
+    - JSON-LD su `/percentuali`: parse OK 3/3
+    - `GA_SCRIPT_LOADED=False`
+

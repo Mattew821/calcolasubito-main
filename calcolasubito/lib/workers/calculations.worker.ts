@@ -113,7 +113,9 @@ function calculateDaysBetween(startDate: string, endDate: string): number {
   const start = new Date(startDate)
   const end = new Date(endDate)
   const msPerDay = 24 * 60 * 60 * 1000
-  return Math.floor((end.getTime() - start.getTime()) / msPerDay)
+  const startUtc = Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate())
+  const endUtc = Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate())
+  return Math.floor((endUtc - startUtc) / msPerDay)
 }
 
 // ===== SCORPORO IVA =====
@@ -233,11 +235,13 @@ function calculateCodiceFiscaleSimplified(
   let sum = 0
   for (let i = 0; i < codiceSenza.length; i++) {
     const char = codiceSenza.charAt(i)
-    if (i % 2 === 0) {
-      sum += dispariMap[char as keyof typeof dispariMap] || 0
-    } else {
-      sum += pariMap[char as keyof typeof pariMap] || 0
+    const mapped = i % 2 === 0
+      ? dispariMap[char as keyof typeof dispariMap]
+      : pariMap[char as keyof typeof pariMap]
+    if (mapped === undefined) {
+      throw new Error(`Invalid character in codice fiscale base: ${char}`)
     }
+    sum += mapped
   }
 
   const resto = sum % 26
@@ -266,6 +270,16 @@ function calculateMortgage(
   annualRate: number,
   months: number
 ): MortgageCalculation {
+  if (months <= 0) {
+    throw new Error('Months must be greater than zero')
+  }
+  if (principal < 0) {
+    throw new Error('Principal cannot be negative')
+  }
+  if (annualRate < 0) {
+    throw new Error('Annual rate cannot be negative')
+  }
+
   const monthlyRate = annualRate / 100 / 12
 
   if (monthlyRate === 0) {

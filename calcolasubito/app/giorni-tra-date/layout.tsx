@@ -17,10 +17,10 @@ const faqSchema = {
   mainEntity: [
     {
       '@type': 'Question',
-      name: 'Il calcolatore include entrambe le date?',
+      name: 'Come funziona il conteggio dei giorni?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Sì, il calcolo include sia la data iniziale che quella finale nel conteggio dei giorni.',
+        text: 'Il calcolatore calcola la differenza in giorni tra le due date. Ad esempio, dal 1 gennaio al 3 gennaio risultano 2 giorni.',
       },
     },
     {

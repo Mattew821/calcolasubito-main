@@ -46,7 +46,7 @@ function ToastItem({ id, message, type, duration = 3000, onClose }: ToastItemPro
   }[type]
 
   return (
-    <div className={`fixed bottom-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-fadeIn z-50`}>
+    <div role="alert" aria-live="assertive" className={`fixed bottom-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-fadeIn z-50`}>
       <span className="text-xl font-bold">{icon}</span>
       <span>{message}</span>
     </div>

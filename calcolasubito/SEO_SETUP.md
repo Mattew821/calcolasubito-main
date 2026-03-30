@@ -371,3 +371,17 @@ Questa guida copre la strategia ufficiale per aumentare la visibilitÃ  su Goog
   - JSON-LD su `/percentuali`: 3 blocchi trovati, parse OK 3/3
   - GA script in produzione: non rilevato (`GA_SCRIPT_LOADED=False`)
 
+- Recursive verification cycle (2026-03-30, run 3):
+  - Fix validazione date: formato ISO stretto e rifiuto date calendario invalide (`2024-02-30`)
+  - Hardening worker: calcolo giorni su UTC + guardie mutuo + check robusto caratteri mappa CF
+  - Coerenza contenuti: FAQ `giorni-tra-date` allineata al risultato numerico reale
+  - Nuovi test (`lib/__tests__/validations.test.ts`):
+    - schema date (validi/non validi/inversione range)
+    - schema CF straniero residente (100 valid random + check digit alterato)
+  - Esito:
+    - `npm test -- --runInBand` -> PASS (34/34)
+    - `npm run lint` -> PASS
+    - `npm run build` -> PASS
+    - Stress loop qualità `test/lint/build` -> 5/5 PASS
+    - `validation_framework.py --no-interactive --max-attempts-per-problem 0 --max-global-iterations 0` -> PASS (0 problemi)
+
