@@ -177,12 +177,12 @@ export default function CalcoloCodiceFiscale() {
                       type="text"
                       {...register('surname')}
                       className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
-                        errors.surname ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                        (errors as any).surname?.message ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
                       }`}
                       placeholder="Es. Rossi, Geraci Montanari, De Luca"
                     />
-                    {errors.surname?.message && (
-                      <p className="mt-1 text-sm text-red-600">{errors.surname.message}</p>
+                    {(errors as any).surname?.message && (
+                      <p className="mt-1 text-sm text-red-600">{(errors as any).surname.message}</p>
                     )}
                   </div>
                   <div>
@@ -193,12 +193,12 @@ export default function CalcoloCodiceFiscale() {
                       type="text"
                       {...register('name')}
                       className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
-                        errors.name ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                        (errors as any).name?.message ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
                       }`}
                       placeholder="Es. Marco, Valeria Sonia, Francisa"
                     />
-                    {errors.name?.message && (
-                      <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+                    {(errors as any).name?.message && (
+                      <p className="mt-1 text-sm text-red-600">{(errors as any).name.message}</p>
                     )}
                   </div>
                 </div>
@@ -212,11 +212,11 @@ export default function CalcoloCodiceFiscale() {
                       type="date"
                       {...register('birthDate')}
                       className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
-                        errors.birthDate ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                        (errors as any).birthDate?.message ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
                       }`}
                     />
-                    {errors.birthDate?.message && (
-                      <p className="mt-1 text-sm text-red-600">{errors.birthDate.message}</p>
+                    {(errors as any).birthDate?.message && (
+                      <p className="mt-1 text-sm text-red-600">{(errors as any).birthDate.message}</p>
                     )}
                   </div>
                   <div>
@@ -226,14 +226,14 @@ export default function CalcoloCodiceFiscale() {
                     <select
                       {...register('gender')}
                       className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
-                        errors.gender ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                        (errors as any).gender?.message ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
                       }`}
                     >
                       <option value="M">Maschio</option>
                       <option value="F">Femmina</option>
                     </select>
-                    {errors.gender?.message && (
-                      <p className="mt-1 text-sm text-red-600">{errors.gender.message}</p>
+                    {(errors as any).gender?.message && (
+                      <p className="mt-1 text-sm text-red-600">{(errors as any).gender.message}</p>
                     )}
                   </div>
                 </div>
@@ -246,12 +246,12 @@ export default function CalcoloCodiceFiscale() {
                     type="text"
                     {...register('birthPlace')}
                     className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
-                      errors.birthPlace ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                      (errors as any).birthPlace?.message ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
                     }`}
                     placeholder="Es. H501 (Roma)"
                   />
-                  {errors.birthPlace?.message && (
-                    <p className="mt-1 text-sm text-red-600">{errors.birthPlace.message}</p>
+                  {(errors as any).birthPlace?.message && (
+                    <p className="mt-1 text-sm text-red-600">{(errors as any).birthPlace.message}</p>
                   )}
                 </div>
 
@@ -323,13 +323,13 @@ export default function CalcoloCodiceFiscale() {
                     type="text"
                     {...register('codiceFiscale')}
                     className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 uppercase ${
-                      errors.codiceFiscale ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                      (errors as any).codiceFiscale?.message ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
                     }`}
                     placeholder="Es. RSSMRC92A01H501T"
                     maxLength={16}
                   />
-                  {errors.codiceFiscale?.message && (
-                    <p className="mt-1 text-sm text-red-600">{errors.codiceFiscale.message}</p>
+                  {(errors as any).codiceFiscale?.message && (
+                    <p className="mt-1 text-sm text-red-600">{(errors as any).codiceFiscale.message}</p>
                   )}
                   <p className="mt-2 text-xs text-gray-500">
                     Formato: 6 lettere (cognome+nome) + 2 cifre (anno) + 1 lettera (mese) + 2 cifre (giorno) + 4 lettere (comune) + 1 lettera (controllo)

@@ -52,7 +52,10 @@
       "Bash(git remote:*)",
       "Read(//c/Users/matth/Desktop/**)",
       "Read(//c/Users/matth/Desktop//**)",
-      "Bash(find /c/Users/matth/Desktop/calcolasubito/calcolasubito -name *.env* -o -name .next -o -name node_modules)"
+      "Bash(find /c/Users/matth/Desktop/calcolasubito/calcolasubito -name *.env* -o -name .next -o -name node_modules)",
+      "Bash(do echo:*)",
+      "Read(//c/Users/matth/Desktop/calcolasubito/calcolasubito/**)",
+      "Bash(head -20 app/*/layout.tsx)"
     ]
   },
   "hooks": {

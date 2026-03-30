@@ -129,8 +129,8 @@ function calculateIVA(
   if (mode === 'gross') {
     // Scorporo IVA: da lordo a netto
     // IVA = (Lordo × Aliquota) ÷ (100 + Aliquota)
-    const ivaAmount = (amount * rate) / (100 + rate)
-    const netAmount = amount - ivaAmount
+    const ivaAmount = Math.round((amount * rate) / (100 + rate) * 100) / 100
+    const netAmount = Math.round((amount - ivaAmount) * 100) / 100
     return {
       gross: amount,
       net: netAmount,
@@ -141,8 +141,8 @@ function calculateIVA(
     // Applicazione IVA: da netto a lordo
     // IVA = Netto × (Aliquota ÷ 100)
     // Lordo = Netto + IVA
-    const ivaAmount = (amount * rate) / 100
-    const grossAmount = amount + ivaAmount
+    const ivaAmount = Math.round((amount * rate) / 100 * 100) / 100
+    const grossAmount = Math.round((amount + ivaAmount) * 100) / 100
     return {
       gross: grossAmount,
       net: amount,

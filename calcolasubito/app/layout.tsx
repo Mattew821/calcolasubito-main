@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'it_IT',
-    url: 'https://calcolasubito.vercel.app',
+    url: process.env.NEXT_PUBLIC_BASE_URL || 'https://calcolasubito.vercel.app',
     siteName: 'CalcolaSubito',
     title: 'CalcolaSubito - Calcolatori Online Gratuiti',
     description: 'Suite di calcolatori online gratuiti per l\'Italia: percentuali, IVA, codice fiscale, mutuo e molto altro.',
@@ -49,6 +49,7 @@ export const metadata: Metadata = {
 }
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID || null
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://calcolasubito.vercel.app'
 
 // Log warning in development if GA_ID is not configured
 if (!GA_ID && process.env.NODE_ENV === 'development') {
@@ -61,8 +62,8 @@ const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'CalcolaSubito',
-  url: 'https://calcolasubito.vercel.app',
-  logo: 'https://calcolasubito.vercel.app/logo.png',
+  url: BASE_URL,
+  logo: `${BASE_URL}/logo.png`,
   sameAs: [
     'https://www.facebook.com/calcolasubito',
     'https://twitter.com/calcolasubito',
@@ -78,7 +79,7 @@ const webApplicationSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
   name: 'CalcolaSubito',
-  url: 'https://calcolasubito.vercel.app',
+  url: BASE_URL,
   description: 'Suite di calcolatori online gratuiti per l\'Italia',
   applicationCategory: 'UtilityApplication',
   offers: {
