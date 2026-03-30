@@ -41,6 +41,14 @@ export const CALCULATOR_CATALOG: CalculatorCatalogEntry[] = [
     tags: ['iva', 'fisco', 'fattura', 'imponibile'],
   },
   {
+    id: 'calcolo-imu',
+    title: 'Calcolo IMU',
+    category: 'Fisco',
+    popularity: 'Molto Alto',
+    description: 'Stima IMU annua con rendita catastale, aliquota e quote di possesso.',
+    tags: ['imu', 'casa', 'tasse', 'rendita catastale', 'fisco'],
+  },
+  {
     id: 'codice-fiscale',
     title: 'Codice Fiscale',
     category: 'Fisco',
@@ -55,6 +63,14 @@ export const CALCULATOR_CATALOG: CalculatorCatalogEntry[] = [
     popularity: 'Molto Alto',
     description: 'Rata mensile, interessi e piano di ammortamento.',
     tags: ['mutuo', 'rata', 'casa', 'interessi'],
+  },
+  {
+    id: 'busta-paga-netta',
+    title: 'Busta Paga Netta',
+    category: 'Finanza',
+    popularity: 'Molto Alto',
+    description: 'Simula stipendio netto mensile da RAL, contributi e imposte.',
+    tags: ['busta paga', 'stipendio netto', 'ral', 'irpef', 'contributi'],
   },
   {
     id: 'rata-prestito',

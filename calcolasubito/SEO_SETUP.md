@@ -289,7 +289,7 @@ Questa guida copre la strategia ufficiale per aumentare la visibilitÃ  su Goog
 
 ### Lungo termine (6-12 mesi)
 - [ ] Sviluppare autoritÃ  del dominio tramite link building
-- [ ] Espandere con nuovi calcolatori (busta paga, IMU, etc.)
+- [x] Espandere con nuovi calcolatori (busta paga e IMU implementati)
 - [ ] Creare video tutorial su YouTube
 - [ ] Monetizzare (ads, affiliate links) se il traffico Ã¨ alto
 

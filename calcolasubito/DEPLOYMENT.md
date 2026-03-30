@@ -199,7 +199,7 @@ Dopo deploy:
 - [x] Sito raggiungibile da produzione URL
 - [x] Tutti i calcolatori disponibili funzionano
 - [x] Sitemap.xml generato correttamente
-- [ ] Google Analytics traccia visite (bloccato: script GA non presente in produzione)
+- [ ] Google Analytics traccia visite (codice GA4 e pageview SPA implementati; resta configurare NEXT_PUBLIC_GA_ID in Vercel produzione)
 - [ ] Schema markup è valid (JSON-LD valido sintatticamente; conferma finale su validator esterno da account/browser)
 - [ ] GSC indica "Sito verificato" (bloccato: richiede accesso account Google Search Console)
 - [ ] GSC ha ricevuto sitemap (bloccato: richiede accesso account Google Search Console)
@@ -385,4 +385,22 @@ Stato task esterni:
     - `robots.txt` valido e allineato al dominio `calcolasubito.vercel.app`
   - Esito:
     - nessun bug riproducibile emerso in questo ciclo; nessuna correzione codice necessaria.
+
+- Recursive verification cycle (2026-03-30, run 8):
+  - Nuove funzionalita implementate:
+    - integrazione GA4 migliorata con tracciamento page-view su cambio route (`components/GoogleAnalytics.tsx`)
+    - redirect canonico host in produzione via `middleware.ts`
+    - nuovi calcolatori: `/calcolo-imu` e `/busta-paga-netta`
+    - motore formule esteso in `lib/calculations.ts` (IMU + simulatore netto busta paga)
+    - validazioni dedicate aggiunte in `lib/validations.ts`
+    - suite E2E Playwright aggiunta (`playwright.config.ts`, `e2e/calculators.spec.ts`)
+  - Quality gates:
+    - `npm test -- --runInBand` -> PASS (91/91)
+    - `npm run lint` -> PASS
+    - `npm run build` -> PASS
+    - `npx playwright test` -> PASS (24/24)
+    - `python validation_framework.py --no-interactive --no-auto-git-push --max-attempts-per-problem 2 --max-global-iterations 2` -> PASS (0 problemi)
+  - SEO/runtime:
+    - sitemap aggiornata automaticamente a 27 URL (23 calcolatori + pagine statiche + home)
+    - canonical verificato in E2E su tutte le route calcolatori
 

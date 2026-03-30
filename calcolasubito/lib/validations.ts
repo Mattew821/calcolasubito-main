@@ -178,3 +178,64 @@ export const rataMutuoSchema = z.object({
 })
 
 export type RataMutuoInput = z.infer<typeof rataMutuoSchema>
+
+// IMU Calculator
+export const imuSchema = z.object({
+  cadastralIncome: z.number()
+    .min(1, 'La rendita catastale deve essere maggiore di 0')
+    .max(1_000_000, 'La rendita catastale è troppo alta')
+    .finite('La rendita catastale deve essere un valore finito'),
+  multiplier: z.number()
+    .min(1, 'Il coefficiente deve essere maggiore di 0')
+    .max(1000, 'Il coefficiente è troppo alto')
+    .finite('Il coefficiente deve essere un valore finito'),
+  ratePerMille: z.number()
+    .min(0, 'L\'aliquota IMU deve essere maggiore o uguale a 0')
+    .max(30, 'L\'aliquota IMU non deve superare 30 per mille')
+    .finite('L\'aliquota IMU deve essere un valore finito'),
+  ownershipPercent: z.number()
+    .min(0.01, 'La quota di possesso deve essere maggiore di 0')
+    .max(100, 'La quota di possesso non può superare 100%')
+    .finite('La quota di possesso deve essere un valore finito'),
+  ownedMonths: z.number()
+    .int('I mesi di possesso devono essere un numero intero')
+    .min(1, 'I mesi di possesso devono essere almeno 1')
+    .max(12, 'I mesi di possesso non possono superare 12'),
+  annualDeduction: z.number()
+    .min(0, 'La detrazione non può essere negativa')
+    .max(100000, 'La detrazione è troppo alta')
+    .finite('La detrazione deve essere un valore finito'),
+})
+
+export type ImuInput = z.infer<typeof imuSchema>
+
+// Busta Paga Netta Calculator
+export const bustaPagaNettaSchema = z.object({
+  grossAnnualSalary: z.number()
+    .min(500, 'La RAL deve essere almeno 500€')
+    .max(2_000_000, 'La RAL è troppo alta')
+    .finite('La RAL deve essere un valore finito'),
+  monthlyPayments: z.number()
+    .int('Le mensilità devono essere un numero intero')
+    .min(12, 'Le mensilità devono essere almeno 12')
+    .max(14, 'Le mensilità non possono superare 14'),
+  employeeContributionRate: z.number()
+    .min(0, 'I contributi dipendente devono essere >= 0')
+    .max(30, 'I contributi dipendente non possono superare 30%')
+    .finite('I contributi dipendente devono essere un valore finito'),
+  regionalAdditionalRate: z.number()
+    .min(0, 'L\'addizionale regionale deve essere >= 0')
+    .max(4, 'L\'addizionale regionale non può superare 4%')
+    .finite('L\'addizionale regionale deve essere un valore finito'),
+  municipalAdditionalRate: z.number()
+    .min(0, 'L\'addizionale comunale deve essere >= 0')
+    .max(2, 'L\'addizionale comunale non può superare 2%')
+    .finite('L\'addizionale comunale deve essere un valore finito'),
+  employerContributionRate: z.number()
+    .min(0, 'I contributi azienda devono essere >= 0')
+    .max(60, 'I contributi azienda non possono superare 60%')
+    .finite('I contributi azienda devono essere un valore finito'),
+  applyIntegrativeTreatment: z.boolean(),
+})
+
+export type BustaPagaNettaInput = z.infer<typeof bustaPagaNettaSchema>

@@ -15,7 +15,12 @@ Portale di calcolatori online gratuiti in italiano, ottimizzato per SEO, perform
   - ripristino ultimi valori
   - export/import snapshot JSON
   - azioni rapide: copia link, condividi, stampa, reset form, ricalcola
+- Redirect canonico host in produzione verso `calcolasubito.vercel.app`
+- Google Analytics GA4 con tracking page-view anche sulle navigazioni interne
 - Nuovo calcolatore: `numeri-casuali`
+- Nuovi calcolatori fiscali/lavoro:
+  - `calcolo-imu`
+  - `busta-paga-netta`
 - 5 nuovi calcolatori popolari:
   - `calcolo-eta`
   - `rata-prestito`
@@ -46,6 +51,7 @@ Apri [http://localhost:3000](http://localhost:3000).
 npm test
 npm run lint
 npm run build
+npm run e2e
 ```
 
 ## Configurazione dominio
@@ -60,7 +66,7 @@ Esempio `.env.local`:
 NEXT_PUBLIC_BASE_URL=https://calcolasubito.vercel.app
 ```
 
-## Calcolatori disponibili (21)
+## Calcolatori disponibili (23)
 
 1. Calcolo Percentuali
 2. Giorni tra Date
@@ -83,6 +89,8 @@ NEXT_PUBLIC_BASE_URL=https://calcolasubito.vercel.app
 19. Numeri Casuali
 20. Calcolo Età
 21. Calcolo Mancia
+22. Calcolo IMU
+23. Busta Paga Netta
 
 ## Stack
 
@@ -90,6 +98,7 @@ NEXT_PUBLIC_BASE_URL=https://calcolasubito.vercel.app
 - TypeScript
 - Tailwind CSS
 - Jest
+- Playwright (E2E)
 
 ## Note
 

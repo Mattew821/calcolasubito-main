@@ -2,6 +2,8 @@ import {
   giorniTraDateSchema,
   codiceFiscaleItalianSchema,
   codiceFiscaleForeignerItalySchema,
+  imuSchema,
+  bustaPagaNettaSchema,
 } from '../validations'
 
 const CodiceFiscale = require('codice-fiscale-js')
@@ -141,5 +143,59 @@ describe('codiceFiscale schemas', () => {
     if (result.success) {
       expect(result.data.codiceFiscale).toBe(valid)
     }
+  })
+})
+
+describe('imuSchema', () => {
+  it('accepts valid IMU input', () => {
+    const result = imuSchema.safeParse({
+      cadastralIncome: 1000,
+      multiplier: 160,
+      ratePerMille: 10.6,
+      ownershipPercent: 100,
+      ownedMonths: 12,
+      annualDeduction: 0,
+    })
+    expect(result.success).toBe(true)
+  })
+
+  it('rejects invalid IMU input ranges', () => {
+    const result = imuSchema.safeParse({
+      cadastralIncome: 0,
+      multiplier: 160,
+      ratePerMille: 10.6,
+      ownershipPercent: 100,
+      ownedMonths: 12,
+      annualDeduction: 0,
+    })
+    expect(result.success).toBe(false)
+  })
+})
+
+describe('bustaPagaNettaSchema', () => {
+  it('accepts valid salary simulation input', () => {
+    const result = bustaPagaNettaSchema.safeParse({
+      grossAnnualSalary: 32000,
+      monthlyPayments: 13,
+      employeeContributionRate: 9.19,
+      regionalAdditionalRate: 1.4,
+      municipalAdditionalRate: 0.8,
+      employerContributionRate: 30,
+      applyIntegrativeTreatment: true,
+    })
+    expect(result.success).toBe(true)
+  })
+
+  it('rejects monthly payments outside valid interval', () => {
+    const result = bustaPagaNettaSchema.safeParse({
+      grossAnnualSalary: 32000,
+      monthlyPayments: 15,
+      employeeContributionRate: 9.19,
+      regionalAdditionalRate: 1.4,
+      municipalAdditionalRate: 0.8,
+      employerContributionRate: 30,
+      applyIntegrativeTreatment: true,
+    })
+    expect(result.success).toBe(false)
   })
 })

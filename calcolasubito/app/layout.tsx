@@ -3,6 +3,7 @@ import { Manrope, Space_Grotesk } from 'next/font/google'
 import '@/styles/globals.css'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import GoogleAnalytics from '@/components/GoogleAnalytics'
 import { BASE_URL } from '@/lib/site-config'
 
 const manrope = Manrope({
@@ -128,28 +129,6 @@ export default function RootLayout({
           crossOrigin="anonymous"
         ></script>
 
-        {/* Google Analytics - Only load if GA_ID is configured */}
-        {GA_ID && (
-          <>
-            <script
-              async
-              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-            ></script>
-            <script
-              dangerouslySetInnerHTML={{
-                __html: `
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', '${GA_ID}', {
-                    page_path: window.location.pathname,
-                  });
-                `,
-              }}
-            />
-          </>
-        )}
-
         {/* JSON-LD Organization Schema */}
         <script
           type="application/ld+json"
@@ -167,6 +146,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`flex flex-col min-h-screen ${manrope.variable} ${spaceGrotesk.variable}`}>
+        {GA_ID && <GoogleAnalytics measurementId={GA_ID} />}
         <Header />
         <main className="flex-1">
           {children}

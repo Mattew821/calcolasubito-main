@@ -23,6 +23,8 @@ import {
   calculateCalorieNeeds,
   convertLengthFromMeters,
   generateRandomIntegers,
+  calculateImu,
+  calculateNetSalary,
 } from '../calculations'
 
 /**
@@ -481,6 +483,134 @@ describe('generateRandomIntegers', () => {
   })
 })
 
+describe('calculateImu', () => {
+  it('should calculate IMU annual tax and installments', () => {
+    const result = calculateImu({
+      cadastralIncome: 1000,
+      multiplier: 160,
+      ratePerMille: 10.6,
+      ownershipPercent: 100,
+      ownedMonths: 12,
+      annualDeduction: 0,
+    })
+
+    expect(result.taxableBase).toBeCloseTo(168000, 2)
+    expect(result.grossAnnualTax).toBeCloseTo(1780.8, 2)
+    expect(result.netAnnualTax).toBeCloseTo(1780.8, 2)
+    expect(result.installmentJune + result.installmentDecember).toBeCloseTo(result.netAnnualTax, 2)
+  })
+
+  it('should apply ownership quota and deductions', () => {
+    const result = calculateImu({
+      cadastralIncome: 850,
+      multiplier: 160,
+      ratePerMille: 8.6,
+      ownershipPercent: 50,
+      ownedMonths: 6,
+      annualDeduction: 200,
+    })
+
+    expect(result.taxableBase).toBeGreaterThan(0)
+    expect(result.ownershipTax).toBeGreaterThan(0)
+    expect(result.proportionalDeduction).toBeCloseTo(50, 2)
+    expect(result.netAnnualTax).toBeGreaterThanOrEqual(0)
+  })
+
+  it('should validate IMU inputs', () => {
+    expect(() =>
+      calculateImu({
+        cadastralIncome: 0,
+        multiplier: 160,
+        ratePerMille: 10.6,
+        ownershipPercent: 100,
+        ownedMonths: 12,
+        annualDeduction: 0,
+      })
+    ).toThrow('Cadastral income must be greater than zero')
+
+    expect(() =>
+      calculateImu({
+        cadastralIncome: 1000,
+        multiplier: 160,
+        ratePerMille: 10.6,
+        ownershipPercent: 100,
+        ownedMonths: 13,
+        annualDeduction: 0,
+      })
+    ).toThrow('Owned months must be an integer between 1 and 12')
+  })
+})
+
+describe('calculateNetSalary', () => {
+  it('should estimate annual and monthly net salary', () => {
+    const result = calculateNetSalary({
+      grossAnnualSalary: 35000,
+      employeeContributionRate: 9.19,
+      monthlyPayments: 13,
+      regionalAdditionalRate: 1.4,
+      municipalAdditionalRate: 0.8,
+      applyIntegrativeTreatment: true,
+      employerContributionRate: 30,
+    })
+
+    expect(result.netAnnualSalary).toBeGreaterThan(0)
+    expect(result.netAnnualSalary).toBeLessThan(result.grossAnnualSalary)
+    expect(Math.abs(result.netMonthlySalary * 13 - result.netAnnualSalary)).toBeLessThanOrEqual(0.13)
+    expect(result.companyCostAnnual).toBeCloseTo(result.grossAnnualSalary + result.employerContributionsAnnual, 2)
+  })
+
+  it('should grant integrative treatment for low taxable incomes', () => {
+    const withTreatment = calculateNetSalary({
+      grossAnnualSalary: 15000,
+      employeeContributionRate: 9.19,
+      monthlyPayments: 13,
+      regionalAdditionalRate: 1.2,
+      municipalAdditionalRate: 0.8,
+      applyIntegrativeTreatment: true,
+      employerContributionRate: 30,
+    })
+
+    const withoutTreatment = calculateNetSalary({
+      grossAnnualSalary: 15000,
+      employeeContributionRate: 9.19,
+      monthlyPayments: 13,
+      regionalAdditionalRate: 1.2,
+      municipalAdditionalRate: 0.8,
+      applyIntegrativeTreatment: false,
+      employerContributionRate: 30,
+    })
+
+    expect(withTreatment.integrativeTreatmentAnnual).toBeGreaterThan(0)
+    expect(withTreatment.netAnnualSalary).toBeGreaterThan(withoutTreatment.netAnnualSalary)
+  })
+
+  it('should validate salary inputs', () => {
+    expect(() =>
+      calculateNetSalary({
+        grossAnnualSalary: -1,
+        employeeContributionRate: 9.19,
+        monthlyPayments: 13,
+        regionalAdditionalRate: 1,
+        municipalAdditionalRate: 1,
+        applyIntegrativeTreatment: true,
+        employerContributionRate: 30,
+      })
+    ).toThrow('Gross annual salary must be greater than zero')
+
+    expect(() =>
+      calculateNetSalary({
+        grossAnnualSalary: 30000,
+        employeeContributionRate: 9.19,
+        monthlyPayments: 11,
+        regionalAdditionalRate: 1,
+        municipalAdditionalRate: 1,
+        applyIntegrativeTreatment: true,
+        employerContributionRate: 30,
+      })
+    ).toThrow('Monthly payments must be an integer between 12 and 14')
+  })
+})
+
 describe('deterministic grid invariants', () => {
   it('should preserve accounting identity for discount across a wide grid', () => {
     for (let price = 0; price <= 1000; price += 25) {
@@ -549,6 +679,25 @@ describe('deterministic grid invariants', () => {
           expect(loan.monthlyPayment).toBeCloseTo(mortgage.monthlyPayment, 10)
           expect(loan.totalAmountPaid).toBeCloseTo(mortgage.totalAmountPaid, 8)
           expect(loan.totalInterest).toBeCloseTo(mortgage.totalInterest, 8)
+        }
+      }
+    }
+  })
+
+  it('should preserve installment identity for IMU across a wide grid', () => {
+    for (let rendita = 500; rendita <= 5000; rendita += 250) {
+      for (const coeff of [55, 65, 80, 140, 160]) {
+        for (let rate = 0; rate <= 12.6; rate += 1.5) {
+          const result = calculateImu({
+            cadastralIncome: rendita,
+            multiplier: coeff,
+            ratePerMille: rate,
+            ownershipPercent: 100,
+            ownedMonths: 12,
+            annualDeduction: 0,
+          })
+          expect(Math.abs(result.installmentJune + result.installmentDecember - result.netAnnualTax)).toBeLessThanOrEqual(0.02)
+          expect(result.netAnnualTax).toBeGreaterThanOrEqual(0)
         }
       }
     }

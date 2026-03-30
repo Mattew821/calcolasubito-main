@@ -592,6 +592,212 @@ export function convertLengthFromMeters(meters: number): LengthConversionResult 
   }
 }
 
+function roundCurrency(value: number): number {
+  return Math.round(value * 100) / 100
+}
+
+// ===== IMU =====
+export interface ImuInput {
+  cadastralIncome: number
+  multiplier: number
+  ratePerMille: number
+  ownershipPercent: number
+  ownedMonths: number
+  annualDeduction: number
+}
+
+export interface ImuResult {
+  taxableBase: number
+  grossAnnualTax: number
+  ownershipTax: number
+  proportionalDeduction: number
+  netAnnualTax: number
+  installmentJune: number
+  installmentDecember: number
+  effectiveRatePerMille: number
+}
+
+export function calculateImu(input: ImuInput): ImuResult {
+  const {
+    cadastralIncome,
+    multiplier,
+    ratePerMille,
+    ownershipPercent,
+    ownedMonths,
+    annualDeduction,
+  } = input
+
+  if (!Number.isFinite(cadastralIncome) || cadastralIncome <= 0) {
+    throw new Error('Cadastral income must be greater than zero')
+  }
+  if (!Number.isFinite(multiplier) || multiplier <= 0) {
+    throw new Error('Multiplier must be greater than zero')
+  }
+  if (!Number.isFinite(ratePerMille) || ratePerMille < 0) {
+    throw new Error('Rate per mille must be greater or equal to zero')
+  }
+  if (!Number.isFinite(ownershipPercent) || ownershipPercent <= 0 || ownershipPercent > 100) {
+    throw new Error('Ownership percent must be between 0 and 100')
+  }
+  if (!Number.isInteger(ownedMonths) || ownedMonths < 1 || ownedMonths > 12) {
+    throw new Error('Owned months must be an integer between 1 and 12')
+  }
+  if (!Number.isFinite(annualDeduction) || annualDeduction < 0) {
+    throw new Error('Annual deduction cannot be negative')
+  }
+
+  const taxableBase = cadastralIncome * 1.05 * multiplier
+  const grossAnnualTax = taxableBase * (ratePerMille / 1000)
+  const ownershipFactor = (ownershipPercent / 100) * (ownedMonths / 12)
+  const ownershipTax = grossAnnualTax * ownershipFactor
+  const proportionalDeduction = annualDeduction * ownershipFactor
+  const netAnnualTax = Math.max(0, ownershipTax - proportionalDeduction)
+  const installmentJune = roundCurrency(netAnnualTax / 2)
+  const installmentDecember = roundCurrency(netAnnualTax - installmentJune)
+
+  return {
+    taxableBase: roundCurrency(taxableBase),
+    grossAnnualTax: roundCurrency(grossAnnualTax),
+    ownershipTax: roundCurrency(ownershipTax),
+    proportionalDeduction: roundCurrency(proportionalDeduction),
+    netAnnualTax: roundCurrency(netAnnualTax),
+    installmentJune,
+    installmentDecember,
+    effectiveRatePerMille: roundCurrency(taxableBase === 0 ? 0 : (netAnnualTax / taxableBase) * 1000),
+  }
+}
+
+// ===== BUSTA PAGA NETTA =====
+export interface NetSalaryInput {
+  grossAnnualSalary: number
+  employeeContributionRate: number
+  monthlyPayments: number
+  regionalAdditionalRate: number
+  municipalAdditionalRate: number
+  applyIntegrativeTreatment: boolean
+  employerContributionRate: number
+}
+
+export interface NetSalaryResult {
+  grossAnnualSalary: number
+  grossMonthlySalary: number
+  employeeContributionsAnnual: number
+  taxableIncomeAnnual: number
+  irpefGrossAnnual: number
+  employeeDetractionAnnual: number
+  irpefNetAnnual: number
+  additionalTaxesAnnual: number
+  integrativeTreatmentAnnual: number
+  netAnnualSalary: number
+  netMonthlySalary: number
+  employerContributionsAnnual: number
+  companyCostAnnual: number
+}
+
+function calculateIrpefGrossAnnual(taxableIncome: number): number {
+  if (taxableIncome <= 28000) {
+    return taxableIncome * 0.23
+  }
+  if (taxableIncome <= 50000) {
+    return 28000 * 0.23 + (taxableIncome - 28000) * 0.35
+  }
+  return 28000 * 0.23 + 22000 * 0.35 + (taxableIncome - 50000) * 0.43
+}
+
+function calculateEmployeeDetractionAnnual(taxableIncome: number): number {
+  if (taxableIncome <= 15000) {
+    return 1955
+  }
+  if (taxableIncome <= 28000) {
+    return 1910 + 1190 * ((28000 - taxableIncome) / 13000)
+  }
+  if (taxableIncome <= 50000) {
+    return 1910 * ((50000 - taxableIncome) / 22000)
+  }
+  return 0
+}
+
+function calculateIntegrativeTreatmentAnnual(
+  taxableIncome: number,
+  applyIntegrativeTreatment: boolean
+): number {
+  if (!applyIntegrativeTreatment) {
+    return 0
+  }
+  if (taxableIncome <= 15000) {
+    return 1200
+  }
+  if (taxableIncome <= 28000) {
+    return 1200 * ((28000 - taxableIncome) / 13000)
+  }
+  return 0
+}
+
+export function calculateNetSalary(input: NetSalaryInput): NetSalaryResult {
+  const {
+    grossAnnualSalary,
+    employeeContributionRate,
+    monthlyPayments,
+    regionalAdditionalRate,
+    municipalAdditionalRate,
+    applyIntegrativeTreatment,
+    employerContributionRate,
+  } = input
+
+  if (!Number.isFinite(grossAnnualSalary) || grossAnnualSalary <= 0) {
+    throw new Error('Gross annual salary must be greater than zero')
+  }
+  if (!Number.isFinite(employeeContributionRate) || employeeContributionRate < 0) {
+    throw new Error('Employee contribution rate must be greater or equal to zero')
+  }
+  if (!Number.isInteger(monthlyPayments) || monthlyPayments < 12 || monthlyPayments > 14) {
+    throw new Error('Monthly payments must be an integer between 12 and 14')
+  }
+  if (!Number.isFinite(regionalAdditionalRate) || regionalAdditionalRate < 0) {
+    throw new Error('Regional additional rate must be greater or equal to zero')
+  }
+  if (!Number.isFinite(municipalAdditionalRate) || municipalAdditionalRate < 0) {
+    throw new Error('Municipal additional rate must be greater or equal to zero')
+  }
+  if (!Number.isFinite(employerContributionRate) || employerContributionRate < 0) {
+    throw new Error('Employer contribution rate must be greater or equal to zero')
+  }
+
+  const employeeContributionsAnnual = grossAnnualSalary * (employeeContributionRate / 100)
+  const taxableIncomeAnnual = Math.max(0, grossAnnualSalary - employeeContributionsAnnual)
+  const irpefGrossAnnual = calculateIrpefGrossAnnual(taxableIncomeAnnual)
+  const employeeDetractionAnnual = calculateEmployeeDetractionAnnual(taxableIncomeAnnual)
+  const irpefNetAnnual = Math.max(0, irpefGrossAnnual - employeeDetractionAnnual)
+  const additionalTaxesAnnual =
+    taxableIncomeAnnual * ((regionalAdditionalRate + municipalAdditionalRate) / 100)
+  const integrativeTreatmentAnnual = calculateIntegrativeTreatmentAnnual(
+    taxableIncomeAnnual,
+    applyIntegrativeTreatment
+  )
+  const netAnnualSalary =
+    grossAnnualSalary - employeeContributionsAnnual - irpefNetAnnual - additionalTaxesAnnual + integrativeTreatmentAnnual
+  const grossMonthlySalary = grossAnnualSalary / monthlyPayments
+  const netMonthlySalary = netAnnualSalary / monthlyPayments
+  const employerContributionsAnnual = grossAnnualSalary * (employerContributionRate / 100)
+  const companyCostAnnual = grossAnnualSalary + employerContributionsAnnual
+
+  return {
+    grossAnnualSalary: roundCurrency(grossAnnualSalary),
+    grossMonthlySalary: roundCurrency(grossMonthlySalary),
+    employeeContributionsAnnual: roundCurrency(employeeContributionsAnnual),
+    taxableIncomeAnnual: roundCurrency(taxableIncomeAnnual),
+    irpefGrossAnnual: roundCurrency(irpefGrossAnnual),
+    employeeDetractionAnnual: roundCurrency(employeeDetractionAnnual),
+    irpefNetAnnual: roundCurrency(irpefNetAnnual),
+    additionalTaxesAnnual: roundCurrency(additionalTaxesAnnual),
+    integrativeTreatmentAnnual: roundCurrency(integrativeTreatmentAnnual),
+    netAnnualSalary: roundCurrency(netAnnualSalary),
+    netMonthlySalary: roundCurrency(netMonthlySalary),
+    employerContributionsAnnual: roundCurrency(employerContributionsAnnual),
+    companyCostAnnual: roundCurrency(companyCostAnnual),
+  }
+}
+
 // ===== NUMERI CASUALI =====
 export interface RandomNumbersResult {
   numbers: number[]
