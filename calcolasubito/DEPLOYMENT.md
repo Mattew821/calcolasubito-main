@@ -356,4 +356,14 @@ Stato task esterni:
     - `npm run lint` -> PASS
     - `npm run build` -> PASS
     - `python validation_framework.py --no-interactive --no-auto-git-push --max-attempts-per-problem 2 --max-global-iterations 2` -> PASS (0 problemi)
+  - Sincronizzazione e produzione:
+    - commit `17ba522` pushato su `origin/calcolasubito-main`
+    - deploy Vercel produzione: `dpl_F35kyg7rPinzdzdz5u9boGtSRUQF`
+    - alias confermato: `https://calcolasubito.vercel.app` -> `https://calcolasubito-asm059e02-mattew821s-projects.vercel.app`
+    - health-check HTTP su dominio finale:
+      - `/` -> 200
+      - `/percentuali` -> 200
+      - `/numeri-casuali` -> 200
+      - `/sitemap.xml` -> 200
+      - `/robots.txt` -> 200
 
