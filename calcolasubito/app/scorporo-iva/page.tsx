@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
 import { ToastContainer, useToast } from '@/components/Toast'
+import { ShareButtons } from '@/components/ShareButtons'
 import AdUnit from '@/components/AdUnit'
 import { useCalculatorWorker } from '@/hooks/useCalculatorWorker'
 import { useRateLimit } from '@/lib/hooks/useRateLimit'
@@ -65,7 +66,7 @@ export default function ScorporoIVA() {
         rate: data.rate,
         mode: data.mode,
       })
-      setResult(ivaResult as IVAResult)
+      setResult(ivaResult as unknown as IVAResult)
       showToast('Calcolo IVA completato!', 'success')
     } catch (error) {
       showToast('Errore nel calcolo', 'error')
@@ -246,6 +247,11 @@ export default function ScorporoIVA() {
                   €{result.iva.toFixed(2)}
                 </p>
               </div>
+              {/* Share Buttons */}
+              <ShareButtons
+                title="Calcolo Scorporo IVA - CalcolaSubito.it"
+                description="Ho appena calcolato il scorporo IVA con questo tool gratuito. Prova anche tu!"
+              />
             </div>
           )}
 

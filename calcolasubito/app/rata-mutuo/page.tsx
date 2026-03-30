@@ -37,6 +37,16 @@ export default function CalcoloRataMutuo() {
   })
 
   const onSubmit = async (data: RataMutuoInput) => {
+    // Check rate limit
+    if (!checkRateLimit()) {
+      const secondsLeft = resetTime ? Math.ceil((resetTime - Date.now()) / 1000) : 0
+      showToast(
+        `Troppi calcoli. Riprova tra ${secondsLeft}s`,
+        'error'
+      )
+      return
+    }
+
     try {
       const months = data.years * 12
       const res = await calculate('mortgage', {

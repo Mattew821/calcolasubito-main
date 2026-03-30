@@ -68,11 +68,12 @@ export function calculateNetFromGross(gross: number, vat: number): {
   vat: number
   net: number
 } {
-  const vatAmount = gross - gross / (1 + vat / 100)
+  const vatAmount = Math.round((gross - gross / (1 + vat / 100)) * 100) / 100
+  const net = Math.round((gross - vatAmount) * 100) / 100
   return {
     gross,
     vat: vatAmount,
-    net: gross - vatAmount,
+    net,
   }
 }
 
