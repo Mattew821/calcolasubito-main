@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'CalcolaSubito' }],
   metadataBase: new URL(BASE_URL),
   alternates: {
-    canonical: BASE_URL,
+    canonical: './',
   },
   openGraph: {
     type: 'website',
