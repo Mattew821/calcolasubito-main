@@ -1,6 +1,6 @@
-'use client'
+﻿'use client'
 
-import React, { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
 interface CalculatorProps {
   title: string
@@ -16,45 +16,38 @@ export default function Calculator({
   keyword,
 }: CalculatorProps) {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 py-12">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            {title}
-          </h1>
-          <p className="text-lg text-gray-600">
-            {description}
+    <div className="min-h-screen page-surface relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 opacity-60">
+        <div className="hero-orb hero-orb-1" />
+        <div className="hero-orb hero-orb-2" />
+      </div>
+
+      <div className="relative max-w-5xl mx-auto px-4 md:px-8 py-12 md:py-16 space-y-8">
+        <header className="glass-panel rounded-3xl p-8 md:p-10 fade-in-up">
+          <p className="inline-flex rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-cyan-700">
+            {keyword || 'Calcolatore online'}
           </p>
-        </div>
+          <h1 className="font-display mt-4 text-3xl md:text-5xl text-slate-900">{title}</h1>
+          <p className="mt-3 text-base md:text-lg text-slate-600 max-w-3xl">{description}</p>
+        </header>
 
-        {/* Calculator Section */}
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-12">
-          {children}
-        </div>
+        <section className="portal-card md:p-8 p-6 fade-in-up">{children}</section>
 
-        {/* Info Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Come funziona?
-            </h2>
-            <p className="text-gray-600">
-              Questo calcolatore esegue tutti i calcoli direttamente nel tuo browser.
-              Nessun dato viene inviato ai nostri server o memorizzato.
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-5 fade-in-up">
+          <article className="portal-card">
+            <h2 className="font-display text-xl text-slate-900 mb-3">Privacy by design</h2>
+            <p className="text-slate-600 text-sm leading-relaxed">
+              Tutti i calcoli vengono effettuati sul tuo dispositivo. Nessun input del form viene salvato nei server del portale.
             </p>
-          </div>
+          </article>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Note Importanti
-            </h2>
-            <p className="text-gray-600">
-              I risultati sono forniti a scopo informativo. Consulta un professionista
-              per questioni specifiche e complesse.
+          <article className="portal-card">
+            <h2 className="font-display text-xl text-slate-900 mb-3">Uso professionale</h2>
+            <p className="text-slate-600 text-sm leading-relaxed">
+              I risultati sono accurati a livello operativo. Per pratiche fiscali, legali o mediche usa sempre anche una verifica specialistica.
             </p>
-          </div>
-        </div>
+          </article>
+        </section>
       </div>
     </div>
   )

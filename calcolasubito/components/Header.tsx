@@ -1,63 +1,70 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link'
-import { Calculator } from 'lucide-react'
+import { Calculator, Menu, X } from 'lucide-react'
 import { useState } from 'react'
+
+const navItems = [
+  { href: '/', label: 'Home' },
+  { href: '/#calcolatori', label: 'Calcolatori' },
+  { href: '/about', label: 'Chi Siamo' },
+  { href: '/privacy', label: 'Privacy' },
+]
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
-      <nav className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 font-bold text-lg text-blue-600 hover:text-blue-700">
-          <Calculator className="w-6 h-6" />
-          <span>CalcolaSubito.it</span>
+    <header className="sticky top-0 z-50 border-b border-white/40 bg-white/80 backdrop-blur-xl shadow-sm">
+      <nav className="max-w-7xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between gap-4">
+        <Link
+          href="/"
+          className="group inline-flex items-center gap-2.5 font-display font-bold text-lg text-cyan-800"
+          aria-label="Vai alla home di CalcolaSubito"
+        >
+          <span className="grid place-items-center w-9 h-9 rounded-xl bg-cyan-100 text-cyan-700 transition-transform duration-300 group-hover:scale-105">
+            <Calculator className="w-5 h-5" />
+          </span>
+          <span>CalcolaSubito</span>
         </Link>
 
-        {/* Menu Mobile */}
         <button
-          className="md:hidden p-2 text-gray-600"
-          onClick={() => setIsOpen(!isOpen)}
+          type="button"
+          className="md:hidden inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white p-2 text-slate-700"
+          onClick={() => setIsOpen((prev) => !prev)}
+          aria-label={isOpen ? 'Chiudi menu' : 'Apri menu'}
+          aria-expanded={isOpen}
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
+          {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
 
-        {/* Menu Desktop */}
-        <div className="hidden md:flex items-center gap-6">
-          <Link href="/" className="text-gray-600 hover:text-blue-600 transition-colors">
-            Home
-          </Link>
-          <Link href="/about" className="text-gray-600 hover:text-blue-600 transition-colors" aria-label="Chi siamo">
-            Chi Siamo
-          </Link>
-          <a href="#calcolatori" className="text-gray-600 hover:text-blue-600 transition-colors">
-            Calcolatori
-          </a>
-          <Link href="/privacy" className="text-gray-600 hover:text-blue-600 transition-colors">
-            Privacy
-          </Link>
+        <div className="hidden md:flex items-center gap-5">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="text-sm font-semibold text-slate-600 hover:text-cyan-700 transition-colors"
+            >
+              {item.label}
+            </Link>
+          ))}
         </div>
       </nav>
 
-      {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-white border-t px-4 py-3">
-          <Link href="/" className="block py-2 text-gray-600 hover:text-blue-600">
-            Home
-          </Link>
-          <Link href="/about" className="block py-2 text-gray-600 hover:text-blue-600">
-            Chi Siamo
-          </Link>
-          <a href="#calcolatori" className="block py-2 text-gray-600 hover:text-blue-600">
-            Calcolatori
-          </a>
-          <Link href="/privacy" className="block py-2 text-gray-600 hover:text-blue-600">
-            Privacy
-          </Link>
+        <div className="md:hidden border-t border-slate-200 bg-white/95 backdrop-blur-xl animate-fadeIn">
+          <div className="max-w-7xl mx-auto px-4 py-3 space-y-1">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="block rounded-lg px-3 py-2 text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
         </div>
       )}
     </header>

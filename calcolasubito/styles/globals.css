@@ -1,72 +1,169 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.6%;
+    --background: 204 38% 97%;
+    --foreground: 215 32% 17%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.6%;
+    --card-foreground: 215 32% 17%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.6%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 9.0%;
+    --popover-foreground: 215 32% 17%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 214 20% 45%;
+    --accent: 191 92% 42%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 79% 56%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.6%;
-    --radius: 0.5rem;
-    --primary: 210 100% 50%;
+    --border: 210 28% 88%;
+    --input: 210 28% 88%;
+    --ring: 191 92% 42%;
+    --radius: 0.9rem;
+    --primary: 191 92% 42%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 216 19% 23%;
   }
 
-  .dark {
-    --background: 0 0% 3.6%;
-    --foreground: 0 0% 98.2%;
-    --card: 0 0% 3.6%;
-    --card-foreground: 0 0% 98.2%;
-    --popover: 0 0% 3.6%;
-    --popover-foreground: 0 0% 98.2%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 98.2%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98.2%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-  }
-}
-
-@layer base {
   * {
     @apply border-border;
   }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-body), 'Manrope', 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 }
 
-html {
-  scroll-behavior: smooth;
+@layer components {
+  .font-display {
+    font-family: var(--font-display), 'Space Grotesk', 'Trebuchet MS', sans-serif;
+    letter-spacing: -0.015em;
+  }
+
+  .page-surface {
+    background:
+      radial-gradient(circle at 8% 8%, rgba(34, 211, 238, 0.18), transparent 32%),
+      radial-gradient(circle at 90% 16%, rgba(14, 165, 233, 0.2), transparent 38%),
+      linear-gradient(135deg, #f6fbff 0%, #eef7ff 45%, #f2f8fc 100%);
+  }
+
+  .glass-panel {
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.78));
+    box-shadow:
+      0 20px 55px rgba(14, 116, 144, 0.12),
+      0 5px 20px rgba(15, 23, 42, 0.05);
+    backdrop-filter: blur(10px);
+  }
+
+  .category-chip {
+    @apply px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-600 text-sm font-semibold transition-all duration-300;
+  }
+
+  .category-chip:hover {
+    @apply border-cyan-300 text-cyan-700;
+    transform: translateY(-1px);
+  }
+
+  .category-chip-active {
+    @apply border-cyan-500 bg-cyan-500 text-white shadow-lg;
+    box-shadow: 0 12px 30px rgba(6, 182, 212, 0.25);
+  }
+
+  .calculator-card {
+    @apply block rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm transition-all duration-300;
+    backdrop-filter: blur(6px);
+  }
+
+  .calculator-card:hover {
+    border-color: rgba(34, 211, 238, 0.5);
+    box-shadow:
+      0 20px 35px rgba(6, 182, 212, 0.12),
+      0 8px 18px rgba(15, 23, 42, 0.08);
+    transform: translateY(-4px);
+  }
+
+  .highlight-card {
+    @apply block rounded-2xl border border-cyan-100 bg-cyan-50/60 p-5 transition-all duration-300;
+  }
+
+  .highlight-card:hover {
+    @apply border-cyan-300 bg-cyan-50;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 26px rgba(6, 182, 212, 0.14);
+  }
+
+  .badge-popularity {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-bold tracking-wide;
+    background: linear-gradient(140deg, #e0f2fe, #dbeafe);
+    color: #0f4f7a;
+  }
+
+  .portal-card {
+    @apply rounded-2xl border border-slate-200 bg-white p-6 shadow-sm;
+  }
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer utilities {
+  .fade-in-up {
+    animation: fadeInUp 0.6s ease-out both;
+  }
 }
 
-/* Toast Animation */
+.hero-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(30px);
+  animation: orbitFloat 9s ease-in-out infinite;
+}
+
+.hero-orb-1 {
+  width: 24rem;
+  height: 24rem;
+  top: -7rem;
+  left: -6rem;
+  background: radial-gradient(circle at center, rgba(34, 211, 238, 0.35), rgba(34, 211, 238, 0));
+}
+
+.hero-orb-2 {
+  width: 20rem;
+  height: 20rem;
+  right: -4rem;
+  top: 5rem;
+  background: radial-gradient(circle at center, rgba(14, 165, 233, 0.33), rgba(14, 165, 233, 0));
+  animation-delay: -3s;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes orbitFloat {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(12px, -14px) scale(1.04);
+  }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -80,4 +177,20 @@ body {
 
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-in-out;
+}
+
+@media (max-width: 768px) {
+  .hero-orb-1 {
+    width: 17rem;
+    height: 17rem;
+    top: -5rem;
+    left: -5rem;
+  }
+
+  .hero-orb-2 {
+    width: 14rem;
+    height: 14rem;
+    right: -4rem;
+    top: 4rem;
+  }
 }

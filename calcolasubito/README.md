@@ -1,159 +1,87 @@
-﻿# CalcolaSubito.it
+﻿# CalcolaSubito
 
-Suite di calcolatori online gratuiti per l'Italia, ottimizzati per SEO e user experience.
+Portale di calcolatori online gratuiti in italiano, ottimizzato per SEO, performance e UX.
 
-## Setup
+## Novita introdotte
 
-### Prerequisiti
-- Node.js 18+ e npm/yarn
-- Git
+- Restyling UI completo con look professionale, transizioni e animazioni leggere
+- Homepage con barra di ricerca istantanea dei calcolatori
+- Filtro per categorie (`Finanza`, `Fisco`, `Matematica`, `Salute`, `Scuola`, `Utilita`)
+- Catalogo centralizzato in `lib/calculator-catalog.ts` per mantenere coerenti home + sitemap
+- 5 nuovi calcolatori popolari:
+  - `calcolo-eta`
+  - `rata-prestito`
+  - `calcolo-mancia`
+  - `fabbisogno-calorico`
+  - `convertitore-unita-lunghezza`
 
-### Installazione
+## Setup locale
+
+Prerequisiti:
+- Node.js 18+
+- npm
+
+Installazione:
 
 ```bash
-# Clona il repository
 git clone <repo-url>
-cd calcolasubito
-
-# Installa le dipendenze
+cd calcolasubito/calcolasubito
 npm install
-
-# Avvia il server di sviluppo
 npm run dev
 ```
 
-Visita `http://localhost:3000` nel browser.
+Apri [http://localhost:3000](http://localhost:3000).
 
-## Struttura del Progetto
+## Script principali
 
-```
-calcolasubito/
-â”œâ”€â”€ app/                    # Next.js App Router
-â”‚   â”œâ”€â”€ layout.tsx         # Layout principale
-â”‚   â”œâ”€â”€ page.tsx           # Homepage
-â”‚   â”œâ”€â”€ percentuali/       # Calcolatore percentuali
-â”‚   â”œâ”€â”€ giorni-tra-date/   # Calcolatore giorni
-â”‚   â”œâ”€â”€ scorporo-iva/      # Calcolatore IVA
-â”‚   â”œâ”€â”€ codice-fiscale/    # Calcolatore codice fiscale
-â”‚   â”œâ”€â”€ rata-mutuo/        # Calcolatore mutuo
-â”‚   â”œâ”€â”€ privacy/           # Pagina privacy
-â”‚   â”œâ”€â”€ cookie/            # Pagina cookie policy
-â”‚   â””â”€â”€ sitemap.ts         # Sitemap XML
-â”œâ”€â”€ components/            # Componenti React
-â”‚   â”œâ”€â”€ Header.tsx        # Header navigazione
-â”‚   â”œâ”€â”€ Footer.tsx        # Footer
-â”‚   â””â”€â”€ Calculator.tsx    # Wrapper calcolatore generico
-â”œâ”€â”€ lib/
-â”‚   â””â”€â”€ calculations.ts   # Utility funzioni calcolo
-â”œâ”€â”€ styles/
-â”‚   â””â”€â”€ globals.css       # Stili globali Tailwind
-â”œâ”€â”€ public/
-â”‚   â””â”€â”€ robots.txt        # Robots.txt per SEO
-â”œâ”€â”€ tailwind.config.ts    # Configurazione Tailwind
-â”œâ”€â”€ next.config.ts        # Configurazione Next.js
-â”œâ”€â”€ tsconfig.json         # Configurazione TypeScript
-â””â”€â”€ package.json          # Dipendenze npm
-```
-
-## Calcolatori Implementati (15)
-
-1. **Calcolo Percentuali** - Calcola percentuali e proporzioni
-2. **Giorni tra Date** - Calcola giorni/settimane/mesi tra due date
-3. **Scorporo IVA** - Calcola imponibile e IVA da importi lordi/netti
-4. **Codice Fiscale** - Genera/verifica il codice fiscale italiano
-5. **Rata Mutuo** - Calcola rata mensile e ammortamento
-6. **Sconto Percentuale** - Calcola risparmio e prezzo finale
-7. **Aumento Percentuale** - Calcola incremento e valore finale
-8. **Interesse Semplice** - Calcola interessi lineari e montante
-9. **Interesse Composto** - Simula capitalizzazione periodica
-10. **Indice Massa Corporea (BMI)** - Calcola BMI e fascia indicativa
-11. **Consumo Carburante** - Calcola km/l e l/100km
-12. **Area Rettangolo** - Calcola area da base e altezza
-13. **Area Cerchio** - Calcola area dal raggio
-14. **Media Voti Ponderata** - Calcola media con pesi/crediti
-15. **Conversione Temperatura** - Converte Celsius in Fahrenheit/Kelvin
-
-## Build e Deploy
-
-### Build Locale
 ```bash
+npm test
+npm run lint
 npm run build
-npm start
 ```
 
-### Deploy su Vercel
+## Configurazione dominio
+
+Il dominio base del portale e centralizzato:
+- `lib/site-config.ts` -> `BASE_URL`
+- variabile consigliata: `NEXT_PUBLIC_BASE_URL`
+
+Esempio `.env.local`:
+
 ```bash
-# Installa Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel
+NEXT_PUBLIC_BASE_URL=https://calcolasubito.vercel.app
 ```
 
-## SEO e Performance
+## Calcolatori disponibili (20)
 
-- âœ… Static Site Generation (SSG) per performance eccellente
-- âœ… Meta tags ottimizzati per ogni pagina
-- âœ… Open Graph e schema JSON-LD
-- âœ… Sitemap.xml dinamica
-- âœ… Robots.txt configurato
-- âœ… Mobile-first responsive design
-- âœ… PageSpeed Insights target: 95+
+1. Calcolo Percentuali
+2. Giorni tra Date
+3. Scorporo IVA
+4. Codice Fiscale
+5. Rata Mutuo
+6. Rata Prestito
+7. Sconto Percentuale
+8. Aumento Percentuale
+9. Interesse Semplice
+10. Interesse Composto
+11. Indice Massa Corporea (BMI)
+12. Fabbisogno Calorico
+13. Consumo Carburante
+14. Area Rettangolo
+15. Area Cerchio
+16. Media Voti Ponderata
+17. Conversione Temperatura
+18. Convertitore Lunghezze
+19. Calcolo Eta
+20. Calcolo Mancia
 
-## Stack Tecnico
+## Stack
 
-- **Framework**: Next.js 14 (App Router)
-- **Styling**: Tailwind CSS + shadcn/ui
-- **Language**: TypeScript
-- **Hosting**: Vercel (free tier)
-- **Analytics**: Google Analytics (optional)
-- **Ads**: Google AdSense (optional)
+- Next.js 14 (App Router)
+- TypeScript
+- Tailwind CSS
+- Jest
 
-## Roadmap
+## Note
 
-### Fase 1 (Settimana 1-2) âœ…
-- [x] Setup progetto
-- [x] 5 calcolatori base
-- [x] Layout e componenti
-- [x] Deploy su Vercel
-
-### Fase 2 (Settimana 3-4)
-- [x] SEO content writing
-- [x] Meta tags e schema markup
-- [ ] Google Search Console setup
-- [ ] AdSense request
-
-### Fase 3 (Mese 2-3)
-- [x] Aggiungi altri 10 calcolatori
-- [ ] Link building
-- [ ] Affiliazioni (Fiscozen, Flextax, etc.)
-
-### Fase 4 (Mese 4+)
-- [ ] Monitoring e optimization
-- [ ] Aggiungi 25+ calcolatori totali
-- [ ] Possibile versione spagnola
-
-## Metriche di Successo
-
-| Milestone | Target | Timeline |
-|-----------|--------|----------|
-| 5 calcolatori live | âœ… | Settimana 1-2 |
-| Google Search Console | 10+ indexed | Mese 1 |
-| Traffico | 500-1K pageview | Mese 1-2 |
-| Entrate AdSense | 5-30â‚¬ | Mese 2 |
-| 15 calcolatori | +10K pageview | Mese 3-4 |
-| **100â‚¬+/mese** | 20K+ pageview | Mese 7-8 âœ… |
-
-## Contribuendo
-
-Le PR sono benvenute. Per modifiche maggiori, apri un issue prima.
-
-## License
-
-MIT License - Vedi LICENSE file per dettagli.
-
-## Contatti
-
-Per domande o suggerimenti, apri un issue nel repository.
-
-
+I calcoli sono forniti a scopo informativo. Per casi fiscali, legali o sanitari critici e consigliata anche una verifica professionale.

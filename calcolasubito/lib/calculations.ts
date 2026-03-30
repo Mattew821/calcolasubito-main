@@ -376,3 +376,218 @@ export function convertCelsius(celsius: number): TemperatureConversionResult {
     kelvin: celsius + 273.15,
   }
 }
+
+// ===== ETA =====
+export interface AgeResult {
+  years: number
+  months: number
+  days: number
+  totalDays: number
+  nextBirthdayInDays: number
+}
+
+function isLeapYear(year: number): boolean {
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0
+}
+
+function normalizeDate(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate())
+}
+
+function getSafeBirthdayForYear(month: number, day: number, year: number): Date {
+  if (month === 1 && day === 29 && !isLeapYear(year)) {
+    return new Date(year, 1, 28)
+  }
+  return new Date(year, month, day)
+}
+
+export function calculateAge(birthDate: Date, referenceDate: Date = new Date()): AgeResult {
+  if (Number.isNaN(birthDate.getTime()) || Number.isNaN(referenceDate.getTime())) {
+    throw new Error('Birth date and reference date must be valid')
+  }
+
+  const birth = normalizeDate(birthDate)
+  const reference = normalizeDate(referenceDate)
+
+  if (birth > reference) {
+    throw new Error('Birth date cannot be in the future')
+  }
+
+  let years = reference.getFullYear() - birth.getFullYear()
+  let months = reference.getMonth() - birth.getMonth()
+  let days = reference.getDate() - birth.getDate()
+
+  if (days < 0) {
+    months -= 1
+    const previousMonthLastDay = new Date(reference.getFullYear(), reference.getMonth(), 0).getDate()
+    days += previousMonthLastDay
+  }
+
+  if (months < 0) {
+    years -= 1
+    months += 12
+  }
+
+  let nextBirthday = getSafeBirthdayForYear(birth.getMonth(), birth.getDate(), reference.getFullYear())
+  if (nextBirthday < reference) {
+    nextBirthday = getSafeBirthdayForYear(birth.getMonth(), birth.getDate(), reference.getFullYear() + 1)
+  }
+
+  return {
+    years,
+    months,
+    days,
+    totalDays: calculateDaysBetween(birth, reference),
+    nextBirthdayInDays: calculateDaysBetween(reference, nextBirthday),
+  }
+}
+
+// ===== PRESTITO =====
+export interface LoanResult {
+  monthlyPayment: number
+  totalInterest: number
+  totalAmountPaid: number
+}
+
+export function calculateLoanPayment(
+  principal: number,
+  annualRate: number,
+  months: number
+): LoanResult {
+  if (months <= 0) {
+    throw new Error('Months must be greater than zero')
+  }
+  if (principal < 0) {
+    throw new Error('Principal cannot be negative')
+  }
+  if (annualRate < 0) {
+    throw new Error('Annual rate cannot be negative')
+  }
+
+  const monthlyRate = annualRate / 100 / 12
+
+  if (monthlyRate === 0) {
+    const monthlyPayment = principal / months
+    return {
+      monthlyPayment,
+      totalInterest: 0,
+      totalAmountPaid: principal,
+    }
+  }
+
+  const monthlyPayment =
+    (principal *
+      (monthlyRate * Math.pow(1 + monthlyRate, months))) /
+    (Math.pow(1 + monthlyRate, months) - 1)
+
+  const totalAmountPaid = monthlyPayment * months
+
+  return {
+    monthlyPayment,
+    totalInterest: totalAmountPaid - principal,
+    totalAmountPaid,
+  }
+}
+
+// ===== MANCIA =====
+export interface TipResult {
+  tipAmount: number
+  totalAmount: number
+  perPerson: number
+}
+
+export function calculateTip(
+  billAmount: number,
+  tipPercent: number,
+  people: number
+): TipResult {
+  if (billAmount < 0) {
+    throw new Error('Bill amount cannot be negative')
+  }
+  if (tipPercent < 0) {
+    throw new Error('Tip percent cannot be negative')
+  }
+  if (!Number.isInteger(people) || people <= 0) {
+    throw new Error('People must be a positive integer')
+  }
+
+  const tipAmount = (billAmount * tipPercent) / 100
+  const totalAmount = billAmount + tipAmount
+
+  return {
+    tipAmount,
+    totalAmount,
+    perPerson: totalAmount / people,
+  }
+}
+
+// ===== FABBISOGNO CALORICO =====
+export type BiologicalSex = 'male' | 'female'
+
+export interface CalorieInput {
+  sex: BiologicalSex
+  age: number
+  weightKg: number
+  heightCm: number
+  activityFactor: number
+}
+
+export interface CalorieResult {
+  bmr: number
+  tdee: number
+}
+
+export function calculateCalorieNeeds(input: CalorieInput): CalorieResult {
+  const { sex, age, weightKg, heightCm, activityFactor } = input
+
+  if (age <= 0) {
+    throw new Error('Age must be greater than zero')
+  }
+  if (weightKg <= 0) {
+    throw new Error('Weight must be greater than zero')
+  }
+  if (heightCm <= 0) {
+    throw new Error('Height must be greater than zero')
+  }
+  if (activityFactor <= 0) {
+    throw new Error('Activity factor must be greater than zero')
+  }
+
+  const base = 10 * weightKg + 6.25 * heightCm - 5 * age
+  const bmr = sex === 'male' ? base + 5 : base - 161
+
+  return {
+    bmr,
+    tdee: bmr * activityFactor,
+  }
+}
+
+// ===== CONVERSIONE LUNGHEZZE =====
+export interface LengthConversionResult {
+  meters: number
+  kilometers: number
+  centimeters: number
+  millimeters: number
+  miles: number
+  feet: number
+  inches: number
+}
+
+export function convertLengthFromMeters(meters: number): LengthConversionResult {
+  if (!Number.isFinite(meters)) {
+    throw new Error('Meters value must be finite')
+  }
+  if (meters < 0) {
+    throw new Error('Meters value cannot be negative')
+  }
+
+  return {
+    meters,
+    kilometers: meters / 1000,
+    centimeters: meters * 100,
+    millimeters: meters * 1000,
+    miles: meters / 1609.344,
+    feet: meters * 3.280839895,
+    inches: meters * 39.37007874,
+  }
+}

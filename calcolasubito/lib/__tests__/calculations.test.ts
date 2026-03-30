@@ -17,6 +17,11 @@ import {
   calculateCircleArea,
   calculateWeightedAverage,
   convertCelsius,
+  calculateAge,
+  calculateLoanPayment,
+  calculateTip,
+  calculateCalorieNeeds,
+  convertLengthFromMeters,
 } from '../calculations'
 
 /**
@@ -318,5 +323,116 @@ describe('convertCelsius', () => {
 
   it('should reject non-finite Celsius values', () => {
     expect(() => convertCelsius(Number.POSITIVE_INFINITY)).toThrow('Celsius value must be finite')
+  })
+})
+
+describe('calculateAge', () => {
+  it('should calculate age parts correctly', () => {
+    const result = calculateAge(new Date('2000-03-10'), new Date('2026-03-30'))
+    expect(result.years).toBe(26)
+    expect(result.months).toBe(0)
+    expect(result.days).toBe(20)
+    expect(result.totalDays).toBeGreaterThan(0)
+  })
+
+  it('should handle leap day birthdays on non-leap year', () => {
+    const result = calculateAge(new Date('2004-02-29'), new Date('2025-02-28'))
+    expect(result.years).toBe(20)
+    expect(result.nextBirthdayInDays).toBe(0)
+  })
+
+  it('should reject future birth dates', () => {
+    expect(() => calculateAge(new Date('2099-01-01'), new Date('2026-01-01'))).toThrow(
+      'Birth date cannot be in the future'
+    )
+  })
+})
+
+describe('calculateLoanPayment', () => {
+  it('should calculate loan payment and totals', () => {
+    const result = calculateLoanPayment(15000, 7.2, 60)
+    expect(result.monthlyPayment).toBeGreaterThan(250)
+    expect(result.monthlyPayment).toBeLessThan(350)
+    expect(result.totalAmountPaid).toBeCloseTo(result.monthlyPayment * 60, 8)
+    expect(result.totalInterest).toBeCloseTo(result.totalAmountPaid - 15000, 8)
+  })
+
+  it('should handle zero rate loans', () => {
+    const result = calculateLoanPayment(1200, 0, 12)
+    expect(result.monthlyPayment).toBe(100)
+    expect(result.totalInterest).toBe(0)
+    expect(result.totalAmountPaid).toBe(1200)
+  })
+
+  it('should validate ranges', () => {
+    expect(() => calculateLoanPayment(-1, 5, 12)).toThrow('Principal cannot be negative')
+    expect(() => calculateLoanPayment(1000, -1, 12)).toThrow('Annual rate cannot be negative')
+    expect(() => calculateLoanPayment(1000, 3, 0)).toThrow('Months must be greater than zero')
+  })
+})
+
+describe('calculateTip', () => {
+  it('should compute tip and split bill', () => {
+    const result = calculateTip(80, 10, 4)
+    expect(result.tipAmount).toBe(8)
+    expect(result.totalAmount).toBe(88)
+    expect(result.perPerson).toBe(22)
+  })
+
+  it('should validate input', () => {
+    expect(() => calculateTip(-1, 10, 2)).toThrow('Bill amount cannot be negative')
+    expect(() => calculateTip(100, -1, 2)).toThrow('Tip percent cannot be negative')
+    expect(() => calculateTip(100, 10, 0)).toThrow('People must be a positive integer')
+  })
+})
+
+describe('calculateCalorieNeeds', () => {
+  it('should calculate BMR and TDEE for male and female', () => {
+    const male = calculateCalorieNeeds({
+      sex: 'male',
+      age: 30,
+      weightKg: 80,
+      heightCm: 180,
+      activityFactor: 1.55,
+    })
+    const female = calculateCalorieNeeds({
+      sex: 'female',
+      age: 30,
+      weightKg: 80,
+      heightCm: 180,
+      activityFactor: 1.55,
+    })
+
+    expect(male.bmr).toBeGreaterThan(female.bmr)
+    expect(male.tdee).toBeCloseTo(male.bmr * 1.55, 8)
+  })
+
+  it('should reject invalid calorie input', () => {
+    expect(() =>
+      calculateCalorieNeeds({
+        sex: 'male',
+        age: 0,
+        weightKg: 70,
+        heightCm: 170,
+        activityFactor: 1.2,
+      })
+    ).toThrow('Age must be greater than zero')
+  })
+})
+
+describe('convertLengthFromMeters', () => {
+  it('should convert meters to other length units', () => {
+    const result = convertLengthFromMeters(1000)
+    expect(result.kilometers).toBe(1)
+    expect(result.centimeters).toBe(100000)
+    expect(result.millimeters).toBe(1000000)
+    expect(result.miles).toBeCloseTo(0.621371, 6)
+    expect(result.feet).toBeCloseTo(3280.839895, 6)
+    expect(result.inches).toBeCloseTo(39370.07874, 5)
+  })
+
+  it('should reject invalid meter values', () => {
+    expect(() => convertLengthFromMeters(-1)).toThrow('Meters value cannot be negative')
+    expect(() => convertLengthFromMeters(Number.NaN)).toThrow('Meters value must be finite')
   })
 })
