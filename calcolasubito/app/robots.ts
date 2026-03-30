@@ -1,6 +1,8 @@
 import { MetadataRoute } from 'next'
 import { BASE_URL } from '@/lib/site-config'
 
+const ROBOTS_HOST = new URL(BASE_URL).host
+
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
@@ -11,6 +13,6 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     sitemap: `${BASE_URL}/sitemap.xml`,
-    host: BASE_URL,
+    host: ROBOTS_HOST,
   }
 }

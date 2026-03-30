@@ -2,6 +2,12 @@
 import { BASE_URL } from '@/lib/site-config'
 import { CALCULATOR_CATALOG } from '@/lib/calculator-catalog'
 
+const PRIORITY_BY_POPULARITY: Record<(typeof CALCULATOR_CATALOG)[number]['popularity'], number> = {
+  'Molto Alto': 0.95,
+  Alto: 0.9,
+  Medio: 0.85,
+}
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date()
 
@@ -16,7 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${BASE_URL}/${calculator.id}`,
     lastModified: now,
     changeFrequency: 'monthly',
-    priority: 0.9,
+    priority: PRIORITY_BY_POPULARITY[calculator.popularity],
   }))
 
   const staticEntries: MetadataRoute.Sitemap = [
