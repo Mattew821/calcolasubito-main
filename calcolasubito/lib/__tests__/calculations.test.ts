@@ -25,6 +25,7 @@ import {
   generateRandomIntegers,
   calculateImu,
   calculateNetSalary,
+  runEnigmaCipher,
 } from '../calculations'
 
 /**
@@ -608,6 +609,90 @@ describe('calculateNetSalary', () => {
         employerContributionRate: 30,
       })
     ).toThrow('Monthly payments must be an integer between 12 and 14')
+  })
+})
+
+describe('runEnigmaCipher', () => {
+  it('should match a known Enigma I test vector', () => {
+    const result = runEnigmaCipher({
+      text: 'HELLOWORLD',
+      rotors: ['I', 'II', 'III'],
+      ringSettings: [1, 1, 1],
+      positions: ['A', 'A', 'A'],
+      reflector: 'B',
+      plugboardPairs: '',
+      preserveNonLetters: true,
+    })
+
+    expect(result.output).toBe('ILBDAAMTAZ')
+    expect(result.steppedLetters).toBe(10)
+  })
+
+  it('should be reversible with identical initial settings', () => {
+    const settings = {
+      rotors: ['V', 'III', 'II'] as const,
+      ringSettings: [2, 21, 12] as const,
+      positions: ['M', 'C', 'K'] as const,
+      reflector: 'C' as const,
+      plugboardPairs: 'AB CD EF GH',
+      preserveNonLetters: true,
+    }
+
+    const plaintext = 'ATTACCO ALL ALBA, ORE 05:30!'
+    const encrypted = runEnigmaCipher({
+      text: plaintext,
+      ...settings,
+    }).output
+
+    const decrypted = runEnigmaCipher({
+      text: encrypted,
+      ...settings,
+    }).output
+
+    expect(decrypted).toBe(plaintext)
+  })
+
+  it('should drop non-letters when preserveNonLetters is false', () => {
+    const result = runEnigmaCipher({
+      text: 'A B-C!',
+      rotors: ['I', 'II', 'III'],
+      ringSettings: [1, 1, 1],
+      positions: ['A', 'A', 'A'],
+      reflector: 'B',
+      plugboardPairs: '',
+      preserveNonLetters: false,
+    })
+
+    expect(result.normalizedInput).toBe('ABC')
+    expect(result.output).toHaveLength(3)
+  })
+
+  it('should reject invalid plugboard pair reuse', () => {
+    expect(() =>
+      runEnigmaCipher({
+        text: 'CIAO',
+        rotors: ['I', 'II', 'III'],
+        ringSettings: [1, 1, 1],
+        positions: ['A', 'A', 'A'],
+        reflector: 'B',
+        plugboardPairs: 'AB AC',
+        preserveNonLetters: true,
+      })
+    ).toThrow('Plugboard: ogni lettera può comparire in una sola coppia')
+  })
+
+  it('should reject repeated rotors', () => {
+    expect(() =>
+      runEnigmaCipher({
+        text: 'CIAO',
+        rotors: ['I', 'I', 'III'],
+        ringSettings: [1, 1, 1],
+        positions: ['A', 'A', 'A'],
+        reflector: 'B',
+        plugboardPairs: '',
+        preserveNonLetters: true,
+      })
+    ).toThrow('I tre rotori devono essere diversi tra loro')
   })
 })
 

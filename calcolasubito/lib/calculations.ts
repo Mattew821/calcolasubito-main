@@ -851,3 +851,311 @@ export function generateRandomIntegers(
     allowDuplicates,
   }
 }
+
+// ===== CIFRARIO ENIGMA =====
+const ENIGMA_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+export type EnigmaRotorName = 'I' | 'II' | 'III' | 'IV' | 'V'
+export type EnigmaReflectorName = 'B' | 'C'
+
+interface EnigmaRotorSpec {
+  wiring: string
+  notches: string[]
+}
+
+const ENIGMA_ROTOR_SPECS: Record<EnigmaRotorName, EnigmaRotorSpec> = {
+  I: { wiring: 'EKMFLGDQVZNTOWYHXUSPAIBRCJ', notches: ['Q'] },
+  II: { wiring: 'AJDKSIRUXBLHWTMCQGZNPYFVOE', notches: ['E'] },
+  III: { wiring: 'BDFHJLCPRTXVZNYEIWGAKMUSQO', notches: ['V'] },
+  IV: { wiring: 'ESOVPZJAYQUIRHXLNFTGKDCMWB', notches: ['J'] },
+  V: { wiring: 'VZBRGITYUPSDNHLXAWMJQOFECK', notches: ['Z'] },
+}
+
+const ENIGMA_REFLECTOR_SPECS: Record<EnigmaReflectorName, string> = {
+  B: 'YRUHQSLDPXNGOKMIEBFZCWVJAT',
+  C: 'FVPJIAOYEDRZXWGCTKUQSBNMHL',
+}
+
+export interface EnigmaMachineInput {
+  text: string
+  rotors: [EnigmaRotorName, EnigmaRotorName, EnigmaRotorName]
+  ringSettings: [number, number, number]
+  positions: [string, string, string]
+  reflector: EnigmaReflectorName
+  plugboardPairs?: string
+  preserveNonLetters?: boolean
+}
+
+export interface EnigmaMachineResult {
+  input: string
+  normalizedInput: string
+  output: string
+  finalPositions: [string, string, string]
+  steppedLetters: number
+}
+
+function mod(value: number, base: number): number {
+  return ((value % base) + base) % base
+}
+
+function letterToIndex(letter: string): number {
+  return ENIGMA_ALPHABET.indexOf(letter)
+}
+
+function indexToLetter(index: number): string {
+  return ENIGMA_ALPHABET.charAt(mod(index, ENIGMA_ALPHABET.length))
+}
+
+function toForwardMap(wiring: string): number[] {
+  return wiring.split('').map((letter) => letterToIndex(letter))
+}
+
+function toInverseMap(forwardMap: number[]): number[] {
+  const inverseMap = new Array<number>(forwardMap.length)
+  for (let index = 0; index < forwardMap.length; index += 1) {
+    const output = forwardMap[index]
+    if (output === undefined) {
+      throw new Error('Rotor mapping non valido')
+    }
+    inverseMap[output] = index
+  }
+  return inverseMap
+}
+
+const ENIGMA_ROTOR_FORWARD_MAPS: Record<EnigmaRotorName, number[]> = {
+  I: toForwardMap(ENIGMA_ROTOR_SPECS.I.wiring),
+  II: toForwardMap(ENIGMA_ROTOR_SPECS.II.wiring),
+  III: toForwardMap(ENIGMA_ROTOR_SPECS.III.wiring),
+  IV: toForwardMap(ENIGMA_ROTOR_SPECS.IV.wiring),
+  V: toForwardMap(ENIGMA_ROTOR_SPECS.V.wiring),
+}
+
+const ENIGMA_ROTOR_REVERSE_MAPS: Record<EnigmaRotorName, number[]> = {
+  I: toInverseMap(ENIGMA_ROTOR_FORWARD_MAPS.I),
+  II: toInverseMap(ENIGMA_ROTOR_FORWARD_MAPS.II),
+  III: toInverseMap(ENIGMA_ROTOR_FORWARD_MAPS.III),
+  IV: toInverseMap(ENIGMA_ROTOR_FORWARD_MAPS.IV),
+  V: toInverseMap(ENIGMA_ROTOR_FORWARD_MAPS.V),
+}
+
+const ENIGMA_REFLECTOR_MAPS: Record<EnigmaReflectorName, number[]> = {
+  B: toForwardMap(ENIGMA_REFLECTOR_SPECS.B),
+  C: toForwardMap(ENIGMA_REFLECTOR_SPECS.C),
+}
+
+function normalizeEnigmaChar(char: string): string {
+  return char
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .toUpperCase()
+}
+
+function normalizeEnigmaLetter(char: string): string | null {
+  const normalized = normalizeEnigmaChar(char)
+  const candidate = normalized.charAt(0)
+  if (!candidate) {
+    return null
+  }
+  return /^[A-Z]$/.test(candidate) ? candidate : null
+}
+
+function parsePlugboardPairs(rawValue: string | undefined): [number[], string[]] {
+  const mapping = Array.from({ length: ENIGMA_ALPHABET.length }, (_, index) => index)
+  if (!rawValue) {
+    return [mapping, []]
+  }
+
+  const tokens = rawValue
+    .trim()
+    .toUpperCase()
+    .split(/[\s,;]+/)
+    .filter((token) => token.length > 0)
+
+  if (tokens.length > 10) {
+    throw new Error('Plugboard: massimo 10 coppie')
+  }
+
+  const seenLetters = new Set<string>()
+  const normalizedPairs: string[] = []
+
+  for (const token of tokens) {
+    if (!/^[A-Z]{2}$/.test(token)) {
+      throw new Error('Plugboard: usa coppie di due lettere (es. AB CD EF)')
+    }
+
+    const a = token.charAt(0)
+    const b = token.charAt(1)
+    if (a === b) {
+      throw new Error('Plugboard: una coppia non può usare la stessa lettera due volte')
+    }
+    if (seenLetters.has(a) || seenLetters.has(b)) {
+      throw new Error('Plugboard: ogni lettera può comparire in una sola coppia')
+    }
+    seenLetters.add(a)
+    seenLetters.add(b)
+    normalizedPairs.push(`${a}${b}`)
+  }
+
+  for (const pair of normalizedPairs) {
+    const a = letterToIndex(pair.charAt(0))
+    const b = letterToIndex(pair.charAt(1))
+    if (a < 0 || b < 0) {
+      throw new Error('Plugboard: coppia non valida')
+    }
+    mapping[a] = b
+    mapping[b] = a
+  }
+
+  return [mapping, normalizedPairs]
+}
+
+function passRotorForward(
+  signal: number,
+  rotor: EnigmaRotorName,
+  position: number,
+  ringOffset: number
+): number {
+  const shifted = mod(signal + position - ringOffset, ENIGMA_ALPHABET.length)
+  const wired = ENIGMA_ROTOR_FORWARD_MAPS[rotor][shifted]
+  if (wired === undefined) {
+    throw new Error('Rotor forward mapping non valido')
+  }
+  return mod(wired - position + ringOffset, ENIGMA_ALPHABET.length)
+}
+
+function passRotorReverse(
+  signal: number,
+  rotor: EnigmaRotorName,
+  position: number,
+  ringOffset: number
+): number {
+  const shifted = mod(signal + position - ringOffset, ENIGMA_ALPHABET.length)
+  const wired = ENIGMA_ROTOR_REVERSE_MAPS[rotor][shifted]
+  if (wired === undefined) {
+    throw new Error('Rotor reverse mapping non valido')
+  }
+  return mod(wired - position + ringOffset, ENIGMA_ALPHABET.length)
+}
+
+function isRotorAtTurnover(rotor: EnigmaRotorName, position: number, ringOffset: number): boolean {
+  const notches = ENIGMA_ROTOR_SPECS[rotor].notches
+  return notches.some((notchLetter) => {
+    const notchIndex = letterToIndex(notchLetter)
+    const effectiveNotchIndex = mod(notchIndex - ringOffset, ENIGMA_ALPHABET.length)
+    return position === effectiveNotchIndex
+  })
+}
+
+function assertUniqueRotors(rotors: [EnigmaRotorName, EnigmaRotorName, EnigmaRotorName]): void {
+  const uniqueRotors = new Set(rotors)
+  if (uniqueRotors.size !== rotors.length) {
+    throw new Error('I tre rotori devono essere diversi tra loro')
+  }
+}
+
+export function runEnigmaCipher(input: EnigmaMachineInput): EnigmaMachineResult {
+  const preserveNonLetters = input.preserveNonLetters ?? true
+  const { rotors, reflector } = input
+  const rings = input.ringSettings.map((value) => value - 1) as [number, number, number]
+  const initialPositions = input.positions.map((value) => value.toUpperCase()) as [string, string, string]
+
+  assertUniqueRotors(rotors)
+
+  for (const ring of rings) {
+    if (!Number.isInteger(ring + 1) || ring < 0 || ring > 25) {
+      throw new Error('Ring setting non valido: usa valori da 1 a 26')
+    }
+  }
+
+  const positions: [number, number, number] = initialPositions.map((value) => {
+    if (!/^[A-Z]$/.test(value)) {
+      throw new Error('Posizioni rotori non valide: usa lettere da A a Z')
+    }
+    return letterToIndex(value)
+  }) as [number, number, number]
+
+  const [plugboardMap] = parsePlugboardPairs(input.plugboardPairs)
+  const reflectorMap = ENIGMA_REFLECTOR_MAPS[reflector]
+  if (!reflectorMap) {
+    throw new Error('Reflector non valido')
+  }
+
+  let steppedLetters = 0
+  let normalizedInput = ''
+  let output = ''
+
+  for (const originalChar of input.text) {
+    const maybeLetter = normalizeEnigmaLetter(originalChar)
+
+    if (!maybeLetter) {
+      if (preserveNonLetters) {
+        normalizedInput += originalChar
+        output += originalChar
+      }
+      continue
+    }
+
+    normalizedInput += maybeLetter
+
+    // Enigma stepping with historical double-step behaviour.
+    const middleAtTurnover = isRotorAtTurnover(rotors[1], positions[1], rings[1])
+    const rightAtTurnover = isRotorAtTurnover(rotors[2], positions[2], rings[2])
+
+    if (middleAtTurnover) {
+      positions[0] = mod(positions[0] + 1, ENIGMA_ALPHABET.length)
+    }
+    if (middleAtTurnover || rightAtTurnover) {
+      positions[1] = mod(positions[1] + 1, ENIGMA_ALPHABET.length)
+    }
+    positions[2] = mod(positions[2] + 1, ENIGMA_ALPHABET.length)
+    steppedLetters += 1
+
+    let signal = letterToIndex(maybeLetter)
+    if (signal < 0) {
+      continue
+    }
+
+    const fromPlugboard = plugboardMap[signal]
+    if (fromPlugboard === undefined) {
+      throw new Error('Plugboard mapping non valido')
+    }
+    signal = fromPlugboard
+
+    // Right -> Middle -> Left
+    signal = passRotorForward(signal, rotors[2], positions[2], rings[2])
+    signal = passRotorForward(signal, rotors[1], positions[1], rings[1])
+    signal = passRotorForward(signal, rotors[0], positions[0], rings[0])
+
+    const reflectedSignal = reflectorMap[signal]
+    if (reflectedSignal === undefined) {
+      throw new Error('Reflector mapping non valido')
+    }
+    signal = reflectedSignal
+
+    // Left -> Middle -> Right (reverse path)
+    signal = passRotorReverse(signal, rotors[0], positions[0], rings[0])
+    signal = passRotorReverse(signal, rotors[1], positions[1], rings[1])
+    signal = passRotorReverse(signal, rotors[2], positions[2], rings[2])
+
+    const toPlugboard = plugboardMap[signal]
+    if (toPlugboard === undefined) {
+      throw new Error('Plugboard mapping non valido')
+    }
+    signal = toPlugboard
+    output += indexToLetter(signal)
+  }
+
+  const finalPositions: [string, string, string] = [
+    indexToLetter(positions[0]),
+    indexToLetter(positions[1]),
+    indexToLetter(positions[2]),
+  ]
+
+  return {
+    input: input.text,
+    normalizedInput,
+    output,
+    finalPositions,
+    steppedLetters,
+  }
+}

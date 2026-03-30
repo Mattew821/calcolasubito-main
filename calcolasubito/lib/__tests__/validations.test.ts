@@ -4,6 +4,7 @@ import {
   codiceFiscaleForeignerItalySchema,
   imuSchema,
   bustaPagaNettaSchema,
+  enigmaSchema,
 } from '../validations'
 
 const CodiceFiscale = require('codice-fiscale-js')
@@ -195,6 +196,65 @@ describe('bustaPagaNettaSchema', () => {
       municipalAdditionalRate: 0.8,
       employerContributionRate: 30,
       applyIntegrativeTreatment: true,
+    })
+    expect(result.success).toBe(false)
+  })
+})
+
+describe('enigmaSchema', () => {
+  it('accepts valid Enigma settings with plugboard', () => {
+    const result = enigmaSchema.safeParse({
+      text: 'HELLO WORLD',
+      rotorLeft: 'I',
+      rotorMiddle: 'II',
+      rotorRight: 'III',
+      ringLeft: 1,
+      ringMiddle: 1,
+      ringRight: 1,
+      positionLeft: 'A',
+      positionMiddle: 'B',
+      positionRight: 'C',
+      reflector: 'B',
+      plugboardPairs: 'AB CD EF',
+      preserveNonLetters: true,
+    })
+    expect(result.success).toBe(true)
+  })
+
+  it('rejects duplicated rotors', () => {
+    const result = enigmaSchema.safeParse({
+      text: 'HELLO WORLD',
+      rotorLeft: 'I',
+      rotorMiddle: 'I',
+      rotorRight: 'III',
+      ringLeft: 1,
+      ringMiddle: 1,
+      ringRight: 1,
+      positionLeft: 'A',
+      positionMiddle: 'B',
+      positionRight: 'C',
+      reflector: 'B',
+      plugboardPairs: '',
+      preserveNonLetters: true,
+    })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects invalid plugboard pairs', () => {
+    const result = enigmaSchema.safeParse({
+      text: 'HELLO WORLD',
+      rotorLeft: 'I',
+      rotorMiddle: 'II',
+      rotorRight: 'III',
+      ringLeft: 1,
+      ringMiddle: 1,
+      ringRight: 1,
+      positionLeft: 'A',
+      positionMiddle: 'B',
+      positionRight: 'C',
+      reflector: 'B',
+      plugboardPairs: 'AB AC',
+      preserveNonLetters: true,
     })
     expect(result.success).toBe(false)
   })

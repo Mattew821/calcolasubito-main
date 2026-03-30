@@ -23,6 +23,7 @@ Portale di calcolatori online gratuiti in italiano, ottimizzato per SEO, perform
   - rate limiting per IP su due livelli (burst + finestra principale) con risposta `429`
 - Google Analytics GA4 con tracking page-view anche sulle navigazioni interne
 - Nuovo calcolatore: `numeri-casuali`
+- Nuovo calcolatore: `cifrario-enigma` (simulatore Enigma con rotori, ring setting, reflector e plugboard)
 - Nuovi calcolatori fiscali/lavoro:
   - `calcolo-imu`
   - `busta-paga-netta`
@@ -88,7 +89,7 @@ REQUEST_RATE_LIMIT_MAX_KEYS=20000
 
 Nota: il rate limit in-memory a livello middleware riduce flood/bot semplici, ma non sostituisce un WAF/CDN enterprise.
 
-## Calcolatori disponibili (23)
+## Calcolatori disponibili (24)
 
 1. Calcolo Percentuali
 2. Giorni tra Date
@@ -113,6 +114,7 @@ Nota: il rate limit in-memory a livello middleware riduce flood/bot semplici, ma
 21. Calcolo Mancia
 22. Calcolo IMU
 23. Busta Paga Netta
+24. Cifrario Enigma
 
 ## Stack
 

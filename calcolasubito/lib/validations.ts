@@ -239,3 +239,93 @@ export const bustaPagaNettaSchema = z.object({
 })
 
 export type BustaPagaNettaInput = z.infer<typeof bustaPagaNettaSchema>
+
+// Cifrario Enigma Calculator
+const ENIGMA_ROTORS = ['I', 'II', 'III', 'IV', 'V'] as const
+const ENIGMA_REFLECTORS = ['B', 'C'] as const
+
+function validatePlugboardPairs(value: string): boolean {
+  const trimmed = value.trim()
+  if (!trimmed) {
+    return true
+  }
+
+  const tokens = trimmed
+    .toUpperCase()
+    .split(/[\s,;]+/)
+    .filter((token) => token.length > 0)
+
+  if (tokens.length > 10) {
+    return false
+  }
+
+  const seenLetters = new Set<string>()
+  for (const token of tokens) {
+    if (!/^[A-Z]{2}$/.test(token)) {
+      return false
+    }
+    const a = token.charAt(0)
+    const b = token.charAt(1)
+    if (a === b) {
+      return false
+    }
+    if (seenLetters.has(a) || seenLetters.has(b)) {
+      return false
+    }
+    seenLetters.add(a)
+    seenLetters.add(b)
+  }
+
+  return true
+}
+
+export const enigmaSchema = z
+  .object({
+    text: z.string()
+      .min(1, 'Inserisci un testo da cifrare o decifrare')
+      .max(5000, 'Il testo non può superare 5000 caratteri'),
+    rotorLeft: z.enum(ENIGMA_ROTORS),
+    rotorMiddle: z.enum(ENIGMA_ROTORS),
+    rotorRight: z.enum(ENIGMA_ROTORS),
+    ringLeft: z.number()
+      .int('Il Ring del rotore sinistro deve essere intero')
+      .min(1, 'Il Ring del rotore sinistro deve essere tra 1 e 26')
+      .max(26, 'Il Ring del rotore sinistro deve essere tra 1 e 26'),
+    ringMiddle: z.number()
+      .int('Il Ring del rotore centrale deve essere intero')
+      .min(1, 'Il Ring del rotore centrale deve essere tra 1 e 26')
+      .max(26, 'Il Ring del rotore centrale deve essere tra 1 e 26'),
+    ringRight: z.number()
+      .int('Il Ring del rotore destro deve essere intero')
+      .min(1, 'Il Ring del rotore destro deve essere tra 1 e 26')
+      .max(26, 'Il Ring del rotore destro deve essere tra 1 e 26'),
+    positionLeft: z.string()
+      .trim()
+      .toUpperCase()
+      .regex(/^[A-Z]$/, 'La posizione sinistra deve essere una lettera A-Z'),
+    positionMiddle: z.string()
+      .trim()
+      .toUpperCase()
+      .regex(/^[A-Z]$/, 'La posizione centrale deve essere una lettera A-Z'),
+    positionRight: z.string()
+      .trim()
+      .toUpperCase()
+      .regex(/^[A-Z]$/, 'La posizione destra deve essere una lettera A-Z'),
+    reflector: z.enum(ENIGMA_REFLECTORS),
+    plugboardPairs: z.string()
+      .max(120, 'Plugboard troppo lungo')
+      .refine(
+        validatePlugboardPairs,
+        'Plugboard non valido: usa coppie uniche come AB CD EF (max 10)'
+      ),
+    preserveNonLetters: z.boolean(),
+  })
+  .refine(
+    (data) => new Set([data.rotorLeft, data.rotorMiddle, data.rotorRight]).size === 3,
+    {
+      message: 'I tre rotori devono essere diversi tra loro',
+      path: ['rotorRight'],
+    }
+  )
+
+export type EnigmaInput = z.infer<typeof enigmaSchema>

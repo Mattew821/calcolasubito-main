@@ -137,6 +137,14 @@ export const CALCULATOR_CATALOG: CalculatorCatalogEntry[] = [
     tags: ['media', 'voti', 'universita', 'crediti'],
   },
   {
+    id: 'cifrario-enigma',
+    title: 'Cifrario Enigma',
+    category: 'Scuola',
+    popularity: 'Medio',
+    description: 'Simula Enigma con rotori, reflector e plugboard.',
+    tags: ['enigma', 'cifrario', 'crittografia', 'rotori', 'plugboard'],
+  },
+  {
     id: 'area-rettangolo',
     title: 'Area Rettangolo',
     category: 'Matematica',

@@ -451,3 +451,24 @@ Stato task esterni:
     - stress rapido 120 request su `/percentuali` -> `200:79`, `429:41` (rate limit attivo)
   - Esito:
     - nessun errore residuo rilevato; baseline anti-bot/flood attiva lato applicazione.
+
+- Recursive verification cycle (2026-03-31, enigma calculator):
+  - Nuovo calcolatore implementato: `/cifrario-enigma`
+    - simulazione Enigma con 3 rotori (I-V), reflector (B/C), ring settings, posizioni iniziali e plugboard
+    - stepping corretto con double-step e cifratura/decifratura simmetrica
+  - Moduli aggiunti/aggiornati:
+    - `lib/calculations.ts`: `runEnigmaCipher` + tipi Enigma
+    - `lib/validations.ts`: `enigmaSchema` con vincoli su rotori/plugboard
+    - `app/cifrario-enigma/page.tsx` + `app/cifrario-enigma/layout.tsx`
+    - `lib/calculator-catalog.ts` + `README.md` aggiornati
+  - Test aggiunti:
+    - vettore noto `HELLOWORLD -> ILBDAAMTAZ`
+    - reversibilità con stesse impostazioni iniziali
+    - validazioni errori su plugboard e rotori duplicati
+  - Quality gates:
+    - `npm test -- --runInBand` -> PASS (111/111)
+    - `npm run lint` -> PASS
+    - `npm run build` -> PASS
+    - `python validation_framework.py --no-interactive --no-auto-git-push --max-attempts-per-problem 2 --max-global-iterations 2` -> PASS (0 problemi)
+  - Esito:
+    - implementazione Enigma + Plugboard completa e stabile, senza errori residui rilevati.
