@@ -2,20 +2,21 @@ import type { Metadata } from 'next'
 import '@/styles/globals.css'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import { BASE_URL } from '@/lib/site-config'
 
 export const metadata: Metadata = {
   title: 'CalcolaSubito | Calcolatori Online Gratuiti',
   description: 'Suite di calcolatori online gratuiti per l\'Italia: IVA, busta paga, IMU, codice fiscale e molti altri.',
   keywords: 'calcolatori online, calcolo IVA, busta paga, codice fiscale, IMU, TARI',
   authors: [{ name: 'CalcolaSubito' }],
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://calcolasubito.vercel.app'),
+  metadataBase: new URL(BASE_URL),
   alternates: {
-    canonical: process.env.NEXT_PUBLIC_BASE_URL || 'https://calcolasubito.vercel.app',
+    canonical: BASE_URL,
   },
   openGraph: {
     type: 'website',
     locale: 'it_IT',
-    url: process.env.NEXT_PUBLIC_BASE_URL || 'https://calcolasubito.vercel.app',
+    url: BASE_URL,
     siteName: 'CalcolaSubito',
     title: 'CalcolaSubito - Calcolatori Online Gratuiti',
     description: 'Suite di calcolatori online gratuiti per l\'Italia: percentuali, IVA, codice fiscale, mutuo e molto altro.',
@@ -49,7 +50,6 @@ export const metadata: Metadata = {
 }
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID || null
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://calcolasubito.vercel.app'
 
 // Log warning in development if GA_ID is not configured
 if (!GA_ID && process.env.NODE_ENV === 'development') {

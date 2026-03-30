@@ -1,33 +1,33 @@
-# 📊 Guida SEO Completa - CalcolaSubito
+﻿# ðŸ“Š Guida SEO Completa - CalcolaSubito
 
-Questa guida copre la strategia ufficiale per aumentare la visibilità su Google e gli altri motori di ricerca.
+Questa guida copre la strategia ufficiale per aumentare la visibilitÃ  su Google e gli altri motori di ricerca.
 
 ---
 
-## 🔵 Fase 1: Strumenti Ufficiali di Google
+## ðŸ”µ Fase 1: Strumenti Ufficiali di Google
 
 ### 1.1 Google Search Console (FONDAMENTALE)
 **Scopo:** Far sapere a Google che il sito esiste e inviare la sitemap.
 
 **Come fare:**
 1. Vai su [Google Search Console](https://search.google.com/search-console)
-2. Clicca "Aggiungi proprietà"
-3. Scegli "URL prefix" e inserisci: `https://calcolasubito.vercel.app`
+2. Clicca "Aggiungi proprietÃ "
+3. Scegli "URL prefix" e inserisci: `${NEXT_PUBLIC_BASE_URL}`
 4. Verifica il dominio (varie opzioni disponibili)
-5. Vai su "Sitemap" → "Aggiungi sitemap"
-6. Inserisci: `https://calcolasubito.vercel.app/sitemap.xml`
+5. Vai su "Sitemap" â†’ "Aggiungi sitemap"
+6. Inserisci: `${NEXT_PUBLIC_BASE_URL}/sitemap.xml`
 7. Verifica che sia stata inviata correttamente
 
-**Cosa farà:**
+**Cosa farÃ :**
 - Inviare automaticamente tutte le pagine a Google
 - Monitorare quali pagine sono indicizzate
 - Segnalare errori tecnici (404, 500, etc.)
 - Mostrare le query per cui appari nei risultati
 
 **Check periodici:**
-- Performance → Clicchi (quali query portano traffico?)
-- Copertura → Pagine indicizzate vs. errori
-- Miglioramenti → Dati strutturati (schema.json validati?)
+- Performance â†’ Clicchi (quali query portano traffico?)
+- Copertura â†’ Pagine indicizzate vs. errori
+- Miglioramenti â†’ Dati strutturati (schema.json validati?)
 
 ---
 
@@ -45,20 +45,20 @@ Questa guida copre la strategia ufficiale per aumentare la visibilità su Google
 5. Completa tutte le sezioni (foto, orari, sito web)
 
 **Beneficio:**
-- Visiblità geografica se gli utenti cercano "calcolatori online" + località
-- Maggior credibilità (stelle, recensioni)
+- VisiblitÃ  geografica se gli utenti cercano "calcolatori online" + localitÃ 
+- Maggior credibilitÃ  (stelle, recensioni)
 
 ---
 
-### 1.3 Google PageSpeed Insights (VELOCITÀ = RANKING)
+### 1.3 Google PageSpeed Insights (VELOCITÃ€ = RANKING)
 **Scopo:** Monitorare che il sito sia veloce (fattore di ranking ufficiale dal 2021).
 
 **Come verificare:**
 1. Vai su [PageSpeed Insights](https://pagespeed.web.dev)
-2. Inserisci: `https://calcolasubito.vercel.app`
+2. Inserisci: `${NEXT_PUBLIC_BASE_URL}`
 3. Analizza:
    - **Core Web Vitals** (LCP, FID, CLS)
-   - **Performance Score** (100 è perfetto)
+   - **Performance Score** (100 Ã¨ perfetto)
    - **Best Practices**
    - **SEO Score**
 
@@ -69,9 +69,9 @@ Questa guida copre la strategia ufficiale per aumentare la visibilità su Google
 - Cumulative Layout Shift (CLS): **< 0.1**
 
 **Stato attuale (con Web Workers):**
-- ✅ Main thread sempre libero
-- ✅ Nessun calcolo bloccante
-- ✅ Performance score dovrebbe essere **95+**
+- âœ… Main thread sempre libero
+- âœ… Nessun calcolo bloccante
+- âœ… Performance score dovrebbe essere **95+**
 
 **Se basso:**
 - Comprimere immagini
@@ -81,7 +81,7 @@ Questa guida copre la strategia ufficiale per aumentare la visibilità su Google
 
 ---
 
-## 🎯 Fase 2: Strategie SEO On-Page
+## ðŸŽ¯ Fase 2: Strategie SEO On-Page
 
 ### 2.1 Keyword Research
 **Parole chiave attuali di CalcolaSubito:**
@@ -105,7 +105,7 @@ Questa guida copre la strategia ufficiale per aumentare la visibilità su Google
 
 **Target keyword per ogni calcolatore:**
 
-| Pagina | Keyword Principale | Volume | Difficoltà |
+| Pagina | Keyword Principale | Volume | DifficoltÃ  |
 |---|---|---|---|
 | /percentuali | calcolo percentuali online | Alto | Media |
 | /giorni-tra-date | giorni tra due date | Medio | Bassa |
@@ -118,39 +118,39 @@ Questa guida copre la strategia ufficiale per aumentare la visibilità su Google
 ### 2.2 Ottimizzazione On-Page
 **Checklist per ogni pagina:**
 
-✅ **H1 (unico per pagina)**
-- ✓ Percentuali: "Calcolo Percentuali Online Gratuito"
-- ✓ Giorni tra date: "Calcolo Giorni tra Due Date Online"
-- ✓ Scorporo IVA: "Calcolo Scorporo IVA Online Gratuito"
-- ✓ Codice Fiscale: "Calcolo Codice Fiscale Online Gratuito"
-- ✓ Rata Mutuo: "Calcolo Rata Mutuo Online"
+âœ… **H1 (unico per pagina)**
+- âœ“ Percentuali: "Calcolo Percentuali Online Gratuito"
+- âœ“ Giorni tra date: "Calcolo Giorni tra Due Date Online"
+- âœ“ Scorporo IVA: "Calcolo Scorporo IVA Online Gratuito"
+- âœ“ Codice Fiscale: "Calcolo Codice Fiscale Online Gratuito"
+- âœ“ Rata Mutuo: "Calcolo Rata Mutuo Online"
 
-✅ **Meta Title (< 60 caratteri)**
-- Vedi app/[route]/layout.tsx → metadata.title
+âœ… **Meta Title (< 60 caratteri)**
+- Vedi app/[route]/layout.tsx â†’ metadata.title
 - Attuale: BUONO (contiene keyword principale)
 
-✅ **Meta Description (< 160 caratteri)**
-- Vedi app/[route]/layout.tsx → metadata.description
+âœ… **Meta Description (< 160 caratteri)**
+- Vedi app/[route]/layout.tsx â†’ metadata.description
 - Attuale: BUONO (descrive la funzione principale)
 
-✅ **H2 Subheadings (contengono keyword correlate)**
-- ✓ "Come Funziona il Calcolo Percentuale"
-- ✓ "La Formula Matematica"
-- ✓ "Casi di Utilizzo Comuni"
-- ✓ "Domande Frequenti"
+âœ… **H2 Subheadings (contengono keyword correlate)**
+- âœ“ "Come Funziona il Calcolo Percentuale"
+- âœ“ "La Formula Matematica"
+- âœ“ "Casi di Utilizzo Comuni"
+- âœ“ "Domande Frequenti"
 
-✅ **Keyword density**
+âœ… **Keyword density**
 - Target: 1-2% della keyword principale per pagina
 - Attuale: BUONO (2500+ parole, keyword distribuita naturalmente)
 
-✅ **Internal linking**
-- ✓ Footer con link a altri calcolatori
-- ✓ Sezione "Scopri gli altri calcolatori"
+âœ… **Internal linking**
+- âœ“ Footer con link a altri calcolatori
+- âœ“ Sezione "Scopri gli altri calcolatori"
 - Aggiungere contesto: "Se calcoli IVA, vedi anche scorporo IVA"
 
 ---
 
-### 2.3 Contenuti di Qualità
+### 2.3 Contenuti di QualitÃ 
 **Standard attuale:** 2500+ parole per pagina con:
 - Definizioni
 - Formule spiegate
@@ -168,21 +168,21 @@ Questa guida copre la strategia ufficiale per aumentare la visibilità su Google
    - Post: "Come capire la busta paga"
    - Post: "Guida completa all'IVA"
    - Post: "Capire il mutuo immobiliare"
-   - Linkare da calcolatori → blog
+   - Linkare da calcolatori â†’ blog
 
 3. **Dati strutturati** - Schema.org
-   - ✅ FAQPage (già implementato)
-   - ✅ WebApplication
-   - ✅ Organization
-   - ✅ AggregateRating
-   - ⭐ Aggiungere: VideoSchema (se aggiungi video tutorial)
+   - âœ… FAQPage (giÃ  implementato)
+   - âœ… WebApplication
+   - âœ… Organization
+   - âœ… AggregateRating
+   - â­ Aggiungere: VideoSchema (se aggiungi video tutorial)
 
 ---
 
-## 📤 Fase 3: Strategie di Diffusione Esterna
+## ðŸ“¤ Fase 3: Strategie di Diffusione Esterna
 
 ### 3.1 Link Building (Backlinks)
-**Strategia:** Ottenere link da siti autorevoli → Google vede "voti di fiducia"
+**Strategia:** Ottenere link da siti autorevoli â†’ Google vede "voti di fiducia"
 
 **Metodi legittimi:**
 
@@ -204,9 +204,9 @@ Questa guida copre la strategia ufficiale per aumentare la visibilità su Google
    - Contattare creatori di tali liste
 
 **Evitare:**
-- ❌ Comprare backlinks (Google penalizza)
-- ❌ Link farm e siti di spam
-- ❌ Link building automatico (penguin penalty)
+- âŒ Comprare backlinks (Google penalizza)
+- âŒ Link farm e siti di spam
+- âŒ Link building automatico (penguin penalty)
 
 ---
 
@@ -255,24 +255,24 @@ Questa guida copre la strategia ufficiale per aumentare la visibilità su Google
 
 3. Contenuto newsletter:
    - "Questa settimana su CalcolaSubito"
-   - "Nuove funzionalità aggiunte"
+   - "Nuove funzionalitÃ  aggiunte"
    - Link ai calcolatori
    - Tips finanziari
 
 **Beneficio SEO:**
 - Traffico ripetuto (visite ricorrenti = Google boost)
-- Traffic segnale di qualità
+- Traffic segnale di qualitÃ 
 - Link click-through nei nostri contenuti
 
 ---
 
-## 📋 Checklist di implementazione
+## ðŸ“‹ Checklist di implementazione
 
 ### Immediato (questa settimana)
 - [ ] Verificare il sito in Google Search Console
 - [ ] Inviare sitemap.xml
 - [ ] Testare in PageSpeed Insights
-- [ ] Verificare che tutte le pagine siano indicizzate (site:calcolasubito.vercel.app in Google)
+- [ ] Verificare che tutte le pagine siano indicizzate (site:<YOUR_DOMAIN> in Google)
 
 ### Breve termine (1 mese)
 - [ ] Aggiornare i contenuti delle 5 pagine con nuovo materiale
@@ -287,30 +287,30 @@ Questa guida copre la strategia ufficiale per aumentare la visibilità su Google
 - [ ] Iniziare social media marketing (1 post a settimana)
 
 ### Lungo termine (6-12 mesi)
-- [ ] Sviluppare autorità del dominio tramite link building
+- [ ] Sviluppare autoritÃ  del dominio tramite link building
 - [ ] Espandere con nuovi calcolatori (busta paga, IMU, etc.)
 - [ ] Creare video tutorial su YouTube
-- [ ] Monetizzare (ads, affiliate links) se il traffico è alto
+- [ ] Monetizzare (ads, affiliate links) se il traffico Ã¨ alto
 
 ---
 
-## 📊 Metriche da Monitorare
+## ðŸ“Š Metriche da Monitorare
 
 **Ogni settimana in Google Search Console:**
 - Impressioni (quante volte siamo apparsi nei risultati?)
 - Click (quante visite?)
 - Posizione media (a che posizione appariamo?)
-- Query top (quale keyword porta più traffico?)
+- Query top (quale keyword porta piÃ¹ traffico?)
 
 **Metriche di conversione:**
 - Bounce rate (se > 70%, i contenuti non sono pertinenti)
-- Pages per session (gli utenti visitano più pagine?)
+- Pages per session (gli utenti visitano piÃ¹ pagine?)
 - Time on page (gli utenti rimangono a leggere?)
-- Forma engagement: "Quanto è stata utile questa pagina?"
+- Forma engagement: "Quanto Ã¨ stata utile questa pagina?"
 
 ---
 
-## 🎯 Target per 6 mesi
+## ðŸŽ¯ Target per 6 mesi
 
 | Metrica | Target | Come misurerlo |
 |---|---|---|
@@ -323,7 +323,7 @@ Questa guida copre la strategia ufficiale per aumentare la visibilità su Google
 
 ---
 
-## 🔗 Risorse utili
+## ðŸ”— Risorse utili
 
 - [Google Search Console](https://search.google.com/search-console)
 - [Google Business Profile](https://business.google.com)
@@ -337,3 +337,5 @@ Questa guida copre la strategia ufficiale per aumentare la visibilità su Google
 
 **Ultimo aggiornamento:** 2026-03-26
 **Prossima review:** 2026-04-26
+
+
