@@ -404,3 +404,21 @@ Stato task esterni:
     - sitemap aggiornata automaticamente a 27 URL (23 calcolatori + pagine statiche + home)
     - canonical verificato in E2E su tutte le route calcolatori
 
+- Recursive verification cycle (2026-03-30, run 9):
+  - Rilancio completo qualità in modalità ricorsiva:
+    - `npm test -- --runInBand` -> PASS (91/91)
+    - `npm run lint` -> PASS
+    - `npm run build` -> PASS
+    - `python validation_framework.py --no-interactive --no-auto-git-push --max-attempts-per-problem 3 --max-global-iterations 3` -> PASS (0 problemi)
+  - E2E:
+    - individuato falso negativo quando `validation_framework` e Playwright venivano eseguiti in parallelo (contesa su `.next`)
+    - esecuzione corretta in sequenza: 2 loop completi `test + lint + build + playwright` -> PASS 2/2
+    - `npx playwright test` -> PASS (24/24) stabile
+  - Runtime/SEO produzione:
+    - smoke check su tutte le route portale (incluse `/calcolo-imu` e `/busta-paga-netta`) -> 200
+    - canonical valido su tutte le route verificate
+    - `sitemap.xml`: `sitemap_count=27` con nuove route presenti
+    - redirect host non canonico verificato (es. `calcolasubito-psi.vercel.app` -> 308 verso `calcolasubito.vercel.app`)
+  - Esito:
+    - nessun bug applicativo riproducibile; unico issue emerso era infrastrutturale/test-runner (parallelismo), risolto con sequenziamento.
+
