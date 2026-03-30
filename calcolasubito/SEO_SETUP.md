@@ -359,5 +359,9 @@ Questa guida copre la strategia ufficiale per aumentare la visibilitÃ  su Goog
   - calculatePercentageOf: gestione divisione per zero
   - calculateDaysBetween: normalizzazione UTC per evitare edge case orario
   - calculateMortgage: guardie su mesi/tasso/capitale non validi
-  - Test unitari: 24 PASS
+  - Test unitari: 27 PASS
+
+
+- Build stability loop: 3 esecuzioni consecutive PASS su 
+pm run build.
 

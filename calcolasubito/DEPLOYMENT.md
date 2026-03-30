@@ -229,7 +229,7 @@ Dopo deploy:
 
 Verifiche eseguite in modo deterministico e riproducibile:
 
-- `npm test -- --runInBand`: PASS (24/24 test)
+- `npm test -- --runInBand`: PASS (27/27 test)
 - `npm run lint`: PASS (0 warning/error)
 - `npm run build`: PASS (build di produzione completata)
 - Routing locale verificato con server avviato su `localhost:3000`:
@@ -272,4 +272,7 @@ Stato task esterni:
   - `npm run build` -> PASS
 
 - Hardening edge case completato (2026-03-30): funzioni calcolo rinforzate + test extra PASS.
+
+
+- Build stability loop (2026-03-30): 3/3 build consecutive PASS.
 

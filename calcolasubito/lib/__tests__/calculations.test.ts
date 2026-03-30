@@ -29,6 +29,16 @@ describe('calculatePercentage', () => {
   it('should handle decimal values', () => {
     expect(calculatePercentage(100.5, 10.5)).toBeCloseTo(10.5525, 4)
   })
+
+  it('should satisfy inverse relation with calculatePercentageOf on random inputs', () => {
+    for (let i = 0; i < 200; i++) {
+      const number = Math.random() * 100000 + 0.01
+      const percentage = Math.random() * 100
+      const part = calculatePercentage(number, percentage)
+      const back = calculatePercentageOf(part, number)
+      expect(back).toBeCloseTo(percentage, 8)
+    }
+  })
 })
 
 describe('calculatePercentageOf', () => {
@@ -69,6 +79,14 @@ describe('calculateDaysBetween', () => {
     const startDate = new Date('2024-03-30T23:59:59')
     const endDate = new Date('2024-03-31T00:00:01')
     expect(calculateDaysBetween(startDate, endDate)).toBe(1)
+  })
+
+  it('should be antisymmetric across random dates', () => {
+    for (let i = 0; i < 200; i++) {
+      const a = new Date(2020, 0, 1 + Math.floor(Math.random() * 3650))
+      const b = new Date(2020, 0, 1 + Math.floor(Math.random() * 3650))
+      expect(calculateDaysBetween(a, b)).toBe(-calculateDaysBetween(b, a))
+    }
   })
 })
 
@@ -165,5 +183,19 @@ describe('calculateMortgage', () => {
 
   it('should throw on negative annual rate', () => {
     expect(() => calculateMortgage(100000, -1, 12)).toThrow('Annual rate cannot be negative')
+  })
+
+  it('should keep payment identity on random valid inputs', () => {
+    for (let i = 0; i < 100; i++) {
+      const principal = 5000 + Math.random() * 495000
+      const annualRate = Math.random() * 10
+      const months = 12 + Math.floor(Math.random() * 480)
+      const result = calculateMortgage(principal, annualRate, months)
+      expect(result.amortizationSchedule.length).toBe(months)
+      expect(result.totalAmountPaid).toBeCloseTo(result.monthlyPayment * months, 8)
+      expect(result.totalInterest).toBeCloseTo(result.totalAmountPaid - principal, 8)
+      expect(result.amortizationSchedule[months - 1].balance).toBeGreaterThanOrEqual(0)
+      expect(result.amortizationSchedule[months - 1].balance).toBeLessThan(1)
+    }
   })
 })
