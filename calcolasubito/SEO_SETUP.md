@@ -275,8 +275,8 @@ Questa guida copre la strategia ufficiale per aumentare la visibilitÃ  su Goog
 - [ ] Verificare che tutte le pagine siano indicizzate (site:<YOUR_DOMAIN> in Google)
 
 ### Breve termine (1 mese)
-- [ ] Aggiornare i contenuti delle 5 pagine con nuovo materiale
-- [ ] Aggiungere internal link tra calcolatori
+- [x] Aggiornare i contenuti delle 5 pagine con nuovo materiale (verificato contenuto SEO esteso nelle pagine calcolatori)
+- [x] Aggiungere internal link tra calcolatori (verificato sezione link incrociati nelle pagine calcolatori)
 - [x] Verificare validità sintattica dei dati strutturati (JSON-LD parse OK)
 - [ ] Verificare i dati strutturati con [Schema.org validator](https://validator.schema.org) via browser
 - [ ] Monitorare Search Console: che query sono apparse?
@@ -353,4 +353,11 @@ Questa guida copre la strategia ufficiale per aumentare la visibilitÃ  su Goog
   - `npm run lint` PASS
   - `npm run build` PASS
 
+
+
+- Bug fix matematici validati (2026-03-30):
+  - calculatePercentageOf: gestione divisione per zero
+  - calculateDaysBetween: normalizzazione UTC per evitare edge case orario
+  - calculateMortgage: guardie su mesi/tasso/capitale non validi
+  - Test unitari: 24 PASS
 

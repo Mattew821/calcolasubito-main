@@ -41,6 +41,10 @@ describe('calculatePercentageOf', () => {
   it('should handle edge cases', () => {
     expect(calculatePercentageOf(0, 100)).toBe(0)
   })
+
+  it('should throw when total is zero', () => {
+    expect(() => calculatePercentageOf(10, 0)).toThrow('Total cannot be zero')
+  })
 })
 
 describe('calculateDaysBetween', () => {
@@ -59,6 +63,12 @@ describe('calculateDaysBetween', () => {
     const startDate = new Date('2024-02-01')
     const endDate = new Date('2024-03-01')
     expect(calculateDaysBetween(startDate, endDate)).toBe(29) // 2024 is leap year
+  })
+
+  it('should not be affected by time-of-day differences', () => {
+    const startDate = new Date('2024-03-30T23:59:59')
+    const endDate = new Date('2024-03-31T00:00:01')
+    expect(calculateDaysBetween(startDate, endDate)).toBe(1)
   })
 })
 
@@ -143,5 +153,17 @@ describe('calculateMortgage', () => {
     expect(result.amortizationSchedule[result.amortizationSchedule.length - 1].month).toBe(12)
     // Last payment should reduce balance to ~0
     expect(result.amortizationSchedule[11].balance).toBeLessThan(1)
+  })
+
+  it('should throw on invalid months', () => {
+    expect(() => calculateMortgage(100000, 5, 0)).toThrow('Months must be greater than zero')
+  })
+
+  it('should throw on negative principal', () => {
+    expect(() => calculateMortgage(-1, 5, 12)).toThrow('Principal cannot be negative')
+  })
+
+  it('should throw on negative annual rate', () => {
+    expect(() => calculateMortgage(100000, -1, 12)).toThrow('Annual rate cannot be negative')
   })
 })

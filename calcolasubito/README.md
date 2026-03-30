@@ -108,7 +108,7 @@ vercel
 - [x] Deploy su Vercel
 
 ### Fase 2 (Settimana 3-4)
-- [ ] SEO content writing
+- [x] SEO content writing
 - [x] Meta tags e schema markup
 - [ ] Google Search Console setup
 - [ ] AdSense request
@@ -145,4 +145,5 @@ MIT License - Vedi LICENSE file per dettagli.
 ## Contatti
 
 Per domande o suggerimenti, apri un issue nel repository.
+
 

@@ -8,13 +8,26 @@ export function calculatePercentage(number: number, percentage: number): number 
 }
 
 export function calculatePercentageOf(part: number, total: number): number {
+  if (total === 0) {
+    throw new Error('Total cannot be zero')
+  }
   return (part / total) * 100
 }
 
 // ===== GIORNI TRA DATE =====
 export function calculateDaysBetween(startDate: Date, endDate: Date): number {
   const msPerDay = 24 * 60 * 60 * 1000
-  return Math.floor((endDate.getTime() - startDate.getTime()) / msPerDay)
+  const startUtc = Date.UTC(
+    startDate.getFullYear(),
+    startDate.getMonth(),
+    startDate.getDate()
+  )
+  const endUtc = Date.UTC(
+    endDate.getFullYear(),
+    endDate.getMonth(),
+    endDate.getDate()
+  )
+  return Math.floor((endUtc - startUtc) / msPerDay)
 }
 
 export function calculateWeeksBetween(startDate: Date, endDate: Date): number {
@@ -104,6 +117,16 @@ export function calculateMortgage(
   annualRate: number,
   months: number
 ): MortgageCalculation {
+  if (months <= 0) {
+    throw new Error('Months must be greater than zero')
+  }
+  if (principal < 0) {
+    throw new Error('Principal cannot be negative')
+  }
+  if (annualRate < 0) {
+    throw new Error('Annual rate cannot be negative')
+  }
+
   const monthlyRate = annualRate / 100 / 12
 
   // If rate is 0
