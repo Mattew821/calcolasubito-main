@@ -240,7 +240,7 @@ export default function CalcoloCodiceFiscale() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Comune di Nascita (Codice ISTAT)
+                    Comune di Nascita o Codice Catastale
                   </label>
                   <input
                     type="text"
@@ -248,7 +248,7 @@ export default function CalcoloCodiceFiscale() {
                     className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
                       (errors as any).birthPlace?.message ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
                     }`}
-                    placeholder="Es. H501 (Roma)"
+                    placeholder="Es. Roma oppure H501"
                   />
                   {(errors as any).birthPlace?.message && (
                     <p className="mt-1 text-sm text-red-600">{(errors as any).birthPlace.message}</p>
@@ -432,7 +432,7 @@ export default function CalcoloCodiceFiscale() {
                   • <strong>2 cifre (giorno)</strong>: +40 per le donne
                 </li>
                 <li>
-                  • <strong>4 caratteri (comune)</strong>: codice ISTAT
+                  • <strong>4 caratteri (comune)</strong>: codice catastale
                 </li>
                 <li>
                   • <strong>1 carattere (control digit)</strong>: cifra di controllo

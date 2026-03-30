@@ -3,6 +3,8 @@
  * Offload dal main thread per garantire UI fluida a 60fps
  */
 
+import { resolveCodiceCatastale } from '../codice-fiscale-utils'
+
 // ===== GENERIC CSV LOADER =====
 interface CSVRecord {
   [key: string]: string
@@ -211,10 +213,10 @@ function calculateCodiceFiscaleSimplified(
   const dayPart = String(date.getDate() + (gender === 'F' ? 40 : 0)).padStart(2, '0')
   const datePart = year + monthLetter + dayPart
 
-  // Get ISTAT code for municipality - search in CSV
-  const istatCode = searchCodiceCatastale(birthPlace)
+  // Accept either direct codice catastale (e.g. H501) or municipality name.
+  const catastaleCode = resolveCodiceCatastale(birthPlace, searchCodiceCatastale)
 
-  const codiceSenza = (surnamePart + namePart + datePart + istatCode).toUpperCase()
+  const codiceSenza = (surnamePart + namePart + datePart + catastaleCode).toUpperCase()
 
   // Calcolo del control digit (16° carattere)
   // Algoritmo ufficiale Agenzia delle Entrate

@@ -385,3 +385,17 @@ Questa guida copre la strategia ufficiale per aumentare la visibilitÃ  su Goog
     - Stress loop qualità `test/lint/build` -> 5/5 PASS
     - `validation_framework.py --no-interactive --max-attempts-per-problem 0 --max-global-iterations 0` -> PASS (0 problemi)
 
+- Recursive verification cycle (2026-03-30, run 4):
+  - Corretto flusso codice fiscale su `birthPlace`:
+    - accetta sia comune sia codice catastale diretto (es. `H501`)
+    - blocca input non risolvibili con errore esplicito
+  - Migliorie test:
+    - nuovo `lib/__tests__/codice-fiscale-utils.test.ts`
+    - fix test random su antisimmetria giorni (`ab + ba = 0`)
+  - Esito finale:
+    - `npm test -- --runInBand` -> PASS (40/40)
+    - `npm run lint` -> PASS
+    - `npm run build` -> PASS
+    - `validation_framework.py --no-interactive --max-attempts-per-problem 0 --max-global-iterations 0` -> PASS (0 problemi)
+    - Stress loop qualità `test/lint/build` -> 5/5 PASS
+

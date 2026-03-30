@@ -1,6 +1,8 @@
 import { z } from 'zod'
 
 const ISO_DATE_REGEX = /^(\d{4})-(\d{2})-(\d{2})$/
+const CODICE_CATASTALE_REGEX = /^[A-Za-z][0-9]{3}$/
+const COMUNE_NAME_REGEX = /^[a-zA-ZÀ-ÖØ-öø-ÿ\s'.-]+$/u
 
 function parseStrictIsoDate(date: string): Date | null {
   const match = ISO_DATE_REGEX.exec(date)
@@ -24,6 +26,11 @@ function parseStrictIsoDate(date: string): Date | null {
 
 function isStrictIsoDate(date: string): boolean {
   return parseStrictIsoDate(date) !== null
+}
+
+function isValidBirthPlace(value: string): boolean {
+  const trimmed = value.trim()
+  return CODICE_CATASTALE_REGEX.test(trimmed) || COMUNE_NAME_REGEX.test(trimmed)
 }
 
 // Percentuali Calculator
@@ -92,7 +99,12 @@ export const codiceFiscaleItalianSchema = z.object({
     .min(1, 'Seleziona una data di nascita')
     .refine(isStrictIsoDate, 'Data di nascita non valida'),
   birthPlace: z.string()
-    .min(2, 'Il comune deve avere almeno 2 caratteri'),
+    .min(2, 'Il comune deve avere almeno 2 caratteri')
+    .max(100, 'Il comune non deve superare 100 caratteri')
+    .refine(
+      isValidBirthPlace,
+      'Inserisci un comune valido o un codice catastale (es. H501)'
+    ),
   gender: z.enum(['M', 'F']),
 })
 

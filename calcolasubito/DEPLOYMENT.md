@@ -312,3 +312,23 @@ Stato task esterni:
     - JSON-LD su `/percentuali`: parse OK 3/3
     - `GA_SCRIPT_LOADED=False`
 
+- Recursive verification cycle (2026-03-30, run 4):
+  - Nuovo bug fix calcoli CF:
+    - supporto completo a `birthPlace` come comune oppure codice catastale diretto (es. `H501`)
+    - errore esplicito se comune/codice non risolvibile, evitando codici fiscali con valore placeholder
+  - Hardening test:
+    - aggiunto `lib/__tests__/codice-fiscale-utils.test.ts`
+    - corretto test flakey su antisimmetria giorni (`0` vs `-0`)
+  - Risultati:
+    - `npm test -- --runInBand` -> PASS (40/40)
+    - `npm run lint` -> PASS
+    - `npm run build` -> PASS
+    - `validation_framework.py --no-interactive --max-attempts-per-problem 0 --max-global-iterations 0` -> PASS (0 problemi)
+    - stress loop qualità `test/lint/build` -> 5/5 PASS
+  - Runtime locale:
+    - `/`, `/about`, `/percentuali`, `/giorni-tra-date`, `/scorporo-iva`, `/codice-fiscale`, `/rata-mutuo`, `/sitemap.xml`, `/robots.txt` -> 200
+  - Runtime produzione `${NEXT_PUBLIC_BASE_URL}`:
+    - `/`, `/about`, `/percentuali`, `/giorni-tra-date`, `/scorporo-iva`, `/codice-fiscale`, `/rata-mutuo`, `/sitemap.xml`, `/robots.txt` -> 200
+    - JSON-LD su `/percentuali`: parse OK 3/3
+    - `GA_SCRIPT_LOADED=False`
+

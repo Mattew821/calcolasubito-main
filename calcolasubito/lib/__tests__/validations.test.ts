@@ -75,6 +75,30 @@ describe('codiceFiscale schemas', () => {
     expect(result.success).toBe(false)
   })
 
+  it('accepts catastale code as birthPlace for italian mode', () => {
+    const result = codiceFiscaleItalianSchema.safeParse({
+      mode: 'italian',
+      surname: 'Rossi',
+      name: 'Mario',
+      birthDate: '1980-01-01',
+      birthPlace: 'h501',
+      gender: 'M',
+    })
+    expect(result.success).toBe(true)
+  })
+
+  it('rejects invalid birthPlace characters for italian mode', () => {
+    const result = codiceFiscaleItalianSchema.safeParse({
+      mode: 'italian',
+      surname: 'Rossi',
+      name: 'Mario',
+      birthDate: '1980-01-01',
+      birthPlace: '@@@',
+      gender: 'M',
+    })
+    expect(result.success).toBe(false)
+  })
+
   it('accepts valid foreigner codice fiscale and rejects altered check digit', () => {
     for (let i = 0; i < 100; i++) {
       const valid = generateValidCodiceFiscale()

@@ -85,7 +85,9 @@ describe('calculateDaysBetween', () => {
     for (let i = 0; i < 200; i++) {
       const a = new Date(2020, 0, 1 + Math.floor(Math.random() * 3650))
       const b = new Date(2020, 0, 1 + Math.floor(Math.random() * 3650))
-      expect(calculateDaysBetween(a, b)).toBe(-calculateDaysBetween(b, a))
+      const ab = calculateDaysBetween(a, b)
+      const ba = calculateDaysBetween(b, a)
+      expect(ab + ba).toBe(0)
     }
   })
 })
