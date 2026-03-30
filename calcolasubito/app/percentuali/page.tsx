@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
@@ -38,6 +38,11 @@ export default function CalcoloPercentuali() {
 
   const number = watch('number')
   const percentage = watch('percentage')
+
+  // Reset result when mode changes
+  React.useEffect(() => {
+    setResult(null)
+  }, [mode])
 
   const onSubmit = async (data: PercentualiInput) => {
     // Check rate limit

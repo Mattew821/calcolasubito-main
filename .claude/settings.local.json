@@ -51,7 +51,8 @@
       "Bash(git fetch:*)",
       "Bash(git remote:*)",
       "Read(//c/Users/matth/Desktop/**)",
-      "Read(//c/Users/matth/Desktop//**)"
+      "Read(//c/Users/matth/Desktop//**)",
+      "Bash(find /c/Users/matth/Desktop/calcolasubito/calcolasubito -name *.env* -o -name .next -o -name node_modules)"
     ]
   },
   "hooks": {

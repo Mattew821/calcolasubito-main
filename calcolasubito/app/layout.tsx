@@ -8,7 +8,10 @@ export const metadata: Metadata = {
   description: 'Suite di calcolatori online gratuiti per l\'Italia: IVA, busta paga, IMU, codice fiscale e molti altri.',
   keywords: 'calcolatori online, calcolo IVA, busta paga, codice fiscale, IMU, TARI',
   authors: [{ name: 'CalcolaSubito.it' }],
-  metadataBase: new URL('https://calcolasubito.it'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://calcolasubito.it'),
+  alternates: {
+    canonical: process.env.NEXT_PUBLIC_BASE_URL || 'https://calcolasubito.it',
+  },
   openGraph: {
     type: 'website',
     locale: 'it_IT',

@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
 import { ToastContainer, useToast } from '@/components/Toast'
 import { useCalculatorWorker } from '@/hooks/useCalculatorWorker'
+import { useRateLimit } from '@/lib/hooks/useRateLimit'
 import { type MortgageCalculation } from '@/lib/calculations'
 import { rataMutuoSchema, type RataMutuoInput } from '@/lib/validations'
 
@@ -13,6 +14,12 @@ export default function CalcoloRataMutuo() {
   const [result, setResult] = useState<MortgageCalculation | null>(null)
   const { toasts, showToast, removeToast } = useToast()
   const { calculate, isLoading } = useCalculatorWorker()
+
+  // Rate limiting: 10 calculations per minute
+  const { checkRateLimit, isLimited, remainingRequests, resetTime } = useRateLimit({
+    maxRequests: 10,
+    windowMs: 60000, // 1 minute
+  })
 
   const {
     register,

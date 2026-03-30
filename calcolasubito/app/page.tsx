@@ -9,11 +9,6 @@ const calculators = [
   { id: 'rata-mutuo', title: 'Calcolo Rata Mutuo', volume: 'Alto' },
 ]
 
-export const metadata = {
-  title: 'CalcolaSubito.it | Calcolatori Online Gratuiti',
-  description: 'Accedi a 20+ calcolatori online gratuiti per tutte le vostre esigenze: IVA, busta paga, IMU, codice fiscale e molto altro.',
-}
-
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
