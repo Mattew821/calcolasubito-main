@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Calculator from '@/components/Calculator'
@@ -45,8 +45,8 @@ export default function CalcoloCodiceFiscale() {
 
   const currentMode = watch('mode') as FormMode
 
-  // Reset result and form when mode changes
-  React.useEffect(() => {
+  // Reset result when mode changes
+  useEffect(() => {
     setCodiceFiscale(null)
   }, [currentMode])
 
