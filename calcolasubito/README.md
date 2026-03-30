@@ -49,7 +49,7 @@ Il dominio base del portale e centralizzato:
 Esempio `.env.local`:
 
 ```bash
-NEXT_PUBLIC_BASE_URL=https://calcolasubito.vercel.app
+NEXT_PUBLIC_BASE_URL=https://vercel.vercel.app
 ```
 
 ## Calcolatori disponibili (20)
