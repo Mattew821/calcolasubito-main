@@ -45,12 +45,10 @@ export default function CalcoloCodiceFiscale() {
 
   const currentMode = watch('mode') as FormMode
 
-  // Reset form when mode changes
-  const handleModeChange = (newMode: FormMode) => {
-    setMode(newMode)
+  // Reset result and form when mode changes
+  React.useEffect(() => {
     setCodiceFiscale(null)
-    resetForm()
-  }
+  }, [currentMode])
 
   const onSubmit = async (data: CodiceFiscaleInput) => {
     // Check rate limit
@@ -108,7 +106,6 @@ export default function CalcoloCodiceFiscale() {
                   type="radio"
                   value="italian"
                   checked={currentMode === 'italian'}
-                  onChange={() => handleModeChange('italian')}
                   {...register('mode')}
                   className="mr-3"
                 />
@@ -121,7 +118,6 @@ export default function CalcoloCodiceFiscale() {
                   type="radio"
                   value="foreigner_italy"
                   checked={currentMode === 'foreigner_italy'}
-                  onChange={() => handleModeChange('foreigner_italy')}
                   {...register('mode')}
                   className="mr-3"
                 />
@@ -134,7 +130,6 @@ export default function CalcoloCodiceFiscale() {
                   type="radio"
                   value="foreigner_abroad"
                   checked={currentMode === 'foreigner_abroad'}
-                  onChange={() => handleModeChange('foreigner_abroad')}
                   {...register('mode')}
                   className="mr-3"
                 />
