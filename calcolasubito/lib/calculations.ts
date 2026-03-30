@@ -176,3 +176,203 @@ export function calculateMortgage(
     amortizationSchedule: schedule,
   }
 }
+
+// ===== NUOVI CALCOLATORI =====
+export interface DiscountResult {
+  discountAmount: number
+  finalPrice: number
+}
+
+export function calculateDiscount(price: number, discountPercent: number): DiscountResult {
+  if (price < 0) {
+    throw new Error('Price cannot be negative')
+  }
+  if (discountPercent < 0 || discountPercent > 100) {
+    throw new Error('Discount percent must be between 0 and 100')
+  }
+
+  const discountAmount = (price * discountPercent) / 100
+  return {
+    discountAmount,
+    finalPrice: price - discountAmount,
+  }
+}
+
+export interface IncreaseResult {
+  increaseAmount: number
+  finalValue: number
+}
+
+export function calculateIncrease(baseValue: number, increasePercent: number): IncreaseResult {
+  if (baseValue < 0) {
+    throw new Error('Base value cannot be negative')
+  }
+  if (increasePercent < 0) {
+    throw new Error('Increase percent cannot be negative')
+  }
+
+  const increaseAmount = (baseValue * increasePercent) / 100
+  return {
+    increaseAmount,
+    finalValue: baseValue + increaseAmount,
+  }
+}
+
+export interface SimpleInterestResult {
+  interest: number
+  totalAmount: number
+}
+
+export function calculateSimpleInterest(
+  principal: number,
+  annualRate: number,
+  years: number
+): SimpleInterestResult {
+  if (principal < 0) {
+    throw new Error('Principal cannot be negative')
+  }
+  if (annualRate < 0) {
+    throw new Error('Annual rate cannot be negative')
+  }
+  if (years < 0) {
+    throw new Error('Years cannot be negative')
+  }
+
+  const interest = principal * (annualRate / 100) * years
+  return {
+    interest,
+    totalAmount: principal + interest,
+  }
+}
+
+export interface CompoundInterestResult {
+  interest: number
+  finalAmount: number
+}
+
+export function calculateCompoundInterest(
+  principal: number,
+  annualRate: number,
+  years: number,
+  compoundsPerYear: number
+): CompoundInterestResult {
+  if (principal < 0) {
+    throw new Error('Principal cannot be negative')
+  }
+  if (annualRate < 0) {
+    throw new Error('Annual rate cannot be negative')
+  }
+  if (years < 0) {
+    throw new Error('Years cannot be negative')
+  }
+  if (compoundsPerYear <= 0) {
+    throw new Error('Compounds per year must be greater than zero')
+  }
+
+  const periodicRate = annualRate / 100 / compoundsPerYear
+  const periods = years * compoundsPerYear
+  const finalAmount = principal * Math.pow(1 + periodicRate, periods)
+  return {
+    interest: finalAmount - principal,
+    finalAmount,
+  }
+}
+
+export function calculateBMI(weightKg: number, heightCm: number): number {
+  if (weightKg <= 0) {
+    throw new Error('Weight must be greater than zero')
+  }
+  if (heightCm <= 0) {
+    throw new Error('Height must be greater than zero')
+  }
+
+  const heightM = heightCm / 100
+  return weightKg / (heightM * heightM)
+}
+
+export interface FuelConsumptionResult {
+  kmPerLiter: number
+  litersPer100Km: number
+}
+
+export function calculateFuelConsumption(
+  distanceKm: number,
+  fuelLiters: number
+): FuelConsumptionResult {
+  if (distanceKm <= 0) {
+    throw new Error('Distance must be greater than zero')
+  }
+  if (fuelLiters <= 0) {
+    throw new Error('Fuel liters must be greater than zero')
+  }
+
+  return {
+    kmPerLiter: distanceKm / fuelLiters,
+    litersPer100Km: (fuelLiters / distanceKm) * 100,
+  }
+}
+
+export function calculateRectangleArea(base: number, height: number): number {
+  if (base < 0 || height < 0) {
+    throw new Error('Rectangle dimensions cannot be negative')
+  }
+  return base * height
+}
+
+export function calculateCircleArea(radius: number): number {
+  if (radius < 0) {
+    throw new Error('Radius cannot be negative')
+  }
+  return Math.PI * radius * radius
+}
+
+export function calculateWeightedAverage(values: number[], weights: number[]): number {
+  if (values.length === 0) {
+    throw new Error('Values cannot be empty')
+  }
+  if (values.length !== weights.length) {
+    throw new Error('Values and weights must have same length')
+  }
+
+  let weightedSum = 0
+  let totalWeight = 0
+
+  for (let i = 0; i < values.length; i++) {
+    const value = values[i]
+    const weight = weights[i]
+    if (value === undefined || weight === undefined) {
+      throw new Error('Values and weights must have same length')
+    }
+    if (!Number.isFinite(value) || !Number.isFinite(weight)) {
+      throw new Error('Values and weights must be finite numbers')
+    }
+    if (weight < 0) {
+      throw new Error('Weights cannot be negative')
+    }
+    weightedSum += value * weight
+    totalWeight += weight
+  }
+
+  if (totalWeight === 0) {
+    throw new Error('Total weight cannot be zero')
+  }
+
+  return weightedSum / totalWeight
+}
+
+export interface TemperatureConversionResult {
+  celsius: number
+  fahrenheit: number
+  kelvin: number
+}
+
+export function convertCelsius(celsius: number): TemperatureConversionResult {
+  if (!Number.isFinite(celsius)) {
+    throw new Error('Celsius value must be finite')
+  }
+  return {
+    celsius,
+    fahrenheit: (celsius * 9) / 5 + 32,
+    kelvin: celsius + 273.15,
+  }
+}

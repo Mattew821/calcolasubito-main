@@ -7,6 +7,16 @@ const calculators = [
   'scorporo-iva',
   'codice-fiscale',
   'rata-mutuo',
+  'sconto-percentuale',
+  'aumento-percentuale',
+  'interesse-semplice',
+  'interesse-composto',
+  'indice-massa-corporea',
+  'consumo-carburante',
+  'area-rettangolo',
+  'area-cerchio',
+  'media-voti',
+  'conversione-temperatura',
 ]
 
 export default function sitemap(): MetadataRoute.Sitemap {

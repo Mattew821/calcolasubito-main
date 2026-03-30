@@ -7,6 +7,16 @@ import {
   calculateGrossFromNet,
   calculateNetFromGross,
   calculateMortgage,
+  calculateDiscount,
+  calculateIncrease,
+  calculateSimpleInterest,
+  calculateCompoundInterest,
+  calculateBMI,
+  calculateFuelConsumption,
+  calculateRectangleArea,
+  calculateCircleArea,
+  calculateWeightedAverage,
+  convertCelsius,
 } from '../calculations'
 
 /**
@@ -199,5 +209,114 @@ describe('calculateMortgage', () => {
       expect(result.amortizationSchedule[months - 1].balance).toBeGreaterThanOrEqual(0)
       expect(result.amortizationSchedule[months - 1].balance).toBeLessThan(1)
     }
+  })
+})
+
+describe('calculateDiscount', () => {
+  it('should calculate discount and final price', () => {
+    const result = calculateDiscount(100, 20)
+    expect(result.discountAmount).toBe(20)
+    expect(result.finalPrice).toBe(80)
+  })
+
+  it('should throw on invalid ranges', () => {
+    expect(() => calculateDiscount(-1, 10)).toThrow('Price cannot be negative')
+    expect(() => calculateDiscount(100, -1)).toThrow('Discount percent must be between 0 and 100')
+    expect(() => calculateDiscount(100, 101)).toThrow('Discount percent must be between 0 and 100')
+  })
+})
+
+describe('calculateIncrease', () => {
+  it('should calculate increase amount and final value', () => {
+    const result = calculateIncrease(200, 15)
+    expect(result.increaseAmount).toBe(30)
+    expect(result.finalValue).toBe(230)
+  })
+
+  it('should throw on negative inputs', () => {
+    expect(() => calculateIncrease(-1, 10)).toThrow('Base value cannot be negative')
+    expect(() => calculateIncrease(100, -1)).toThrow('Increase percent cannot be negative')
+  })
+})
+
+describe('interests', () => {
+  it('should calculate simple interest', () => {
+    const result = calculateSimpleInterest(1000, 5, 2)
+    expect(result.interest).toBe(100)
+    expect(result.totalAmount).toBe(1100)
+  })
+
+  it('should calculate compound interest', () => {
+    const result = calculateCompoundInterest(1000, 12, 1, 12)
+    expect(result.finalAmount).toBeCloseTo(1126.825, 3)
+    expect(result.interest).toBeCloseTo(126.825, 3)
+  })
+
+  it('should validate interest input ranges', () => {
+    expect(() => calculateSimpleInterest(-1, 5, 1)).toThrow('Principal cannot be negative')
+    expect(() => calculateCompoundInterest(1000, 5, 1, 0)).toThrow(
+      'Compounds per year must be greater than zero'
+    )
+  })
+})
+
+describe('calculateBMI', () => {
+  it('should calculate BMI correctly', () => {
+    expect(calculateBMI(70, 175)).toBeCloseTo(22.857, 3)
+  })
+
+  it('should throw on invalid anthropometric values', () => {
+    expect(() => calculateBMI(0, 175)).toThrow('Weight must be greater than zero')
+    expect(() => calculateBMI(70, 0)).toThrow('Height must be greater than zero')
+  })
+})
+
+describe('calculateFuelConsumption', () => {
+  it('should calculate consumption metrics', () => {
+    const result = calculateFuelConsumption(500, 25)
+    expect(result.kmPerLiter).toBe(20)
+    expect(result.litersPer100Km).toBe(5)
+  })
+
+  it('should reject invalid distances and liters', () => {
+    expect(() => calculateFuelConsumption(0, 10)).toThrow('Distance must be greater than zero')
+    expect(() => calculateFuelConsumption(100, 0)).toThrow('Fuel liters must be greater than zero')
+  })
+})
+
+describe('areas', () => {
+  it('should calculate rectangle and circle areas', () => {
+    expect(calculateRectangleArea(10, 5)).toBe(50)
+    expect(calculateCircleArea(2)).toBeCloseTo(12.5663706, 6)
+  })
+
+  it('should throw on negative dimensions', () => {
+    expect(() => calculateRectangleArea(-1, 2)).toThrow('Rectangle dimensions cannot be negative')
+    expect(() => calculateCircleArea(-1)).toThrow('Radius cannot be negative')
+  })
+})
+
+describe('calculateWeightedAverage', () => {
+  it('should compute weighted average', () => {
+    const result = calculateWeightedAverage([24, 30, 28], [6, 9, 3])
+    expect(result).toBeCloseTo(27.666667, 6)
+  })
+
+  it('should reject invalid weight vectors', () => {
+    expect(() => calculateWeightedAverage([], [])).toThrow('Values cannot be empty')
+    expect(() => calculateWeightedAverage([1], [1, 2])).toThrow('Values and weights must have same length')
+    expect(() => calculateWeightedAverage([1], [0])).toThrow('Total weight cannot be zero')
+  })
+})
+
+describe('convertCelsius', () => {
+  it('should convert Celsius to Fahrenheit and Kelvin', () => {
+    const result = convertCelsius(25)
+    expect(result.fahrenheit).toBe(77)
+    expect(result.kelvin).toBeCloseTo(298.15, 2)
+  })
+
+  it('should reject non-finite Celsius values', () => {
+    expect(() => convertCelsius(Number.POSITIVE_INFINITY)).toThrow('Celsius value must be finite')
   })
 })

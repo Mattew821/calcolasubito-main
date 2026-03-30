@@ -399,3 +399,14 @@ Questa guida copre la strategia ufficiale per aumentare la visibilitÃ  su Goog
     - `validation_framework.py --no-interactive --max-attempts-per-problem 0 --max-global-iterations 0` -> PASS (0 problemi)
     - Stress loop qualità `test/lint/build` -> 5/5 PASS
 
+- Recursive verification cycle (2026-03-30, run 5):
+  - Implementati 10 nuovi calcolatori (totale portale: 15)
+  - Home e sitemap aggiornate con i nuovi slug
+  - Validazione qualità completa:
+    - `npm test -- --runInBand` -> PASS (57/57)
+    - `npm run lint` -> PASS
+    - `npm run build` -> PASS
+    - `validation_framework.py --no-interactive --max-attempts-per-problem 0 --max-global-iterations 0` -> PASS (0 problemi)
+    - Stress loop qualità `test/lint/build` -> 5/5 PASS
+  - Smoke test locale su tutte le nuove route: 200 OK
+

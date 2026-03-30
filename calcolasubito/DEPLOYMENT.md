@@ -332,3 +332,16 @@ Stato task esterni:
     - JSON-LD su `/percentuali`: parse OK 3/3
     - `GA_SCRIPT_LOADED=False`
 
+- Recursive verification cycle (2026-03-30, run 5):
+  - Estensione portale: +10 nuovi calcolatori (totale 15)
+    - `/sconto-percentuale`, `/aumento-percentuale`, `/interesse-semplice`, `/interesse-composto`, `/indice-massa-corporea`, `/consumo-carburante`, `/area-rettangolo`, `/area-cerchio`, `/media-voti`, `/conversione-temperatura`
+  - Formula engine aggiornato con nuove funzioni e guardie su edge case
+  - Smoke runtime locale (`next start`):
+    - tutte le 15 route calcolatori + `/about` + `/sitemap.xml` + `/robots.txt` -> 200
+  - Quality gates:
+    - `npm test -- --runInBand` -> PASS (57/57)
+    - `npm run lint` -> PASS
+    - `npm run build` -> PASS
+    - `validation_framework.py --no-interactive --max-attempts-per-problem 0 --max-global-iterations 0` -> PASS (0 problemi)
+    - stress loop `test/lint/build` -> 5/5 PASS
+

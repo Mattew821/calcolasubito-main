@@ -55,13 +55,23 @@ calcolasubito/
 â””â”€â”€ package.json          # Dipendenze npm
 ```
 
-## Calcolatori Implementati
+## Calcolatori Implementati (15)
 
 1. **Calcolo Percentuali** - Calcola percentuali e proporzioni
 2. **Giorni tra Date** - Calcola giorni/settimane/mesi tra due date
 3. **Scorporo IVA** - Calcola imponibile e IVA da importi lordi/netti
-4. **Codice Fiscale** - Genera il codice fiscale italiano
+4. **Codice Fiscale** - Genera/verifica il codice fiscale italiano
 5. **Rata Mutuo** - Calcola rata mensile e ammortamento
+6. **Sconto Percentuale** - Calcola risparmio e prezzo finale
+7. **Aumento Percentuale** - Calcola incremento e valore finale
+8. **Interesse Semplice** - Calcola interessi lineari e montante
+9. **Interesse Composto** - Simula capitalizzazione periodica
+10. **Indice Massa Corporea (BMI)** - Calcola BMI e fascia indicativa
+11. **Consumo Carburante** - Calcola km/l e l/100km
+12. **Area Rettangolo** - Calcola area da base e altezza
+13. **Area Cerchio** - Calcola area dal raggio
+14. **Media Voti Ponderata** - Calcola media con pesi/crediti
+15. **Conversione Temperatura** - Converte Celsius in Fahrenheit/Kelvin
 
 ## Build e Deploy
 
@@ -114,7 +124,7 @@ vercel
 - [ ] AdSense request
 
 ### Fase 3 (Mese 2-3)
-- [ ] Aggiungi altri 10 calcolatori
+- [x] Aggiungi altri 10 calcolatori
 - [ ] Link building
 - [ ] Affiliazioni (Fiscozen, Flextax, etc.)
 

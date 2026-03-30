@@ -8,6 +8,16 @@ const calculators = [
   { id: 'scorporo-iva', title: 'Calcolo Scorporo IVA', volume: 'Molto Alto' },
   { id: 'codice-fiscale', title: 'Calcolo Codice Fiscale', volume: 'Molto Alto' },
   { id: 'rata-mutuo', title: 'Calcolo Rata Mutuo', volume: 'Alto' },
+  { id: 'sconto-percentuale', title: 'Calcolo Sconto Percentuale', volume: 'Alto' },
+  { id: 'aumento-percentuale', title: 'Calcolo Aumento Percentuale', volume: 'Alto' },
+  { id: 'interesse-semplice', title: 'Calcolo Interesse Semplice', volume: 'Medio' },
+  { id: 'interesse-composto', title: 'Calcolo Interesse Composto', volume: 'Medio' },
+  { id: 'indice-massa-corporea', title: 'Calcolo BMI', volume: 'Alto' },
+  { id: 'consumo-carburante', title: 'Calcolo Consumo Carburante', volume: 'Medio' },
+  { id: 'area-rettangolo', title: 'Calcolo Area Rettangolo', volume: 'Medio' },
+  { id: 'area-cerchio', title: 'Calcolo Area Cerchio', volume: 'Medio' },
+  { id: 'media-voti', title: 'Calcolo Media Voti Ponderata', volume: 'Alto' },
+  { id: 'conversione-temperatura', title: 'Conversione Temperatura', volume: 'Medio' },
 ]
 
 export default function Home() {
