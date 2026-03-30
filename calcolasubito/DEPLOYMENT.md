@@ -422,3 +422,32 @@ Stato task esterni:
   - Esito:
     - nessun bug applicativo riproducibile; unico issue emerso era infrastrutturale/test-runner (parallelismo), risolto con sequenziamento.
 
+
+- Recursive verification cycle (2026-03-31, security hardening):
+  - Threat mitigation applicata in edge middleware:
+    - blocco scanner path/file comuni (es. `/wp-admin`, `/.env`, `phpmyadmin`, probe php/sql)
+    - blocco metodi HTTP non ammessi sulle pagine pubbliche (`Allow: GET, HEAD, OPTIONS`)
+    - blocco query malevole e user-agent di scanner noti
+    - rate limiting IP su due livelli:
+      - burst limit (default `80 req / 10s`, block `120s`)
+      - window limit (default `240 req / 60s`, block `600s`)
+  - Nuovi moduli e test:
+    - `lib/security/request-guard.ts`
+    - `lib/security/rate-limiter.ts`
+    - `lib/__tests__/request-guard.test.ts`
+    - `lib/__tests__/rate-limiter.test.ts`
+  - Configurazione:
+    - `.env.example` aggiornato con variabili `REQUEST_RATE_LIMIT_*`
+  - Quality gates:
+    - `npm test -- --runInBand` -> PASS (103/103)
+    - `npm run lint` -> PASS
+    - `npm run build` -> PASS
+    - `python validation_framework.py --no-interactive --no-auto-git-push --max-attempts-per-problem 2 --max-global-iterations 2` -> PASS (0 problemi)
+  - Runtime checks in `next start` (porta 3200/3202):
+    - `/` -> 200
+    - `/wp-admin` -> 403
+    - `/percentuali?q=%27%20OR%201%3D1--` -> 403
+    - `POST /percentuali` -> 405
+    - stress rapido 120 request su `/percentuali` -> `200:79`, `429:41` (rate limit attivo)
+  - Esito:
+    - nessun errore residuo rilevato; baseline anti-bot/flood attiva lato applicazione.

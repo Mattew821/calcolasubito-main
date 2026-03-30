@@ -16,6 +16,11 @@ Portale di calcolatori online gratuiti in italiano, ottimizzato per SEO, perform
   - export/import snapshot JSON
   - azioni rapide: copia link, condividi, stampa, reset form, ricalcola
 - Redirect canonico host in produzione verso `calcolasubito.vercel.app`
+- Hardening sicurezza edge in `middleware.ts`:
+  - blocco metodi HTTP non necessari (`POST`, `PUT`, ecc.) sulle pagine pubbliche
+  - blocco path e probe tipici da scanner (`/wp-admin`, `/.env`, `phpmyadmin`, ecc.)
+  - blocco query e user-agent malevoli noti
+  - rate limiting per IP su due livelli (burst + finestra principale) con risposta `429`
 - Google Analytics GA4 con tracking page-view anche sulle navigazioni interne
 - Nuovo calcolatore: `numeri-casuali`
 - Nuovi calcolatori fiscali/lavoro:
@@ -65,6 +70,23 @@ Esempio `.env.local`:
 ```bash
 NEXT_PUBLIC_BASE_URL=https://calcolasubito.vercel.app
 ```
+
+## Configurazione sicurezza anti-abuso (opzionale)
+
+Le soglie di protezione edge sono configurabili via env:
+
+```bash
+REQUEST_RATE_LIMIT_DISABLED=false
+REQUEST_RATE_LIMIT_WINDOW_MS=60000
+REQUEST_RATE_LIMIT_MAX_PER_WINDOW=240
+REQUEST_RATE_LIMIT_BLOCK_MS=600000
+REQUEST_RATE_LIMIT_BURST_WINDOW_MS=10000
+REQUEST_RATE_LIMIT_BURST_MAX=80
+REQUEST_RATE_LIMIT_BURST_BLOCK_MS=120000
+REQUEST_RATE_LIMIT_MAX_KEYS=20000
+```
+
+Nota: il rate limit in-memory a livello middleware riduce flood/bot semplici, ma non sostituisce un WAF/CDN enterprise.
 
 ## Calcolatori disponibili (23)
 
