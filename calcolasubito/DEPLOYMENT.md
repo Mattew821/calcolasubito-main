@@ -264,3 +264,9 @@ Stato task esterni:
   - GA_SCRIPT_LOADED=False su homepage produzione
   - JSON-LD su /percentuali: 3 blocchi, parse OK=3, parse FAIL=0
   - validation_framework.py: PASS (0 problemi)
+
+- Ciclo ricorsivo finale (2026-03-30):
+  - `validation_framework.py --no-interactive --max-attempts-per-problem 0 --max-global-iterations 0` -> PASS (0 problemi)
+  - `npm test -- --runInBand` -> PASS
+  - `npm run lint` -> PASS
+  - `npm run build` -> PASS

@@ -1,4 +1,4 @@
-# CalcolaSubito.it
+﻿# CalcolaSubito.it
 
 Suite di calcolatori online gratuiti per l'Italia, ottimizzati per SEO e user experience.
 
@@ -28,31 +28,31 @@ Visita `http://localhost:3000` nel browser.
 
 ```
 calcolasubito/
-├── app/                    # Next.js App Router
-│   ├── layout.tsx         # Layout principale
-│   ├── page.tsx           # Homepage
-│   ├── percentuali/       # Calcolatore percentuali
-│   ├── giorni-tra-date/   # Calcolatore giorni
-│   ├── scorporo-iva/      # Calcolatore IVA
-│   ├── codice-fiscale/    # Calcolatore codice fiscale
-│   ├── rata-mutuo/        # Calcolatore mutuo
-│   ├── privacy/           # Pagina privacy
-│   ├── cookie/            # Pagina cookie policy
-│   └── sitemap.ts         # Sitemap XML
-├── components/            # Componenti React
-│   ├── Header.tsx        # Header navigazione
-│   ├── Footer.tsx        # Footer
-│   └── Calculator.tsx    # Wrapper calcolatore generico
-├── lib/
-│   └── calculations.ts   # Utility funzioni calcolo
-├── styles/
-│   └── globals.css       # Stili globali Tailwind
-├── public/
-│   └── robots.txt        # Robots.txt per SEO
-├── tailwind.config.ts    # Configurazione Tailwind
-├── next.config.ts        # Configurazione Next.js
-├── tsconfig.json         # Configurazione TypeScript
-└── package.json          # Dipendenze npm
+â”œâ”€â”€ app/                    # Next.js App Router
+â”‚   â”œâ”€â”€ layout.tsx         # Layout principale
+â”‚   â”œâ”€â”€ page.tsx           # Homepage
+â”‚   â”œâ”€â”€ percentuali/       # Calcolatore percentuali
+â”‚   â”œâ”€â”€ giorni-tra-date/   # Calcolatore giorni
+â”‚   â”œâ”€â”€ scorporo-iva/      # Calcolatore IVA
+â”‚   â”œâ”€â”€ codice-fiscale/    # Calcolatore codice fiscale
+â”‚   â”œâ”€â”€ rata-mutuo/        # Calcolatore mutuo
+â”‚   â”œâ”€â”€ privacy/           # Pagina privacy
+â”‚   â”œâ”€â”€ cookie/            # Pagina cookie policy
+â”‚   â””â”€â”€ sitemap.ts         # Sitemap XML
+â”œâ”€â”€ components/            # Componenti React
+â”‚   â”œâ”€â”€ Header.tsx        # Header navigazione
+â”‚   â”œâ”€â”€ Footer.tsx        # Footer
+â”‚   â””â”€â”€ Calculator.tsx    # Wrapper calcolatore generico
+â”œâ”€â”€ lib/
+â”‚   â””â”€â”€ calculations.ts   # Utility funzioni calcolo
+â”œâ”€â”€ styles/
+â”‚   â””â”€â”€ globals.css       # Stili globali Tailwind
+â”œâ”€â”€ public/
+â”‚   â””â”€â”€ robots.txt        # Robots.txt per SEO
+â”œâ”€â”€ tailwind.config.ts    # Configurazione Tailwind
+â”œâ”€â”€ next.config.ts        # Configurazione Next.js
+â”œâ”€â”€ tsconfig.json         # Configurazione TypeScript
+â””â”€â”€ package.json          # Dipendenze npm
 ```
 
 ## Calcolatori Implementati
@@ -82,13 +82,13 @@ vercel
 
 ## SEO e Performance
 
-- ✅ Static Site Generation (SSG) per performance eccellente
-- ✅ Meta tags ottimizzati per ogni pagina
-- ✅ Open Graph e schema JSON-LD
-- ✅ Sitemap.xml dinamica
-- ✅ Robots.txt configurato
-- ✅ Mobile-first responsive design
-- ✅ PageSpeed Insights target: 95+
+- âœ… Static Site Generation (SSG) per performance eccellente
+- âœ… Meta tags ottimizzati per ogni pagina
+- âœ… Open Graph e schema JSON-LD
+- âœ… Sitemap.xml dinamica
+- âœ… Robots.txt configurato
+- âœ… Mobile-first responsive design
+- âœ… PageSpeed Insights target: 95+
 
 ## Stack Tecnico
 
@@ -101,15 +101,15 @@ vercel
 
 ## Roadmap
 
-### Fase 1 (Settimana 1-2) ✅
+### Fase 1 (Settimana 1-2) âœ…
 - [x] Setup progetto
 - [x] 5 calcolatori base
 - [x] Layout e componenti
-- [ ] Deploy su Vercel
+- [x] Deploy su Vercel
 
 ### Fase 2 (Settimana 3-4)
 - [ ] SEO content writing
-- [ ] Meta tags e schema markup
+- [x] Meta tags e schema markup
 - [ ] Google Search Console setup
 - [ ] AdSense request
 
@@ -127,12 +127,12 @@ vercel
 
 | Milestone | Target | Timeline |
 |-----------|--------|----------|
-| 5 calcolatori live | ✅ | Settimana 1-2 |
+| 5 calcolatori live | âœ… | Settimana 1-2 |
 | Google Search Console | 10+ indexed | Mese 1 |
 | Traffico | 500-1K pageview | Mese 1-2 |
-| Entrate AdSense | 5-30€ | Mese 2 |
+| Entrate AdSense | 5-30â‚¬ | Mese 2 |
 | 15 calcolatori | +10K pageview | Mese 3-4 |
-| **100€+/mese** | 20K+ pageview | Mese 7-8 ✅ |
+| **100â‚¬+/mese** | 20K+ pageview | Mese 7-8 âœ… |
 
 ## Contribuendo
 
@@ -145,3 +145,4 @@ MIT License - Vedi LICENSE file per dettagli.
 ## Contatti
 
 Per domande o suggerimenti, apri un issue nel repository.
+

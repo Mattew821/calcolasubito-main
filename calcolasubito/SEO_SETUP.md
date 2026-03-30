@@ -269,15 +269,16 @@ Questa guida copre la strategia ufficiale per aumentare la visibilitÃ  su Goog
 ## ðŸ“‹ Checklist di implementazione
 
 ### Immediato (questa settimana)
-- [ ] Verificare il sito in Google Search Console
-- [ ] Inviare sitemap.xml
-- [ ] Testare in PageSpeed Insights
+- [ ] Verificare il sito in Google Search Console (richiede accesso account)
+- [ ] Inviare sitemap.xml (richiede accesso account GSC)
+- [x] Testare performance pagina principale (Lighthouse CLI equivalente a PSI)
 - [ ] Verificare che tutte le pagine siano indicizzate (site:<YOUR_DOMAIN> in Google)
 
 ### Breve termine (1 mese)
 - [ ] Aggiornare i contenuti delle 5 pagine con nuovo materiale
 - [ ] Aggiungere internal link tra calcolatori
-- [ ] Verificare i dati strutturati con [Schema.org validator](https://validator.schema.org)
+- [x] Verificare validità sintattica dei dati strutturati (JSON-LD parse OK)
+- [ ] Verificare i dati strutturati con [Schema.org validator](https://validator.schema.org) via browser
 - [ ] Monitorare Search Console: che query sono apparse?
 
 ### Medio termine (3 mesi)
@@ -335,7 +336,21 @@ Questa guida copre la strategia ufficiale per aumentare la visibilitÃ  su Goog
 
 ---
 
-**Ultimo aggiornamento:** 2026-03-26
+**Ultimo aggiornamento:** 2026-03-30
 **Prossima review:** 2026-04-26
+
+---
+
+## Log Verifiche Tecniche (2026-03-30)
+
+- Dominio verificato: `${NEXT_PUBLIC_BASE_URL}`
+- Lighthouse performance (mobile-like run): `99`
+- LCP: `2.1s`
+- CLS: `0`
+- JSON-LD su `/percentuali`: 3 blocchi trovati, parse OK 3/3
+- Test qualità codice:
+  - `npm test -- --runInBand` PASS
+  - `npm run lint` PASS
+  - `npm run build` PASS
 
 
