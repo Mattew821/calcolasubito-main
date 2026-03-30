@@ -228,7 +228,7 @@ export default function ScorporoIVA() {
 
           {/* Result */}
           {result && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 space-y-4">
+            <div aria-live="polite" role="status" className="bg-blue-50 border border-blue-200 rounded-lg p-6 space-y-4">
               <div>
                 <p className="text-sm text-gray-600">Importo Lordo (IVA inclusa):</p>
                 <p className="text-2xl font-bold text-blue-600">

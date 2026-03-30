@@ -162,7 +162,7 @@ export default function CalcoloGiorni() {
 
           {/* Result */}
           {result !== null && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <div aria-live="polite" role="status" className="bg-blue-50 border border-blue-200 rounded-lg p-6">
               <p className="text-gray-600 text-sm mb-2">Differenza:</p>
               <p className="text-4xl font-bold text-blue-600 mb-4">
                 {result.toLocaleString('it-IT')} giorni

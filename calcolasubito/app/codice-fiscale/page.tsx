@@ -396,7 +396,7 @@ export default function CalcoloCodiceFiscale() {
 
           {/* Result */}
           {codiceFiscale && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <div aria-live="polite" role="status" className="bg-blue-50 border border-blue-200 rounded-lg p-6">
               <p className="text-gray-600 text-sm mb-2">
                 {currentMode === 'italian' ? 'Codice Fiscale:' : 'Codice Confermato:'}
               </p>
