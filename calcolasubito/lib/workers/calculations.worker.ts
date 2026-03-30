@@ -102,6 +102,9 @@ function calculatePercentage(number: number, percentage: number): number {
 }
 
 function calculatePercentageOf(part: number, total: number): number {
+  if (total === 0) {
+    throw new Error('Total cannot be zero')
+  }
   return (part / total) * 100
 }
 
@@ -189,8 +192,10 @@ function calculateCodiceFiscaleSimplified(
   const nameVowels = extractLetters(name, 'vowels')
 
   let namePartBase = ''
+  // Algoritmo ufficiale Agenzia delle Entrate:
+  // Se consonanti > 3: prendi la 1a, 3a e 4a consonante (indici 0, 2, 3)
   if (nameConsonants.length > 3) {
-    namePartBase = (nameConsonants[0] ?? '') + (nameConsonants[1] ?? '') + (nameConsonants[3] ?? '')
+    namePartBase = (nameConsonants[0] ?? '') + (nameConsonants[2] ?? '') + (nameConsonants[3] ?? '')
   } else {
     namePartBase = nameConsonants.slice(0, 3).join('')
   }

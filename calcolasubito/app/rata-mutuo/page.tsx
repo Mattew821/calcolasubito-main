@@ -133,8 +133,8 @@ export default function CalcoloRataMutuo() {
             <div className="flex gap-4">
               <button
                 type="submit"
-                disabled={isLoading}
-                aria-label={isLoading ? "Calcolo in corso" : "Calcola"}
+                disabled={isLoading || isLimited}
+                aria-label={isLoading ? "Calcolo in corso" : isLimited ? "Limite di calcoli raggiunto" : "Calcola"}
                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {isLoading ? (
@@ -142,6 +142,8 @@ export default function CalcoloRataMutuo() {
                     <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" aria-hidden="true"></span>
                     Calcolo...
                   </>
+                ) : isLimited ? (
+                  'Limite raggiunto'
                 ) : (
                   'Calcola'
                 )}
@@ -149,11 +151,28 @@ export default function CalcoloRataMutuo() {
               <button
                 type="button"
                 onClick={reset}
-                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 rounded-lg transition-colors"
+                disabled={isLoading}
+                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 Resetta
               </button>
             </div>
+
+            {/* Rate limit warning */}
+            {remainingRequests <= 2 && remainingRequests > 0 && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <p className="text-sm text-yellow-800">
+                  ⚠️ <strong>{remainingRequests}</strong> calcolo{remainingRequests === 1 ? '' : 'i'} rimasto{remainingRequests === 1 ? '' : 'i'} in questo minuto
+                </p>
+              </div>
+            )}
+            {isLimited && resetTime && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <p className="text-sm text-red-800">
+                  Limite raggiunto. Riprova tra {Math.ceil((resetTime - Date.now()) / 1000)} secondi
+                </p>
+              </div>
+            )}
           </form>
 
           {/* Ad 1 */}
