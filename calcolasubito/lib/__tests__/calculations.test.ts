@@ -436,3 +436,77 @@ describe('convertLengthFromMeters', () => {
     expect(() => convertLengthFromMeters(Number.NaN)).toThrow('Meters value must be finite')
   })
 })
+
+describe('deterministic grid invariants', () => {
+  it('should preserve accounting identity for discount across a wide grid', () => {
+    for (let price = 0; price <= 1000; price += 25) {
+      for (let discount = 0; discount <= 100; discount += 5) {
+        const result = calculateDiscount(price, discount)
+        expect(result.discountAmount + result.finalPrice).toBeCloseTo(price, 10)
+        expect(result.finalPrice).toBeGreaterThanOrEqual(0)
+      }
+    }
+  })
+
+  it('should preserve accounting identity for increases across a wide grid', () => {
+    for (let base = 0; base <= 1000; base += 20) {
+      for (let increase = 0; increase <= 150; increase += 3) {
+        const result = calculateIncrease(base, increase)
+        expect(result.finalValue - result.increaseAmount).toBeCloseTo(base, 10)
+        expect(result.finalValue).toBeGreaterThanOrEqual(base)
+      }
+    }
+  })
+
+  it('should keep temperature conversion formulas consistent across grid', () => {
+    for (let celsius = -100; celsius <= 250; celsius += 5) {
+      const result = convertCelsius(celsius)
+      const backFromF = ((result.fahrenheit - 32) * 5) / 9
+      const backFromK = result.kelvin - 273.15
+      expect(backFromF).toBeCloseTo(celsius, 10)
+      expect(backFromK).toBeCloseTo(celsius, 10)
+    }
+  })
+
+  it('should keep length conversion internally consistent across grid', () => {
+    for (let meters = 0; meters <= 10000; meters += 137) {
+      const result = convertLengthFromMeters(meters)
+      expect(result.kilometers * 1000).toBeCloseTo(meters, 10)
+      expect(result.centimeters / 100).toBeCloseTo(meters, 10)
+      expect(result.millimeters / 1000).toBeCloseTo(meters, 10)
+      expect(result.feet / 3.280839895).toBeCloseTo(meters, 8)
+      expect(result.inches / 39.37007874).toBeCloseTo(meters, 8)
+    }
+  })
+
+  it('should keep tip split identities across grid', () => {
+    for (let bill = 0; bill <= 500; bill += 25) {
+      for (let tipPercent = 0; tipPercent <= 30; tipPercent += 5) {
+        for (let people = 1; people <= 10; people++) {
+          const result = calculateTip(bill, tipPercent, people)
+          expect(result.tipAmount).toBeCloseTo((bill * tipPercent) / 100, 10)
+          expect(result.totalAmount).toBeCloseTo(bill + result.tipAmount, 10)
+          expect(result.perPerson * people).toBeCloseTo(result.totalAmount, 10)
+        }
+      }
+    }
+  })
+
+  it('should match mortgage and loan monthly payment formulas on shared domains', () => {
+    const principals = [5000, 10000, 50000, 200000]
+    const rates = [0, 1.5, 3.8, 7.25]
+    const monthSets = [12, 24, 60, 120, 360]
+
+    for (const principal of principals) {
+      for (const annualRate of rates) {
+        for (const months of monthSets) {
+          const loan = calculateLoanPayment(principal, annualRate, months)
+          const mortgage = calculateMortgage(principal, annualRate, months)
+          expect(loan.monthlyPayment).toBeCloseTo(mortgage.monthlyPayment, 10)
+          expect(loan.totalAmountPaid).toBeCloseTo(mortgage.totalAmountPaid, 8)
+          expect(loan.totalInterest).toBeCloseTo(mortgage.totalInterest, 8)
+        }
+      }
+    }
+  })
+})
