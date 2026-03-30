@@ -8,6 +8,7 @@ Portale di calcolatori online gratuiti in italiano, ottimizzato per SEO, perform
 - Homepage con barra di ricerca istantanea dei calcolatori
 - Filtro per categorie (`Finanza`, `Fisco`, `Matematica`, `Salute`, `Scuola`, `Utilita`)
 - Catalogo centralizzato in `lib/calculator-catalog.ts` per mantenere coerenti home + sitemap
+- Nuovo calcolatore: `numeri-casuali`
 - 5 nuovi calcolatori popolari:
   - `calcolo-eta`
   - `rata-prestito`
@@ -52,7 +53,7 @@ Esempio `.env.local`:
 NEXT_PUBLIC_BASE_URL=https://vercel.vercel.app
 ```
 
-## Calcolatori disponibili (20)
+## Calcolatori disponibili (21)
 
 1. Calcolo Percentuali
 2. Giorni tra Date
@@ -72,8 +73,9 @@ NEXT_PUBLIC_BASE_URL=https://vercel.vercel.app
 16. Media Voti Ponderata
 17. Conversione Temperatura
 18. Convertitore Lunghezze
-19. Calcolo Età
-20. Calcolo Mancia
+19. Numeri Casuali
+20. Calcolo Età
+21. Calcolo Mancia
 
 ## Stack
 

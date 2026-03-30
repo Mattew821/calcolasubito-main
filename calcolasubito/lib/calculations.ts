@@ -591,3 +591,57 @@ export function convertLengthFromMeters(meters: number): LengthConversionResult 
     inches: meters * 39.37007874,
   }
 }
+
+// ===== NUMERI CASUALI =====
+export interface RandomNumbersResult {
+  numbers: number[]
+  min: number
+  max: number
+  count: number
+  allowDuplicates: boolean
+}
+
+export function generateRandomIntegers(
+  min: number,
+  max: number,
+  count: number,
+  allowDuplicates: boolean
+): RandomNumbersResult {
+  if (!Number.isInteger(min) || !Number.isInteger(max)) {
+    throw new Error('Min and max must be integers')
+  }
+  if (min > max) {
+    throw new Error('Min cannot be greater than max')
+  }
+  if (!Number.isInteger(count) || count <= 0) {
+    throw new Error('Count must be a positive integer')
+  }
+
+  const rangeSize = max - min + 1
+
+  if (!allowDuplicates && count > rangeSize) {
+    throw new Error('Count cannot exceed range size when duplicates are disabled')
+  }
+
+  const numbers: number[] = []
+
+  if (allowDuplicates) {
+    for (let i = 0; i < count; i++) {
+      numbers.push(min + Math.floor(Math.random() * rangeSize))
+    }
+  } else {
+    const selected = new Set<number>()
+    while (selected.size < count) {
+      selected.add(min + Math.floor(Math.random() * rangeSize))
+    }
+    numbers.push(...selected)
+  }
+
+  return {
+    numbers,
+    min,
+    max,
+    count,
+    allowDuplicates,
+  }
+}

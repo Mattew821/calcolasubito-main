@@ -22,6 +22,7 @@ import {
   calculateTip,
   calculateCalorieNeeds,
   convertLengthFromMeters,
+  generateRandomIntegers,
 } from '../calculations'
 
 /**
@@ -434,6 +435,49 @@ describe('convertLengthFromMeters', () => {
   it('should reject invalid meter values', () => {
     expect(() => convertLengthFromMeters(-1)).toThrow('Meters value cannot be negative')
     expect(() => convertLengthFromMeters(Number.NaN)).toThrow('Meters value must be finite')
+  })
+})
+
+describe('generateRandomIntegers', () => {
+  it('should generate numbers within range when duplicates are allowed', () => {
+    const result = generateRandomIntegers(1, 10, 25, true)
+    expect(result.numbers.length).toBe(25)
+    expect(result.min).toBe(1)
+    expect(result.max).toBe(10)
+    expect(result.count).toBe(25)
+    expect(result.allowDuplicates).toBe(true)
+
+    for (const value of result.numbers) {
+      expect(Number.isInteger(value)).toBe(true)
+      expect(value).toBeGreaterThanOrEqual(1)
+      expect(value).toBeLessThanOrEqual(10)
+    }
+  })
+
+  it('should generate unique numbers when duplicates are disabled', () => {
+    const result = generateRandomIntegers(1, 10, 10, false)
+    const unique = new Set(result.numbers)
+
+    expect(result.numbers.length).toBe(10)
+    expect(unique.size).toBe(10)
+    expect([...result.numbers].sort((a, b) => a - b)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+  })
+
+  it('should support single-value ranges', () => {
+    const duplicatesEnabled = generateRandomIntegers(7, 7, 3, true)
+    expect(duplicatesEnabled.numbers).toEqual([7, 7, 7])
+
+    const duplicatesDisabled = generateRandomIntegers(7, 7, 1, false)
+    expect(duplicatesDisabled.numbers).toEqual([7])
+  })
+
+  it('should validate random number generation inputs', () => {
+    expect(() => generateRandomIntegers(1.5, 10, 2, true)).toThrow('Min and max must be integers')
+    expect(() => generateRandomIntegers(10, 1, 2, true)).toThrow('Min cannot be greater than max')
+    expect(() => generateRandomIntegers(1, 10, 0, true)).toThrow('Count must be a positive integer')
+    expect(() => generateRandomIntegers(1, 3, 4, false)).toThrow(
+      'Count cannot exceed range size when duplicates are disabled'
+    )
   })
 })
 

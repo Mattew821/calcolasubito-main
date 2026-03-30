@@ -153,6 +153,14 @@ export const CALCULATOR_CATALOG: CalculatorCatalogEntry[] = [
     tags: ['conversione', 'lunghezza', 'metri', 'miglia', 'piedi'],
   },
   {
+    id: 'numeri-casuali',
+    title: 'Numeri Casuali',
+    category: 'Matematica',
+    popularity: 'Alto',
+    description: 'Genera estrazioni casuali con intervallo e quantita personalizzati.',
+    tags: ['numeri casuali', 'estrazione', 'random', 'matematica'],
+  },
+  {
     id: 'calcolo-eta',
     title: 'Calcolo Età',
     category: 'Utilita',
