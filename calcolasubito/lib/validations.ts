@@ -46,7 +46,9 @@ export const scorporoIvaSchema = z.object({
 export type ScorporoIvaInput = z.infer<typeof scorporoIvaSchema>
 
 // Codice Fiscale Calculator
-export const codiceFiscaleSchema = z.object({
+// Support for Italian citizens, foreigners in Italy, and foreigners abroad
+export const codiceFiscaleItalianSchema = z.object({
+  mode: z.literal('italian'),
   surname: z.string()
     .min(2, 'Il cognome deve avere almeno 2 caratteri')
     .max(100, 'Il cognome non deve superare 100 caratteri')
@@ -63,6 +65,26 @@ export const codiceFiscaleSchema = z.object({
   gender: z.enum(['M', 'F']),
 })
 
+export const codiceFiscaleForeignerItalySchema = z.object({
+  mode: z.literal('foreigner_italy'),
+  codiceFiscale: z.string()
+    .length(16, 'Il codice fiscale deve essere di 16 caratteri')
+    .regex(/^[A-Z0-9]{16}$/, 'Il codice fiscale deve contenere solo lettere maiuscole e numeri'),
+})
+
+export const codiceFiscaleForeignerAbroadSchema = z.object({
+  mode: z.literal('foreigner_abroad'),
+})
+
+export const codiceFiscaleSchema = z.discriminatedUnion('mode', [
+  codiceFiscaleItalianSchema,
+  codiceFiscaleForeignerItalySchema,
+  codiceFiscaleForeignerAbroadSchema,
+])
+
+export type CodiceFiscaleItalianInput = z.infer<typeof codiceFiscaleItalianSchema>
+export type CodiceFiscaleForeignerItalyInput = z.infer<typeof codiceFiscaleForeignerItalySchema>
+export type CodiceFiscaleForeignerAbroadInput = z.infer<typeof codiceFiscaleForeignerAbroadSchema>
 export type CodiceFiscaleInput = z.infer<typeof codiceFiscaleSchema>
 
 // Rata Mutuo Calculator
