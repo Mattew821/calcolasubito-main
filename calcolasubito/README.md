@@ -8,6 +8,13 @@ Portale di calcolatori online gratuiti in italiano, ottimizzato per SEO, perform
 - Homepage con barra di ricerca istantanea dei calcolatori
 - Filtro per categorie (`Finanza`, `Fisco`, `Matematica`, `Salute`, `Scuola`, `Utilita`)
 - Catalogo centralizzato in `lib/calculator-catalog.ts` per mantenere coerenti home + sitemap
+- Funzionalita avanzate globali per tutti i calcolatori:
+  - preferiti locali
+  - cronologia calcolatori visitati
+  - snapshot input automatici al submit
+  - ripristino ultimi valori
+  - export/import snapshot JSON
+  - azioni rapide: copia link, condividi, stampa, reset form, ricalcola
 - Nuovo calcolatore: `numeri-casuali`
 - 5 nuovi calcolatori popolari:
   - `calcolo-eta`

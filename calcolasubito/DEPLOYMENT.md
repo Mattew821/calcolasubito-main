@@ -345,3 +345,15 @@ Stato task esterni:
     - `validation_framework.py --no-interactive --max-attempts-per-problem 0 --max-global-iterations 0` -> PASS (0 problemi)
     - stress loop `test/lint/build` -> 5/5 PASS
 
+- Recursive verification cycle (2026-03-30, run 6):
+  - Upgrade funzionalita comuni applicate a tutti i 21 calcolatori via `components/Calculator.tsx`
+    - preferiti locali e lista recenti
+    - snapshot input automatici con ripristino
+    - export/import cronologia JSON
+    - azioni rapide globali: copia link, condivisione, stampa, reset form, ricalcolo
+  - Qualita e verifiche finali:
+    - `npm test -- --runInBand` -> PASS (80/80)
+    - `npm run lint` -> PASS
+    - `npm run build` -> PASS
+    - `python validation_framework.py --no-interactive --no-auto-git-push --max-attempts-per-problem 2 --max-global-iterations 2` -> PASS (0 problemi)
+
