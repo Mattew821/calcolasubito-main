@@ -276,3 +276,13 @@ Stato task esterni:
 
 - Build stability loop (2026-03-30): 3/3 build consecutive PASS.
 
+- Recursive verification cycle (2026-03-30, run 2):
+  - `validation_framework.py --no-interactive --max-attempts-per-problem 0 --max-global-iterations 0` -> PASS (0 problemi)
+  - Test/Lint/Build loop -> 3/3 iterazioni PASS
+  - Produzione `${NEXT_PUBLIC_BASE_URL}`:
+    - `/`, `/percentuali`, `/giorni-tra-date`, `/scorporo-iva`, `/codice-fiscale`, `/rata-mutuo` -> 200
+    - `/sitemap.xml` -> 200
+    - `/robots.txt` -> 200
+    - JSON-LD su `/percentuali`: 3 blocchi, parse OK 3/3
+    - `GA_SCRIPT_LOADED=False` (task esterno ancora aperto)
+

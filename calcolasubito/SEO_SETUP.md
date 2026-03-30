@@ -362,6 +362,12 @@ Questa guida copre la strategia ufficiale per aumentare la visibilitÃ  su Goog
   - Test unitari: 27 PASS
 
 
-- Build stability loop: 3 esecuzioni consecutive PASS su 
-pm run build.
+- Build stability loop: 3 esecuzioni consecutive PASS su `npm run build`.
+
+- Recursive verification cycle (2026-03-30, run 2):
+  - `validation_framework.py --no-interactive --max-attempts-per-problem 0 --max-global-iterations 0` -> PASS (0 problemi)
+  - Test/Lint/Build loop -> 3/3 iterazioni PASS
+  - Produzione `${NEXT_PUBLIC_BASE_URL}`: pagine principali + `sitemap.xml` + `robots.txt` tutte `200`
+  - JSON-LD su `/percentuali`: 3 blocchi trovati, parse OK 3/3
+  - GA script in produzione: non rilevato (`GA_SCRIPT_LOADED=False`)
 
