@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 const ISO_DATE_REGEX = /^(\d{4})-(\d{2})-(\d{2})$/
 const CODICE_CATASTALE_REGEX = /^[A-Za-z][0-9]{3}$/
-const COMUNE_NAME_REGEX = /^[a-zA-ZÀ-ÖØ-öø-ÿ\s'.-]+$/u
+const COMUNE_NAME_REGEX = /^[\p{L}\s'.-]+$/u
 
 function parseStrictIsoDate(date: string): Date | null {
   const match = ISO_DATE_REGEX.exec(date)
@@ -90,11 +90,11 @@ export const codiceFiscaleItalianSchema = z.object({
   surname: z.string()
     .min(2, 'Il cognome deve avere almeno 2 caratteri')
     .max(100, 'Il cognome non deve superare 100 caratteri')
-    .regex(/^[a-zA-Z\s'-]+$/, 'Il cognome può contenere solo lettere, spazi, trattini e apostrofi'),
+    .regex(/^[\p{L}\s'-]+$/u, 'Il cognome può contenere solo lettere, spazi, trattini e apostrofi'),
   name: z.string()
     .min(2, 'Il nome deve avere almeno 2 caratteri')
     .max(100, 'Il nome non deve superare 100 caratteri')
-    .regex(/^[a-zA-Z\s'-]+$/, 'Il nome può contenere solo lettere, spazi, trattini e apostrofi'),
+    .regex(/^[\p{L}\s'-]+$/u, 'Il nome può contenere solo lettere, spazi, trattini e apostrofi'),
   birthDate: z.string()
     .min(1, 'Seleziona una data di nascita')
     .refine(isStrictIsoDate, 'Data di nascita non valida'),
@@ -139,6 +139,8 @@ function validateCodiceFiscaleCheckDigit(cf: string): boolean {
 export const codiceFiscaleForeignerItalySchema = z.object({
   mode: z.literal('foreigner_italy'),
   codiceFiscale: z.string()
+    .trim()
+    .toUpperCase()
     .length(16, 'Il codice fiscale deve essere di 16 caratteri')
     .regex(/^[A-Z0-9]{16}$/, 'Il codice fiscale deve contenere solo lettere maiuscole e numeri')
     .refine(validateCodiceFiscaleCheckDigit, 'Il carattere di controllo del codice fiscale non è valido'),

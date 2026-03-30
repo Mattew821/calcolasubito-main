@@ -87,6 +87,18 @@ describe('codiceFiscale schemas', () => {
     expect(result.success).toBe(true)
   })
 
+  it('accepts accented and international letters for italian mode', () => {
+    const result = codiceFiscaleItalianSchema.safeParse({
+      mode: 'italian',
+      surname: 'Dàvila Łukasz',
+      name: 'José İpek',
+      birthDate: '1988-11-03',
+      birthPlace: 'Forlì',
+      gender: 'M',
+    })
+    expect(result.success).toBe(true)
+  })
+
   it('rejects invalid birthPlace characters for italian mode', () => {
     const result = codiceFiscaleItalianSchema.safeParse({
       mode: 'italian',
@@ -118,13 +130,16 @@ describe('codiceFiscale schemas', () => {
     }
   })
 
-  it('rejects lowercase foreigner codice fiscale format', () => {
+  it('accepts lowercase foreigner codice fiscale format and normalizes it', () => {
     const valid = generateValidCodiceFiscale()
     const lowercase = valid.toLowerCase()
     const result = codiceFiscaleForeignerItalySchema.safeParse({
       mode: 'foreigner_italy',
       codiceFiscale: lowercase,
     })
-    expect(result.success).toBe(false)
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.codiceFiscale).toBe(valid)
+    }
   })
 })

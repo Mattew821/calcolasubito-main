@@ -161,6 +161,27 @@ function calculateIVA(
 
 // ===== CODICE FISCALE =====
 
+const SPECIAL_LETTER_MAP: Record<string, string> = {
+  Æ: 'AE',
+  Œ: 'OE',
+  Ø: 'O',
+  Ł: 'L',
+  Đ: 'D',
+  Ð: 'D',
+  Þ: 'TH',
+}
+
+function normalizeCodiceFiscaleText(value: string): string {
+  const mapped = value
+    .toUpperCase()
+    .replace(/[ÆŒØŁĐÐÞ]/g, (char) => SPECIAL_LETTER_MAP[char] ?? char)
+
+  return mapped
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Z\s]/g, '')
+}
+
 function calculateCodiceFiscaleSimplified(
   surname: string,
   name: string,
@@ -172,7 +193,7 @@ function calculateCodiceFiscaleSimplified(
   const vowels = 'AEIOU'
 
   const extractLetters = (str: string, type: 'consonants' | 'vowels'): string[] => {
-    const cleanStr = str.toUpperCase().replace(/[^A-Z\s]/g, '')
+    const cleanStr = normalizeCodiceFiscaleText(str)
     const parts = cleanStr.split(/\s+/).filter((p) => p.length > 0)
     const letters = type === 'consonants' ? consonants : vowels
     let result: string[] = []
