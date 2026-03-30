@@ -130,7 +130,7 @@ export default function CalcoloRataMutuo() {
             </div>
 
             {/* Buttons */}
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <button
                 type="submit"
                 disabled={isLoading || isLimited}
@@ -187,7 +187,7 @@ export default function CalcoloRataMutuo() {
                   €{result.monthlyPayment.toFixed(2)}
                 </p>
               </div>
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-gray-600">Importo Totale Pagato:</p>
                   <p className="font-semibold text-gray-900">
@@ -219,8 +219,8 @@ export default function CalcoloRataMutuo() {
 
             <section>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">La Formula</h2>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-4">
-                <p className="font-mono text-sm text-blue-900 mb-2">
+              <div className="bg-blue-50 border border-blue-200 p-6 mb-4 equation-box">
+                <p className="font-mono text-sm text-blue-900 mb-2 equation-text">
                   Rata = P × [i(1+i)^n] / [(1+i)^n - 1]
                 </p>
                 <p className="text-sm text-blue-900">

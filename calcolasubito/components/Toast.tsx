@@ -46,9 +46,13 @@ function ToastItem({ id, message, type, duration = 3000, onClose }: ToastItemPro
   }[type]
 
   return (
-    <div role="alert" aria-live="assertive" className={`fixed bottom-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-fadeIn z-50`}>
+    <div
+      role="alert"
+      aria-live="assertive"
+      className={`fixed bottom-4 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:right-4 w-[calc(100%-2rem)] sm:w-auto max-w-sm ${bgColor} text-white px-4 sm:px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-fadeIn z-50`}
+    >
       <span className="text-xl font-bold">{icon}</span>
-      <span>{message}</span>
+      <span className="text-sm sm:text-base break-words">{message}</span>
     </div>
   )
 }

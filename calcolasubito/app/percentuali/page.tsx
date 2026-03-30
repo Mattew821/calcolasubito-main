@@ -92,8 +92,8 @@ export default function CalcoloPercentuali() {
       >
         <div className="space-y-6">
         {/* Mode Selection */}
-        <div className="flex gap-4">
-          <label className="flex items-center cursor-pointer">
+        <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
+          <label className="flex items-start sm:items-center cursor-pointer">
             <input
               type="radio"
               name="mode"
@@ -106,7 +106,7 @@ export default function CalcoloPercentuali() {
               Qual è il {percentage}% di {number}?
             </span>
           </label>
-          <label className="flex items-center cursor-pointer">
+          <label className="flex items-start sm:items-center cursor-pointer">
             <input
               type="radio"
               name="mode"
@@ -161,7 +161,7 @@ export default function CalcoloPercentuali() {
           </div>
 
           {/* Buttons */}
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <button
               type="submit"
               disabled={isLoading || isLimited}
@@ -214,7 +214,7 @@ export default function CalcoloPercentuali() {
         {result !== null && (
           <div aria-live="polite" role="status" className="bg-blue-50 border border-blue-200 rounded-lg p-6">
             <p className="text-gray-600 text-sm mb-2">Risultato:</p>
-            <p className="text-4xl font-bold text-blue-600">
+            <p className="text-3xl sm:text-4xl font-bold text-blue-600 break-words">
               {result.toLocaleString('it-IT', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
@@ -272,8 +272,8 @@ export default function CalcoloPercentuali() {
 
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">La Formula Matematica</h2>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-4">
-              <p className="font-mono text-lg text-blue-900 text-center mb-2">
+            <div className="bg-blue-50 border border-blue-200 p-6 mb-4 equation-box">
+              <p className="font-mono text-base sm:text-lg text-blue-900 mb-2 equation-text">
                 Percentuale = (Numero × Percentuale) ÷ 100
               </p>
             </div>
@@ -288,8 +288,8 @@ export default function CalcoloPercentuali() {
             <p className="text-gray-600">
               <strong>Per il calcolo inverso</strong> (quale percentuale è un numero rispetto a un altro):
             </p>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-4">
-              <p className="font-mono text-lg text-blue-900 text-center">
+            <div className="bg-blue-50 border border-blue-200 p-6 mt-4 equation-box">
+              <p className="font-mono text-base sm:text-lg text-blue-900 equation-text">
                 Percentuale = (Numero ÷ Totale) × 100
               </p>
             </div>

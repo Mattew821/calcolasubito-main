@@ -112,7 +112,7 @@ export default function CalcoloGiorni() {
             </div>
 
             {/* Buttons */}
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <button
                 type="submit"
                 disabled={isLoading || isLimited}
@@ -164,7 +164,7 @@ export default function CalcoloGiorni() {
           {result !== null && (
             <div aria-live="polite" role="status" className="bg-blue-50 border border-blue-200 rounded-lg p-6">
               <p className="text-gray-600 text-sm mb-2">Differenza:</p>
-              <p className="text-4xl font-bold text-blue-600 mb-4">
+              <p className="text-3xl sm:text-4xl font-bold text-blue-600 mb-4 break-words">
                 {result.toLocaleString('it-IT')} giorni
               </p>
               <p className="text-sm text-gray-600">

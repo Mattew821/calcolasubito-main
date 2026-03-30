@@ -101,7 +101,7 @@ export default function CalcoloCodiceFiscale() {
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <p className="text-sm text-blue-900 font-semibold mb-3">Seleziona il tuo status:</p>
             <div className="space-y-2">
-              <label className="flex items-center cursor-pointer">
+              <label className="flex items-start sm:items-center cursor-pointer">
                 <input
                   type="radio"
                   value="italian"
@@ -113,7 +113,7 @@ export default function CalcoloCodiceFiscale() {
                   ✅ <strong>Cittadino italiano</strong> - Genera il tuo codice fiscale
                 </span>
               </label>
-              <label className="flex items-center cursor-pointer">
+              <label className="flex items-start sm:items-center cursor-pointer">
                 <input
                   type="radio"
                   value="foreigner_italy"
@@ -125,7 +125,7 @@ export default function CalcoloCodiceFiscale() {
                   🏠 <strong>Straniero residente in Italia</strong> - Ho già un codice fiscale
                 </span>
               </label>
-              <label className="flex items-center cursor-pointer">
+              <label className="flex items-start sm:items-center cursor-pointer">
                 <input
                   type="radio"
                   value="foreigner_abroad"
@@ -256,7 +256,7 @@ export default function CalcoloCodiceFiscale() {
                 </div>
 
                 {/* Buttons */}
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <button
                     type="submit"
                     disabled={isLoading || isLimited}
@@ -337,7 +337,7 @@ export default function CalcoloCodiceFiscale() {
                 </div>
 
                 {/* Buttons */}
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <button
                     type="submit"
                     disabled={isLoading || isLimited}
@@ -400,7 +400,7 @@ export default function CalcoloCodiceFiscale() {
               <p className="text-gray-600 text-sm mb-2">
                 {currentMode === 'italian' ? 'Codice Fiscale:' : 'Codice Confermato:'}
               </p>
-              <p className="text-3xl font-bold text-blue-600 font-mono tracking-widest">
+              <p className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-600 font-mono tracking-wide break-all">
                 {codiceFiscale}
               </p>
               <p className="text-sm text-gray-600 mt-4">

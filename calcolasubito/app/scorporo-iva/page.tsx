@@ -94,8 +94,8 @@ export default function ScorporoIVA() {
       >
         <div className="space-y-6">
           {/* Mode Selection */}
-          <div className="flex gap-4">
-            <label className="flex items-center cursor-pointer">
+          <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
+            <label className="flex items-start sm:items-center cursor-pointer">
               <input
                 type="radio"
                 {...register('mode')}
@@ -106,7 +106,7 @@ export default function ScorporoIVA() {
                 Ho l&apos;importo lordo (IVA inclusa)
               </span>
             </label>
-            <label className="flex items-center cursor-pointer">
+            <label className="flex items-start sm:items-center cursor-pointer">
               <input
                 type="radio"
                 {...register('mode')}
@@ -178,7 +178,7 @@ export default function ScorporoIVA() {
             </div>
 
             {/* Buttons */}
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <button
                 type="submit"
                 disabled={isLoading || isLimited}
@@ -228,7 +228,7 @@ export default function ScorporoIVA() {
 
           {/* Result */}
           {result && (
-            <div aria-live="polite" role="status" className="bg-blue-50 border border-blue-200 rounded-lg p-6 space-y-4">
+            <div aria-live="polite" role="status" className="bg-blue-50 border border-blue-200 rounded-lg p-5 sm:p-6 space-y-4">
               <div>
                 <p className="text-sm text-gray-600">Importo Lordo (IVA inclusa):</p>
                 <p className="text-2xl font-bold text-blue-600">
