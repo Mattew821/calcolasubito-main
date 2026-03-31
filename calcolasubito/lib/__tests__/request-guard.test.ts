@@ -42,10 +42,35 @@ describe('request guard', () => {
     expect(result.reason).toBe('blocked-path')
   })
 
+  it('blocks encoded scanner paths', () => {
+    const result = evaluateRequestThreat({
+      method: 'GET',
+      pathname: '/wp-admin%2Finstall.php',
+      search: '',
+      userAgent: 'Mozilla/5.0',
+    })
+
+    expect(result.allowed).toBe(false)
+    expect(result.statusCode).toBe(403)
+    expect(result.reason).toBe('blocked-path')
+  })
+
   it('blocks suspicious file probes', () => {
     const result = evaluateRequestThreat({
       method: 'GET',
       pathname: '/backup/database.sql',
+      search: '',
+      userAgent: 'Mozilla/5.0',
+    })
+
+    expect(result.allowed).toBe(false)
+    expect(result.reason).toBe('blocked-file')
+  })
+
+  it('blocks encoded suspicious file probes', () => {
+    const result = evaluateRequestThreat({
+      method: 'GET',
+      pathname: '/backup%2Fdatabase%2Esql',
       search: '',
       userAgent: 'Mozilla/5.0',
     })

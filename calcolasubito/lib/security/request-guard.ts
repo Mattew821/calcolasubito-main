@@ -96,7 +96,7 @@ export function evaluateRequestThreat(input: RequestThreatCheckInput): RequestTh
     }
   }
 
-  if (BLOCKED_PATH_PATTERNS.some((pattern) => pattern.test(normalizedPath))) {
+  if (BLOCKED_PATH_PATTERNS.some((pattern) => pattern.test(normalizedPath) || pattern.test(decodedPath))) {
     return {
       allowed: false,
       statusCode: 403,
@@ -104,7 +104,7 @@ export function evaluateRequestThreat(input: RequestThreatCheckInput): RequestTh
     }
   }
 
-  if (BLOCKED_FILE_PATTERNS.some((pattern) => pattern.test(normalizedPath))) {
+  if (BLOCKED_FILE_PATTERNS.some((pattern) => pattern.test(normalizedPath) || pattern.test(decodedPath))) {
     return {
       allowed: false,
       statusCode: 403,

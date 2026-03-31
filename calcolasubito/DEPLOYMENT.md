@@ -472,3 +472,24 @@ Stato task esterni:
     - `python validation_framework.py --no-interactive --no-auto-git-push --max-attempts-per-problem 2 --max-global-iterations 2` -> PASS (0 problemi)
   - Esito:
     - implementazione Enigma + Plugboard completa e stabile, senza errori residui rilevati.
+
+- Recursive verification cycle (2026-03-31, observability + anti-bypass hardening):
+  - Analisi Vercel produzione (ultime 24h):
+    - nessun errore 5xx rilevato
+    - eventi 403 confermati su probe malevoli (/wp-admin, query sospette)
+    - redirect canonici 308 presenti e coerenti con policy host
+  - Correzione sicurezza applicata:
+    - lib/security/request-guard.ts
+      - i blocchi blocked-path e blocked-file ora valutano anche la versione URL-decoded del path
+      - mitigato bypass con path encoded (es. /wp-admin%2F..., /backup%2Fdatabase%2Esql)
+  - Test regressione aggiunti:
+    - lib/__tests__/request-guard.test.ts
+      - blocks encoded scanner paths
+      - blocks encoded suspicious file probes
+  - Quality gates:
+    - npm test -- --runInBand -> PASS (113/113)
+    - npm run lint -> PASS
+    - npm run build -> PASS
+    - python validation_framework.py --no-interactive --no-auto-git-push --max-attempts-per-problem 2 --max-global-iterations 2 -> PASS (0 problemi)
+  - Esito:
+    - hardening anti-bypass attivo, nessuna regressione rilevata.
