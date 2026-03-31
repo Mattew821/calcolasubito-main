@@ -1,27 +1,27 @@
 # Current
 
-- Last Push Date (Europe/Rome): 2026-03-31 18:26
-- Last Pushed Commit: `5849217`
+- Last Push Date (Europe/Rome): 2026-03-31 18:51
+- Last Pushed Commit: `ef4e7a7`
 - Branch: `calcolasubito-main`
-- Domain: `vercel.vercel.app`
-- Last Vercel Current Update (Europe/Rome): 2026-03-31 18:26
+- Domain: `calcolasubito.vercel.app`
+- Last Vercel Current Update (Europe/Rome): 2026-03-31 18:51
 - Vercel Current:
   - Connector API status: `token-missing`
-  - Public health check: `https://vercel.vercel.app/` -> `200`
-  - X-Vercel-Id: `cdg1::wpwqr-1774974379666-f2ef104bcf86`
+  - Public health check: `https://calcolasubito.vercel.app/` -> `200`
+  - X-Vercel-Id: `fra1::c2j75-1774975912907-193253def2df`
   - X-Vercel-Cache: `HIT`
-  - X-Request-Guard: `n/a`
+  - X-Request-Guard: `active`
   - Security probes:
     - `/wp-admin` -> `403`
-    - `/percentuali?q=%27%20OR%201%3D1--` -> `404`
+    - `/percentuali?q=%27%20OR%201%3D1--` -> `403`
   - Key routes:
     - `/` -> `200`
-    - `/percentuali` -> `404`
-    - `/scorporo-iva` -> `404`
-    - `/cookie` -> `404`
-    - `/privacy` -> `404`
-    - `/sitemap.xml` -> `404`
-    - `/robots.txt` -> `404`
+    - `/percentuali` -> `200`
+    - `/scorporo-iva` -> `200`
+    - `/cookie` -> `200`
+    - `/privacy` -> `200`
+    - `/sitemap.xml` -> `200`
+    - `/robots.txt` -> `200`
 - Quality Gates Policy:
   - Local pre-push hook: `npm run verify:full` (required)
   - CI required checks: `test`, `lint`, `build`, `e2e`
