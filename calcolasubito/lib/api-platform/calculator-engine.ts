@@ -62,8 +62,8 @@ const baseRequestSchema = z.object({
 })
 
 const percentualiInputSchema = z.object({
-  number: z.number().finite(),
-  percentage: z.number().finite(),
+  number: z.number().finite().optional(),
+  percentage: z.number().finite().optional(),
   part: z.number().finite().optional(),
   total: z.number().finite().optional(),
   initialValue: z.number().finite().optional(),
@@ -238,6 +238,13 @@ function resolveMonths(input: { years?: number; months?: number }): number {
   throw new Error('Inserisci years o months')
 }
 
+function requireFiniteField(value: number | undefined, fieldName: string): number {
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    throw new Error(`Campo mancante o non valido: ${fieldName}`)
+  }
+  return value
+}
+
 export function executeCalculatorRequest(request: unknown): unknown {
   const { calculatorId, operation, input } = baseRequestSchema.parse(request)
 
@@ -245,15 +252,22 @@ export function executeCalculatorRequest(request: unknown): unknown {
     case 'percentuali': {
       const payload = percentualiInputSchema.parse(input)
       if (operation === 'percentage-of') {
-        return calculatePercentageOf(payload.part ?? payload.number, payload.total ?? payload.percentage)
+        const part = requireFiniteField(payload.part ?? payload.number, 'part')
+        const total = requireFiniteField(payload.total ?? payload.percentage, 'total')
+        return calculatePercentageOf(part, total)
       }
       if (operation === 'change') {
-        return calculatePercentageChange(payload.initialValue ?? payload.number, payload.finalValue ?? payload.percentage)
+        const initialValue = requireFiniteField(payload.initialValue ?? payload.number, 'initialValue')
+        const finalValue = requireFiniteField(payload.finalValue ?? payload.percentage, 'finalValue')
+        return calculatePercentageChange(initialValue, finalValue)
       }
       if (operation === 'sequential') {
-        return applySequentialPercentages(payload.baseValue ?? payload.number, payload.changes ?? [])
+        const baseValue = requireFiniteField(payload.baseValue ?? payload.number, 'baseValue')
+        return applySequentialPercentages(baseValue, payload.changes ?? [])
       }
-      return calculatePercentage(payload.number, payload.percentage)
+      const number = requireFiniteField(payload.number, 'number')
+      const percentage = requireFiniteField(payload.percentage, 'percentage')
+      return calculatePercentage(number, percentage)
     }
 
     case 'giorni-tra-date': {
