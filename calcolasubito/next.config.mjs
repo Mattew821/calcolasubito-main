@@ -50,6 +50,24 @@ const nextConfig = {
             value: 'strict-origin-when-cross-origin'
           },
 
+          // Disable DNS prefetch to reduce metadata leakage
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'off'
+          },
+
+          // Disable Adobe Flash/Acrobat cross-domain policy files
+          {
+            key: 'X-Permitted-Cross-Domain-Policies',
+            value: 'none'
+          },
+
+          // Isolate browsing context group where supported
+          {
+            key: 'Origin-Agent-Cluster',
+            value: '?1'
+          },
+
           // Permissions Policy - Restrict browser features
           {
             key: 'Permissions-Policy',

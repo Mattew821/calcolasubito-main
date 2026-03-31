@@ -25,7 +25,12 @@ const RATE_LIMIT_BURST_WINDOW_MS = parseIntegerEnv('REQUEST_RATE_LIMIT_BURST_WIN
 const RATE_LIMIT_BURST_MAX = parseIntegerEnv('REQUEST_RATE_LIMIT_BURST_MAX', 80, 10, 2_000)
 const RATE_LIMIT_BURST_BLOCK_MS = parseIntegerEnv('REQUEST_RATE_LIMIT_BURST_BLOCK_MS', 120_000, 5_000, 3_600_000)
 const RATE_LIMIT_MAX_KEYS = parseIntegerEnv('REQUEST_RATE_LIMIT_MAX_KEYS', 20_000, 1_000, 200_000)
-const RATE_LIMIT_DISABLED = process.env.REQUEST_RATE_LIMIT_DISABLED === 'true'
+
+function isDevelopmentRuntime(): boolean {
+  return (process.env.NODE_ENV || '').toLowerCase() === 'development'
+}
+
+const RATE_LIMIT_DISABLED = isDevelopmentRuntime() && process.env.REQUEST_RATE_LIMIT_DISABLED === 'true'
 
 const sustainedRateLimiter = createRateLimiter({
   maxRequests: RATE_LIMIT_MAX_PER_WINDOW,
@@ -99,7 +104,9 @@ function buildRateLimitedResponse(retryAfterSeconds: number, reason: string): Ne
 }
 
 export function middleware(request: NextRequest) {
-  if (process.env.NODE_ENV !== 'production') {
+  // Secure-by-default: enable request guard in every runtime except local development.
+  // This avoids accidental bypass when NODE_ENV is not explicitly set by the hosting runtime.
+  if (isDevelopmentRuntime()) {
     return NextResponse.next()
   }
 

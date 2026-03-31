@@ -493,3 +493,25 @@ Stato task esterni:
     - python validation_framework.py --no-interactive --no-auto-git-push --max-attempts-per-problem 2 --max-global-iterations 2 -> PASS (0 problemi)
   - Esito:
     - hardening anti-bypass attivo, nessuna regressione rilevata.
+- Recursive verification cycle (2026-03-31, temporary security audit + hardening):
+  - Script temporaneo creato ed eseguito: temp-security-audit.mjs
+    - controlli coperti: security headers, path/query malevoli, user-agent scanner, metodi HTTP, redirect canonico, mitigazione flood
+  - Gap individuati e risolti:
+    - middleware hardening:
+      - request guard attivo in modalita secure-by-default (non dipende piu da NODE_ENV=production)
+      - bypass consentito solo in development esplicito
+      - rate limit disabilitabile solo in development
+    - request guard hardening:
+      - blocco richieste con componenti anomale per dimensione (path/query/user-agent oversized)
+    - header hardening in next.config.mjs:
+      - X-DNS-Prefetch-Control: off
+      - X-Permitted-Cross-Domain-Policies: none
+      - Origin-Agent-Cluster: ?1
+  - Test e verifiche:
+    - npm test -- --runInBand -> PASS (114/114)
+    - npm run lint -> PASS
+    - npm run build -> PASS
+    - python validation_framework.py --no-interactive --no-auto-git-push --max-attempts-per-problem 2 --max-global-iterations 2 -> PASS (0 problemi)
+    - audit temporaneo su next start locale (porta 4301) -> PASS (28/28)
+  - Esito:
+    - hardening completato con regressione nulla; baseline sicurezza rinforzata su input malevoli, header e comportamento middleware.

@@ -29,6 +29,19 @@ describe('request guard', () => {
     expect(result.reason).toBe('method-not-allowed')
   })
 
+  it('blocks suspiciously large request components', () => {
+    const result = evaluateRequestThreat({
+      method: 'GET',
+      pathname: '/percentuali',
+      search: `?q=${'a'.repeat(5000)}`,
+      userAgent: 'Mozilla/5.0',
+    })
+
+    expect(result.allowed).toBe(false)
+    expect(result.statusCode).toBe(403)
+    expect(result.reason).toBe('suspicious-request-size')
+  })
+
   it('blocks common scanner paths', () => {
     const result = evaluateRequestThreat({
       method: 'GET',

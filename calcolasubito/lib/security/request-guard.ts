@@ -25,9 +25,13 @@ const MALICIOUS_QUERY_PATTERNS: RegExp[] = [
 ]
 
 const PATH_TRAVERSAL_PATTERN = /(?:\.\.|%2e%2e|%00|%252e%252e)/i
+const MAX_PATH_LENGTH = 2_048
+const MAX_QUERY_LENGTH = 4_096
+const MAX_USER_AGENT_LENGTH = 512
 
 export type RequestBlockReason =
   | 'method-not-allowed'
+  | 'suspicious-request-size'
   | 'blocked-path'
   | 'blocked-file'
   | 'path-traversal'
@@ -82,6 +86,17 @@ export function evaluateRequestThreat(input: RequestThreatCheckInput): RequestTh
       allowed: false,
       statusCode: 405,
       reason: 'method-not-allowed',
+    }
+  }
+
+  const pathLength = (input.pathname || '').length
+  const queryLength = (input.search || '').length
+  const userAgentLength = (input.userAgent || '').length
+  if (pathLength > MAX_PATH_LENGTH || queryLength > MAX_QUERY_LENGTH || userAgentLength > MAX_USER_AGENT_LENGTH) {
+    return {
+      allowed: false,
+      statusCode: 403,
+      reason: 'suspicious-request-size',
     }
   }
 
