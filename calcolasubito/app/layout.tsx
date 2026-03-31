@@ -4,7 +4,13 @@ import '@/styles/globals.css'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
+import AppPreferencesProvider from '@/components/AppPreferencesProvider'
+import ScrollReveal from '@/components/ScrollReveal'
 import { BASE_URL } from '@/lib/site-config'
+import {
+  LANGUAGE_STORAGE_KEY,
+  THEME_STORAGE_KEY,
+} from '@/lib/i18n'
 
 const manrope = Manrope({
   subsets: ['latin'],
@@ -110,17 +116,49 @@ const webApplicationSchema = {
   },
 }
 
+const INITIAL_PREFERENCES_SCRIPT = `
+(() => {
+  try {
+    const root = document.documentElement;
+    const langStored = localStorage.getItem('${LANGUAGE_STORAGE_KEY}');
+    const themeStored = localStorage.getItem('${THEME_STORAGE_KEY}');
+    const navLang = (navigator.languages && navigator.languages[0]) || navigator.language || 'it';
+    const detectedLang = String(navLang).toLowerCase().startsWith('es')
+      ? 'es'
+      : String(navLang).toLowerCase().startsWith('en')
+        ? 'en'
+        : 'it';
+    const lang = ['it', 'en', 'es'].includes(langStored || '') ? langStored : detectedLang;
+    root.lang = lang;
+
+    const pref = ['system', 'light', 'dark'].includes(themeStored || '') ? themeStored : 'system';
+    const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const resolved = pref === 'system' ? (systemDark ? 'dark' : 'light') : pref;
+    root.dataset.theme = resolved;
+    root.style.colorScheme = resolved;
+  } catch (error) {
+    // ignore bootstrap preference errors
+  }
+})();
+`
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    <html lang="it">
+    <html lang="it" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="google-site-verification" content="35trzUPu96FBBZV6byuA-J6D3cs2ewPLUNhURQHf0_Y" />
+
+        <script
+          dangerouslySetInnerHTML={{
+            __html: INITIAL_PREFERENCES_SCRIPT,
+          }}
+        />
 
         {/* Google AdSense */}
         <script
@@ -146,12 +184,15 @@ export default function RootLayout({
         />
       </head>
       <body className={`flex flex-col min-h-screen ${manrope.variable} ${spaceGrotesk.variable}`}>
-        {GA_ID && <GoogleAnalytics measurementId={GA_ID} />}
-        <Header />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
+        <AppPreferencesProvider>
+          {GA_ID && <GoogleAnalytics measurementId={GA_ID} />}
+          <ScrollReveal />
+          <Header />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
+        </AppPreferencesProvider>
       </body>
     </html>
   )

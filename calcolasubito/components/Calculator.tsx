@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { CALCULATOR_CATALOG } from '@/lib/calculator-catalog'
+import { useAppPreferences } from '@/components/AppPreferencesProvider'
 
 interface CalculatorProps {
   title: string
@@ -307,6 +308,7 @@ export default function Calculator({
   const [recents, setRecents] = useState<string[]>([])
   const [snapshots, setSnapshots] = useState<FormSnapshot[]>([])
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null)
+  const { text, language } = useAppPreferences()
 
   const calculatorId = useMemo(() => getCurrentCalculatorId(pathname), [pathname])
   const snapshotStorageKey = useMemo(() => `${SNAPSHOT_STORAGE_PREFIX}${pathname}`, [pathname])
@@ -416,15 +418,15 @@ export default function Calculator({
       : [currentCalculator.id, ...favorites.filter((id) => id !== currentCalculator.id)]
     setFavorites(updatedFavorites)
     writeJsonStorage(FAVORITES_STORAGE_KEY, updatedFavorites)
-    setFeedbackMessage(isFavorite ? 'Rimosso dai preferiti.' : 'Aggiunto ai preferiti.')
+    setFeedbackMessage(isFavorite ? text.calculator.favoriteRemoved : text.calculator.favoriteAdded)
   }
 
   const copyCalculatorLink = async () => {
     const copied = await copyTextToClipboard(window.location.href)
     if (copied) {
-      setFeedbackMessage('Link copiato negli appunti.')
+      setFeedbackMessage(text.calculator.copiedLink)
     } else {
-      setFeedbackMessage('Impossibile copiare il link.')
+      setFeedbackMessage(text.calculator.copyLinkError)
     }
   }
 
@@ -438,9 +440,9 @@ export default function Calculator({
     if (navigator.share) {
       try {
         await navigator.share(shareData)
-        setFeedbackMessage('Condivisione completata.')
+        setFeedbackMessage(text.calculator.shareCompleted)
       } catch {
-        setFeedbackMessage('Condivisione annullata.')
+        setFeedbackMessage(text.calculator.shareCanceled)
       }
       return
     }
@@ -463,7 +465,7 @@ export default function Calculator({
   const resetFormValues = () => {
     const form = getMainForm()
     if (!form) {
-      setFeedbackMessage('Form non trovato.')
+      setFeedbackMessage(text.calculator.formNotFound)
       return
     }
 
@@ -479,13 +481,13 @@ export default function Calculator({
       }
     }
 
-    setFeedbackMessage('Form ripristinato ai valori iniziali.')
+    setFeedbackMessage(text.calculator.formReset)
   }
 
   const submitFormNow = () => {
     const form = getMainForm()
     if (!form) {
-      setFeedbackMessage('Form non trovato.')
+      setFeedbackMessage(text.calculator.formNotFound)
       return
     }
 
@@ -494,30 +496,30 @@ export default function Calculator({
     } else {
       form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
     }
-    setFeedbackMessage('Calcolo inviato.')
+    setFeedbackMessage(text.calculator.calculationSubmitted)
   }
 
   const restoreLastInputs = () => {
     if (snapshots.length === 0) {
-      setFeedbackMessage('Nessuna cronologia disponibile.')
+      setFeedbackMessage(text.calculator.noHistory)
       return
     }
 
     const section = formSectionRef.current
     const form = section?.querySelector('form')
     if (!section || !form) {
-      setFeedbackMessage('Form non trovato per il ripristino.')
+      setFeedbackMessage(text.calculator.formNotFound)
       return
     }
 
     const latestSnapshot = snapshots[0]
     if (!latestSnapshot) {
-      setFeedbackMessage('Nessuno snapshot disponibile.')
+      setFeedbackMessage(text.calculator.noHistory)
       return
     }
 
     applySnapshotToForm(form, latestSnapshot)
-    setFeedbackMessage('Ultimi valori ripristinati.')
+    setFeedbackMessage(text.calculator.restoreCompleted)
   }
 
   const clearSnapshots = () => {
@@ -527,12 +529,12 @@ export default function Calculator({
     } catch {
       // Ignore storage failures
     }
-    setFeedbackMessage('Cronologia locale cancellata.')
+    setFeedbackMessage(text.calculator.historyCleared)
   }
 
   const exportSnapshots = () => {
     if (snapshots.length === 0) {
-      setFeedbackMessage('Nessuna cronologia da esportare.')
+      setFeedbackMessage(text.calculator.noExportHistory)
       return
     }
 
@@ -554,9 +556,9 @@ export default function Calculator({
       link.click()
       document.body.removeChild(link)
       URL.revokeObjectURL(url)
-      setFeedbackMessage('Cronologia esportata in JSON.')
+      setFeedbackMessage(text.calculator.exportCompleted)
     } catch {
-      setFeedbackMessage('Errore durante esportazione cronologia.')
+      setFeedbackMessage(text.calculator.exportError)
     }
   }
 
@@ -580,14 +582,14 @@ export default function Calculator({
 
       const importedSnapshots = sanitizeSnapshots(maybeSnapshots).slice(0, MAX_SNAPSHOTS)
       if (importedSnapshots.length === 0) {
-        setFeedbackMessage('File valido ma senza snapshot utilizzabili.')
+        setFeedbackMessage(text.calculator.importNoUsableData)
       } else {
         setSnapshots(importedSnapshots)
         writeJsonStorage(snapshotStorageKey, importedSnapshots)
-        setFeedbackMessage(`Importati ${importedSnapshots.length} snapshot.`)
+        setFeedbackMessage(`${text.calculator.importCompleted} (${importedSnapshots.length})`)
       }
     } catch {
-      setFeedbackMessage('File non valido: impossibile importare cronologia.')
+      setFeedbackMessage(text.calculator.importError)
     } finally {
       event.target.value = ''
     }
@@ -601,7 +603,7 @@ export default function Calculator({
       </div>
 
       <div className="relative max-w-5xl mx-auto px-4 md:px-8 py-12 md:py-16 space-y-8">
-        <header className="glass-panel rounded-3xl p-8 md:p-10 fade-in-up">
+        <header className="glass-panel rounded-3xl p-8 md:p-10 fade-in-up" data-reveal>
           <p className="inline-flex rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-cyan-700">
             {keyword || 'Calcolatore online'}
           </p>
@@ -609,7 +611,7 @@ export default function Calculator({
           <p className="mt-3 text-base md:text-lg text-slate-600 max-w-3xl">{description}</p>
         </header>
 
-        <section className="portal-card md:p-8 p-6 fade-in-up space-y-5">
+        <section className="portal-card md:p-8 p-6 fade-in-up space-y-5" data-reveal>
           <input
             ref={importInputRef}
             type="file"
@@ -625,7 +627,7 @@ export default function Calculator({
               className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-cyan-300 hover:text-cyan-700 transition-colors"
             >
               <Star className={`w-4 h-4 ${isFavorite ? 'fill-current text-amber-500' : ''}`} />
-              {isFavorite ? 'Preferito' : 'Aggiungi ai preferiti'}
+              {isFavorite ? text.calculator.favorite : text.calculator.addFavorite}
             </button>
             <button
               type="button"
@@ -633,7 +635,7 @@ export default function Calculator({
               className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-cyan-300 hover:text-cyan-700 transition-colors"
             >
               <Link2 className="w-4 h-4" />
-              Copia link
+              {text.calculator.copyLink}
             </button>
             <button
               type="button"
@@ -641,7 +643,7 @@ export default function Calculator({
               className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-cyan-300 hover:text-cyan-700 transition-colors"
             >
               <Share2 className="w-4 h-4" />
-              Condividi
+              {text.calculator.share}
             </button>
             <button
               type="button"
@@ -649,7 +651,7 @@ export default function Calculator({
               className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-cyan-300 hover:text-cyan-700 transition-colors"
             >
               <Printer className="w-4 h-4" />
-              Stampa
+              {text.calculator.print}
             </button>
             <button
               type="button"
@@ -657,7 +659,7 @@ export default function Calculator({
               className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-cyan-300 hover:text-cyan-700 transition-colors"
             >
               <RotateCcw className="w-4 h-4" />
-              Reset form
+              {text.calculator.resetForm}
             </button>
             <button
               type="button"
@@ -665,7 +667,7 @@ export default function Calculator({
               className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-cyan-300 hover:text-cyan-700 transition-colors"
             >
               <RefreshCw className="w-4 h-4" />
-              Ricalcola
+              {text.calculator.recalculate}
             </button>
             <button
               type="button"
@@ -673,7 +675,7 @@ export default function Calculator({
               className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-cyan-300 hover:text-cyan-700 transition-colors"
             >
               <RotateCcw className="w-4 h-4" />
-              Ripristina ultimi valori
+              {text.calculator.restoreValues}
             </button>
             <button
               type="button"
@@ -681,7 +683,7 @@ export default function Calculator({
               className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-cyan-300 hover:text-cyan-700 transition-colors"
             >
               <Download className="w-4 h-4" />
-              Esporta cronologia
+              {text.calculator.exportHistory}
             </button>
             <button
               type="button"
@@ -689,7 +691,7 @@ export default function Calculator({
               className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-cyan-300 hover:text-cyan-700 transition-colors"
             >
               <Upload className="w-4 h-4" />
-              Importa cronologia
+              {text.calculator.importHistory}
             </button>
             {snapshots.length > 0 && (
               <button
@@ -698,7 +700,7 @@ export default function Calculator({
                 className="inline-flex items-center gap-2 rounded-xl border border-rose-300 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-100 transition-colors"
               >
                 <Trash2 className="w-4 h-4" />
-                Svuota cronologia
+                {text.calculator.clearHistory}
               </button>
             )}
           </div>
@@ -713,23 +715,24 @@ export default function Calculator({
             <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
               <p className="inline-flex items-center gap-2 text-sm font-semibold text-slate-700">
                 <History className="w-4 h-4" />
-                Cronologia input locale ({snapshots.length})
+                {text.calculator.localHistory} ({snapshots.length})
               </p>
               <p className="mt-2 text-xs text-slate-500">
-                Ultimo salvataggio: {new Date(snapshots[0]?.timestamp ?? Date.now()).toLocaleString('it-IT')}
+                {text.calculator.localHistoryLastSaved}:{' '}
+                {new Date(snapshots[0]?.timestamp ?? Date.now()).toLocaleString(language === 'en' ? 'en-US' : language === 'es' ? 'es-ES' : 'it-IT')}
               </p>
             </div>
           )}
         </section>
 
-        <section ref={formSectionRef} className="portal-card md:p-8 p-6 fade-in-up">
+        <section ref={formSectionRef} className="portal-card md:p-8 p-6 fade-in-up" data-reveal>
           {children}
         </section>
 
         {(relatedCalculators.length > 0 || recentCalculators.length > 0 || favoriteCalculators.length > 0) && (
-          <section className="grid grid-cols-1 lg:grid-cols-3 gap-5 fade-in-up">
+          <section className="grid grid-cols-1 lg:grid-cols-3 gap-5 fade-in-up" data-reveal>
             <article className="portal-card">
-              <h2 className="font-display text-lg text-slate-900 mb-3">Calcolatori correlati</h2>
+              <h2 className="font-display text-lg text-slate-900 mb-3">{text.calculator.relatedCalculators}</h2>
               <ul className="space-y-2 text-sm">
                 {relatedCalculators.map((calculator) => (
                   <li key={calculator.id}>
@@ -742,9 +745,9 @@ export default function Calculator({
             </article>
 
             <article className="portal-card">
-              <h2 className="font-display text-lg text-slate-900 mb-3">Visitati di recente</h2>
+              <h2 className="font-display text-lg text-slate-900 mb-3">{text.calculator.recentCalculators}</h2>
               {recentCalculators.length === 0 ? (
-                <p className="text-sm text-slate-600">Nessun calcolatore recente oltre a quello corrente.</p>
+                <p className="text-sm text-slate-600">{text.calculator.noRecentItems}</p>
               ) : (
                 <ul className="space-y-2 text-sm">
                   {recentCalculators.map((calculator) => (
@@ -759,9 +762,9 @@ export default function Calculator({
             </article>
 
             <article className="portal-card">
-              <h2 className="font-display text-lg text-slate-900 mb-3">Preferiti</h2>
+              <h2 className="font-display text-lg text-slate-900 mb-3">{text.calculator.favorites}</h2>
               {favoriteCalculators.length === 0 ? (
-                <p className="text-sm text-slate-600">Aggiungi questo o altri calcolatori ai preferiti.</p>
+                <p className="text-sm text-slate-600">{text.calculator.noFavoriteItems}</p>
               ) : (
                 <ul className="space-y-2 text-sm">
                   {favoriteCalculators.map((calculator) => (
@@ -777,18 +780,18 @@ export default function Calculator({
           </section>
         )}
 
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-5 fade-in-up">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-5 fade-in-up" data-reveal>
           <article className="portal-card">
-            <h2 className="font-display text-xl text-slate-900 mb-3">Privacy by design</h2>
+            <h2 className="font-display text-xl text-slate-900 mb-3">{text.calculator.privacyByDesign}</h2>
             <p className="text-slate-600 text-sm leading-relaxed">
-              Tutti i calcoli vengono effettuati sul tuo dispositivo. Nessun input del form viene salvato nei server del portale.
+              {text.calculator.privacyByDesignText}
             </p>
           </article>
 
           <article className="portal-card">
-            <h2 className="font-display text-xl text-slate-900 mb-3">Uso professionale</h2>
+            <h2 className="font-display text-xl text-slate-900 mb-3">{text.calculator.professionalUse}</h2>
             <p className="text-slate-600 text-sm leading-relaxed">
-              I risultati sono accurati a livello operativo. Per pratiche fiscali, legali o mediche usa sempre anche una verifica specialistica.
+              {text.calculator.professionalUseText}
             </p>
           </article>
         </section>

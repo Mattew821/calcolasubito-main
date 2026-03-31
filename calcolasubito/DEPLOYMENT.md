@@ -584,3 +584,29 @@ Stato task esterni:
     - `python validation_framework.py --no-interactive --no-auto-git-push --max-attempts-per-problem 2 --max-global-iterations 2` -> PASS (0 issues)
   - Outcome:
     - all pending finite enhancement tasks from prior backlog closed for these calculators; no residual errors found in validation loop.
+
+- Recursive verification cycle (2026-03-31, frontend UX modernization pass):
+  - Implemented global preferences layer for UI/UX:
+    - dark/light/system theme switching with CSS custom properties and persisted preference
+    - automatic language detection + dynamic language switching (IT/EN/ES) without reload
+    - localStorage persistence for theme/language
+  - New shared modules/components:
+    - `lib/i18n.ts` (typed translations + locale/theme helpers)
+    - `components/AppPreferencesProvider.tsx` (global preferences context)
+    - `components/ScrollReveal.tsx` (intersection-based reveal animations)
+  - Layout integration:
+    - preload script in `app/layout.tsx` to apply theme/language before hydration (reduced flicker)
+    - provider + scroll reveal mounted globally
+  - UI updates:
+    - `components/Header.tsx`: language selector + theme selector + localized navigation labels
+    - `components/Footer.tsx`: localized footer copy and navigation labels
+    - `app/page.tsx`: localized hero/search/category/result text and labels
+    - `components/Calculator.tsx`: localized shared action labels/messages + reveal attributes
+    - `styles/globals.css`: dark theme token set, dark-mode component overrides, reduced-motion support, reveal transitions
+  - Quality gates:
+    - `npm test -- --runInBand` -> PASS (138/138)
+    - `npm run lint` -> PASS
+    - `npm run build` -> PASS
+    - `python validation_framework.py --no-interactive --no-auto-git-push --max-attempts-per-problem 1 --max-global-iterations 1` -> PASS (0 issues)
+  - Outcome:
+    - frontend now supports modern animated UX, accessible theming, and runtime multilingual UI controls with production-ready validation green.
