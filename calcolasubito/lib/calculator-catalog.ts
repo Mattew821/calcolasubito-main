@@ -117,7 +117,7 @@ export const CALCULATOR_CATALOG: CalculatorCatalogEntry[] = [
     title: 'Indice Massa Corporea (BMI)',
     category: 'Salute',
     popularity: 'Molto Alto',
-    description: 'BMI e classificazione indicativa.',
+    description: 'BMI multi-unita, BMI Prime e range peso normopeso.',
     tags: ['bmi', 'salute', 'peso', 'altezza'],
   },
   {
@@ -125,7 +125,7 @@ export const CALCULATOR_CATALOG: CalculatorCatalogEntry[] = [
     title: 'Fabbisogno Calorico',
     category: 'Salute',
     popularity: 'Molto Alto',
-    description: 'Stima calorie giornaliere con formula Mifflin-St Jeor.',
+    description: 'BMR/TDEE, target obiettivo e macronutrienti con unita metriche o imperiali.',
     tags: ['calorie', 'metabolismo', 'tdee', 'salute'],
   },
   {
@@ -149,7 +149,7 @@ export const CALCULATOR_CATALOG: CalculatorCatalogEntry[] = [
     title: 'Area Rettangolo',
     category: 'Matematica',
     popularity: 'Medio',
-    description: 'Area da base e altezza.',
+    description: 'Area, perimetro e conversioni complete delle unita di superficie.',
     tags: ['area', 'rettangolo', 'geometria'],
   },
   {
@@ -157,7 +157,7 @@ export const CALCULATOR_CATALOG: CalculatorCatalogEntry[] = [
     title: 'Area Cerchio',
     category: 'Matematica',
     popularity: 'Medio',
-    description: 'Area del cerchio a partire dal raggio.',
+    description: 'Area, diametro, circonferenza e conversioni complete delle unita di superficie.',
     tags: ['area', 'cerchio', 'geometria'],
   },
   {
@@ -181,7 +181,7 @@ export const CALCULATOR_CATALOG: CalculatorCatalogEntry[] = [
     title: 'Numeri Casuali',
     category: 'Matematica',
     popularity: 'Alto',
-    description: 'Genera estrazioni casuali con intervallo e quantita personalizzati.',
+    description: 'Generatore interi/decimali con seed deterministico, ordinamento e controllo duplicati.',
     tags: ['numeri casuali', 'estrazione', 'random', 'matematica'],
   },
   {
@@ -197,7 +197,7 @@ export const CALCULATOR_CATALOG: CalculatorCatalogEntry[] = [
     title: 'Calcolo Mancia',
     category: 'Utilita',
     popularity: 'Alto',
-    description: 'Mancia totale, totale conto e quota per persona.',
+    description: 'Mancia con servizio, split conto e arrotondamenti avanzati per persona.',
     tags: ['mancia', 'ristorante', 'conto'],
   },
   {

@@ -12,20 +12,27 @@ import {
   calculateSimpleInterest,
   calculateCompoundInterest,
   calculateBMI,
+  calculateBmiDetailed,
   calculateFuelConsumption,
   calculateFuelConsumptionDetailed,
   calculateRectangleArea,
+  calculateRectangleAreaDetailed,
   calculateCircleArea,
+  calculateCircleAreaDetailed,
+  convertAreaFromSquareMeters,
   calculateWeightedAverage,
   convertCelsius,
   convertTemperature,
   calculateAge,
   calculateLoanPayment,
   calculateTip,
+  calculateTipDetailed,
   calculateCalorieNeeds,
+  calculateCaloriePlan,
   convertLength,
   convertLengthFromMeters,
   generateRandomIntegers,
+  generateRandomNumbers,
   calculateImu,
   calculateNetSalary,
   runEnigmaCipher,
@@ -283,6 +290,23 @@ describe('calculateBMI', () => {
   })
 })
 
+describe('calculateBmiDetailed', () => {
+  it('should convert imperial inputs and provide detailed metrics', () => {
+    const result = calculateBmiDetailed({
+      weight: 180,
+      weightUnit: 'lb',
+      height: 70,
+      heightUnit: 'in',
+    })
+
+    expect(result.weightKg).toBeCloseTo(81.6466, 3)
+    expect(result.heightCm).toBeCloseTo(177.8, 3)
+    expect(result.bmi).toBeCloseTo(25.8, 1)
+    expect(result.bmiPrime).toBeCloseTo(result.bmi / 25, 10)
+    expect(result.healthyWeightRangeKg.min).toBeLessThan(result.healthyWeightRangeKg.max)
+  })
+})
+
 describe('calculateFuelConsumption', () => {
   it('should calculate consumption metrics', () => {
     const result = calculateFuelConsumption(500, 25)
@@ -340,6 +364,29 @@ describe('areas', () => {
   it('should throw on negative dimensions', () => {
     expect(() => calculateRectangleArea(-1, 2)).toThrow('Rectangle dimensions cannot be negative')
     expect(() => calculateCircleArea(-1)).toThrow('Radius cannot be negative')
+  })
+})
+
+describe('detailed area conversions', () => {
+  it('should compute rectangle area/perimeter with imperial input units', () => {
+    const result = calculateRectangleAreaDetailed(10, 5, 'ft')
+    expect(result.perimeterInInputUnit).toBe(30)
+    expect(result.areaInInputUnit).toBe(50)
+    expect(result.area.squareMeters).toBeCloseTo(4.64515, 4)
+    expect(result.area.squareFeet).toBeCloseTo(50, 8)
+  })
+
+  it('should compute circle diameter/circumference and area conversions', () => {
+    const result = calculateCircleAreaDetailed(2, 'm')
+    expect(result.diameterInInputUnit).toBe(4)
+    expect(result.circumferenceInInputUnit).toBeCloseTo(12.56637, 5)
+    expect(result.area.squareMeters).toBeCloseTo(Math.PI * 4, 10)
+  })
+
+  it('should convert square meters to common area units', () => {
+    const converted = convertAreaFromSquareMeters(10_000)
+    expect(converted.hectares).toBeCloseTo(1, 10)
+    expect(converted.acres).toBeCloseTo(2.47105, 4)
   })
 })
 
@@ -442,6 +489,25 @@ describe('calculateTip', () => {
   })
 })
 
+describe('calculateTipDetailed', () => {
+  it('should include service charge and rounded split', () => {
+    const result = calculateTipDetailed({
+      billAmount: 80,
+      tipPercent: 10,
+      servicePercent: 12.5,
+      people: 3,
+      rounding: 'up_0_10',
+    })
+
+    expect(result.serviceAmount).toBeCloseTo(10, 8)
+    expect(result.tipAmount).toBeCloseTo(8, 8)
+    expect(result.totalAmount).toBeCloseTo(98, 8)
+    expect(result.perPersonRaw).toBeCloseTo(32.6666, 3)
+    expect(result.perPersonRounded).toBeCloseTo(32.7, 8)
+    expect(result.roundingDelta).toBeCloseTo(0.1, 8)
+  })
+})
+
 describe('calculateCalorieNeeds', () => {
   it('should calculate BMR and TDEE for male and female', () => {
     const male = calculateCalorieNeeds({
@@ -473,6 +539,51 @@ describe('calculateCalorieNeeds', () => {
         activityFactor: 1.2,
       })
     ).toThrow('Age must be greater than zero')
+  })
+})
+
+describe('calculateCaloriePlan', () => {
+  it('should compute calorie target and macro grams with imperial units', () => {
+    const result = calculateCaloriePlan({
+      sex: 'male',
+      age: 30,
+      weight: 180,
+      weightUnit: 'lb',
+      height: 70,
+      heightUnit: 'in',
+      activityFactor: 1.55,
+      goalPercent: -15,
+      macroSplit: {
+        proteinPercent: 30,
+        carbsPercent: 45,
+        fatPercent: 25,
+      },
+    })
+
+    expect(result.weightKg).toBeCloseTo(81.6466, 3)
+    expect(result.heightCm).toBeCloseTo(177.8, 3)
+    expect(result.targetCalories).toBeCloseTo(result.tdee * 0.85, 8)
+    expect(result.macros.proteinGrams).toBeGreaterThan(0)
+    expect(result.macros.carbsGrams).toBeGreaterThan(0)
+    expect(result.macros.fatGrams).toBeGreaterThan(0)
+  })
+
+  it('should reject invalid macro split totals', () => {
+    expect(() =>
+      calculateCaloriePlan({
+        sex: 'female',
+        age: 28,
+        weight: 60,
+        height: 165,
+        activityFactor: 1.4,
+        goalPercent: 0,
+        macroSplit: {
+          proteinPercent: 30,
+          carbsPercent: 30,
+          fatPercent: 30,
+        },
+      })
+    ).toThrow('Macro split must sum to 100')
   })
 })
 
@@ -546,6 +657,48 @@ describe('generateRandomIntegers', () => {
     expect(() => generateRandomIntegers(1, 3, 4, false)).toThrow(
       'Count cannot exceed range size when duplicates are disabled'
     )
+  })
+})
+
+describe('generateRandomNumbers', () => {
+  it('should generate deterministic sequences with seed', () => {
+    const first = generateRandomNumbers({
+      min: 1,
+      max: 100,
+      count: 6,
+      allowDuplicates: true,
+      mode: 'integer',
+      seed: 'seed-2026',
+    })
+    const second = generateRandomNumbers({
+      min: 1,
+      max: 100,
+      count: 6,
+      allowDuplicates: true,
+      mode: 'integer',
+      seed: 'seed-2026',
+    })
+
+    expect(first.numbers).toEqual(second.numbers)
+  })
+
+  it('should support decimal mode with unique values and sorting', () => {
+    const result = generateRandomNumbers({
+      min: 0,
+      max: 1,
+      count: 5,
+      allowDuplicates: false,
+      mode: 'decimal',
+      decimalPlaces: 3,
+      sort: 'asc',
+      seed: 'deterministic-decimals',
+    })
+
+    expect(result.mode).toBe('decimal')
+    expect(result.decimalPlaces).toBe(3)
+    expect(result.numbers.length).toBe(5)
+    expect([...result.numbers]).toEqual([...result.numbers].sort((a, b) => a - b))
+    expect(new Set(result.numbers.map((item) => item.toFixed(3))).size).toBe(5)
   })
 })
 

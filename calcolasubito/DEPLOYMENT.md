@@ -535,3 +535,26 @@ Stato task esterni:
     - python validation_framework.py --no-interactive --no-auto-git-push --max-attempts-per-problem 2 --max-global-iterations 2 -> PASS (0 problemi)
   - Esito:
     - calcolatori resi significativamente piu generici su unita e scenari reali, con test di regressione verde.
+- Recursive verification cycle (2026-03-31, advanced generic calculators pass):
+  - Expanded calculators for broader real-world input spaces:
+    - `/area-rettangolo`: area + perimeter + full surface-unit conversion (m2, km2, ha, acre, ft2, in2)
+    - `/area-cerchio`: area + diameter + circumference + full surface-unit conversion
+    - `/indice-massa-corporea`: multi-unit BMI (kg/lb/st + cm/m/ft/in), BMI Prime, healthy-weight range
+    - `/fabbisogno-calorico`: metric/imperial support, calorie goal target (% cut/bulk), macro presets
+    - `/calcolo-mancia`: service charge and split-rounding strategies
+    - `/numeri-casuali`: integer/decimal mode, deterministic seed, sort mode, duplicate control
+  - Engine enhancements (`lib/calculations.ts`):
+    - `calculateBmiDetailed`
+    - `calculateCaloriePlan`
+    - `calculateRectangleAreaDetailed` / `calculateCircleAreaDetailed` / `convertAreaFromSquareMeters`
+    - `calculateTipDetailed`
+    - `generateRandomNumbers`
+    - Backward compatibility preserved for legacy wrappers
+  - Catalog metadata updated (`lib/calculator-catalog.ts`) for expanded calculators.
+  - Quality gates:
+    - `npm test -- --runInBand` -> PASS (128/128)
+    - `npm run lint` -> PASS
+    - `npm run build` -> PASS
+    - `python validation_framework.py --no-interactive --no-auto-git-push --max-attempts-per-problem 2 --max-global-iterations 2` -> PASS (0 issues)
+  - Outcome:
+    - Genericity significantly improved across units, modes and edge-case handling with full regression green.

@@ -1,25 +1,37 @@
-'use client'
+﻿'use client'
 
 import { useState, type FormEvent } from 'react'
 import Calculator from '@/components/Calculator'
 import AdUnit from '@/components/AdUnit'
-import { generateRandomIntegers } from '@/lib/calculations'
+import {
+  generateRandomNumbers,
+  type RandomNumberMode,
+  type RandomSortMode,
+} from '@/lib/calculations'
 
 export default function NumeriCasualiPage() {
   const [min, setMin] = useState('1')
   const [max, setMax] = useState('90')
   const [count, setCount] = useState('5')
   const [allowDuplicates, setAllowDuplicates] = useState(false)
+  const [mode, setMode] = useState<RandomNumberMode>('integer')
+  const [decimalPlaces, setDecimalPlaces] = useState('2')
+  const [seed, setSeed] = useState('')
+  const [sort, setSort] = useState<RandomSortMode>('none')
   const [error, setError] = useState<string | null>(null)
-  const [result, setResult] = useState<ReturnType<typeof generateRandomIntegers> | null>(null)
+  const [result, setResult] = useState<ReturnType<typeof generateRandomNumbers> | null>(null)
 
   const runExtraction = () => {
-    const output = generateRandomIntegers(
-      Number(min),
-      Number(max),
-      Number(count),
-      allowDuplicates
-    )
+    const output = generateRandomNumbers({
+      min: Number(min),
+      max: Number(max),
+      count: Number(count),
+      allowDuplicates,
+      mode,
+      decimalPlaces: Number(decimalPlaces),
+      seed: seed.trim() === '' ? null : seed,
+      sort,
+    })
     setResult(output)
   }
 
@@ -49,7 +61,7 @@ export default function NumeriCasualiPage() {
   return (
     <Calculator
       title="Generatore Numeri Casuali"
-      description="Estrai numeri casuali in un intervallo personalizzato, con o senza ripetizioni."
+      description="Genera numeri casuali interi o decimali, con seed deterministico, ordinamento e controllo duplicati."
       keyword="numeri casuali"
     >
       <form onSubmit={onCalculate} className="space-y-4">
@@ -58,7 +70,7 @@ export default function NumeriCasualiPage() {
             <label className="block text-sm font-medium text-gray-700 mb-2">Minimo</label>
             <input
               type="number"
-              step="1"
+              step={mode === 'integer' ? '1' : '0.0001'}
               value={min}
               onChange={(event) => setMin(event.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
@@ -70,7 +82,7 @@ export default function NumeriCasualiPage() {
             <label className="block text-sm font-medium text-gray-700 mb-2">Massimo</label>
             <input
               type="number"
-              step="1"
+              step={mode === 'integer' ? '1' : '0.0001'}
               value={max}
               onChange={(event) => setMax(event.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
@@ -90,6 +102,59 @@ export default function NumeriCasualiPage() {
               required
             />
           </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Modalita numeri</label>
+            <select
+              value={mode}
+              onChange={(event) => setMode(event.target.value as RandomNumberMode)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            >
+              <option value="integer">Interi</option>
+              <option value="decimal">Decimali</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Ordinamento</label>
+            <select
+              value={sort}
+              onChange={(event) => setSort(event.target.value as RandomSortMode)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            >
+              <option value="none">Nessuno</option>
+              <option value="asc">Crescente</option>
+              <option value="desc">Decrescente</option>
+            </select>
+          </div>
+        </div>
+
+        {mode === 'decimal' && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Cifre decimali</label>
+            <input
+              type="number"
+              step="1"
+              min="0"
+              max="10"
+              value={decimalPlaces}
+              onChange={(event) => setDecimalPlaces(event.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              required
+            />
+          </div>
+        )}
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Seed (opzionale, per risultato deterministico)</label>
+          <input
+            type="text"
+            value={seed}
+            onChange={(event) => setSeed(event.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            placeholder="es. estrazione-marzo-2026"
+          />
         </div>
 
         <label className="inline-flex items-center gap-2 text-sm text-slate-700">
@@ -133,6 +198,15 @@ export default function NumeriCasualiPage() {
             <p>
               <span className="font-semibold">Duplicati:</span> {result.allowDuplicates ? 'Si' : 'No'}
             </p>
+            <p>
+              <span className="font-semibold">Modalita:</span> {result.mode === 'integer' ? 'Interi' : 'Decimali'}
+            </p>
+            <p>
+              <span className="font-semibold">Decimali:</span> {result.decimalPlaces}
+            </p>
+            <p>
+              <span className="font-semibold">Seed:</span> {result.seed ?? 'Casuale'}
+            </p>
           </div>
 
           <div className="mt-4 flex flex-wrap gap-2">
@@ -141,7 +215,7 @@ export default function NumeriCasualiPage() {
                 key={`${value}-${index}`}
                 className="inline-flex items-center justify-center min-w-10 px-3 py-2 rounded-xl bg-white border border-cyan-200 text-cyan-700 font-semibold shadow-sm"
               >
-                {value}
+                {result.mode === 'integer' ? value : value.toFixed(result.decimalPlaces)}
               </span>
             ))}
           </div>

@@ -278,16 +278,106 @@ export function calculateCompoundInterest(
   }
 }
 
-export function calculateBMI(weightKg: number, heightCm: number): number {
-  if (weightKg <= 0) {
+export type WeightUnit = 'kg' | 'lb' | 'st'
+export type HeightUnit = 'cm' | 'm' | 'ft' | 'in'
+
+const WEIGHT_TO_KG: Record<WeightUnit, number> = {
+  kg: 1,
+  lb: 0.45359237,
+  st: 6.35029318,
+}
+
+const HEIGHT_TO_CM: Record<HeightUnit, number> = {
+  cm: 1,
+  m: 100,
+  ft: 30.48,
+  in: 2.54,
+}
+
+function toKg(weight: number, unit: WeightUnit): number {
+  return weight * WEIGHT_TO_KG[unit]
+}
+
+function fromKg(weightKg: number, unit: WeightUnit): number {
+  return weightKg / WEIGHT_TO_KG[unit]
+}
+
+function toCm(height: number, unit: HeightUnit): number {
+  return height * HEIGHT_TO_CM[unit]
+}
+
+export type BmiCategory =
+  | 'Sottopeso'
+  | 'Normopeso'
+  | 'Sovrappeso'
+  | 'Obesita I'
+  | 'Obesita II'
+  | 'Obesita III'
+
+export interface BmiDetailedResult {
+  bmi: number
+  bmiPrime: number
+  category: BmiCategory
+  weightKg: number
+  heightCm: number
+  healthyWeightRangeKg: {
+    min: number
+    max: number
+  }
+}
+
+function classifyBmi(value: number): BmiCategory {
+  if (value < 18.5) return 'Sottopeso'
+  if (value < 25) return 'Normopeso'
+  if (value < 30) return 'Sovrappeso'
+  if (value < 35) return 'Obesita I'
+  if (value < 40) return 'Obesita II'
+  return 'Obesita III'
+}
+
+export function calculateBmiDetailed(input: {
+  weight: number
+  height: number
+  weightUnit?: WeightUnit
+  heightUnit?: HeightUnit
+}): BmiDetailedResult {
+  const weightUnit = input.weightUnit ?? 'kg'
+  const heightUnit = input.heightUnit ?? 'cm'
+
+  if (!Number.isFinite(input.weight) || input.weight <= 0) {
     throw new Error('Weight must be greater than zero')
   }
-  if (heightCm <= 0) {
+  if (!Number.isFinite(input.height) || input.height <= 0) {
     throw new Error('Height must be greater than zero')
   }
 
+  const weightKg = toKg(input.weight, weightUnit)
+  const heightCm = toCm(input.height, heightUnit)
   const heightM = heightCm / 100
-  return weightKg / (heightM * heightM)
+
+  const bmi = weightKg / (heightM * heightM)
+  const bmiPrime = bmi / 25
+
+  return {
+    bmi,
+    bmiPrime,
+    category: classifyBmi(bmi),
+    weightKg,
+    heightCm,
+    healthyWeightRangeKg: {
+      min: 18.5 * heightM * heightM,
+      max: 24.9 * heightM * heightM,
+    },
+  }
+}
+
+export function calculateBMI(weightKg: number, heightCm: number): number {
+  return calculateBmiDetailed({
+    weight: weightKg,
+    height: heightCm,
+    weightUnit: 'kg',
+    heightUnit: 'cm',
+  }).bmi
 }
 
 export interface FuelConsumptionResult {
@@ -433,6 +523,123 @@ export function calculateCircleArea(radius: number): number {
     throw new Error('Radius cannot be negative')
   }
   return Math.PI * radius * radius
+}
+
+export type AreaInputUnit = 'm' | 'km' | 'cm' | 'mm' | 'mi' | 'yd' | 'ft' | 'in'
+
+const AREA_INPUT_TO_METERS: Record<AreaInputUnit, number> = {
+  m: 1,
+  km: 1000,
+  cm: 0.01,
+  mm: 0.001,
+  mi: 1609.344,
+  yd: 0.9144,
+  ft: 0.3048,
+  in: 0.0254,
+}
+
+export interface AreaConversionResult {
+  squareMeters: number
+  squareKilometers: number
+  squareCentimeters: number
+  squareMillimeters: number
+  squareMiles: number
+  squareYards: number
+  squareFeet: number
+  squareInches: number
+  hectares: number
+  acres: number
+}
+
+export interface RectangleAreaDetailedResult {
+  inputUnit: AreaInputUnit
+  base: number
+  height: number
+  perimeterInInputUnit: number
+  areaInInputUnit: number
+  area: AreaConversionResult
+}
+
+export interface CircleAreaDetailedResult {
+  inputUnit: AreaInputUnit
+  radius: number
+  diameterInInputUnit: number
+  circumferenceInInputUnit: number
+  areaInInputUnit: number
+  area: AreaConversionResult
+}
+
+export function convertAreaFromSquareMeters(squareMeters: number): AreaConversionResult {
+  if (!Number.isFinite(squareMeters)) {
+    throw new Error('Area value must be finite')
+  }
+  if (squareMeters < 0) {
+    throw new Error('Area value cannot be negative')
+  }
+
+  return {
+    squareMeters,
+    squareKilometers: squareMeters / 1_000_000,
+    squareCentimeters: squareMeters * 10_000,
+    squareMillimeters: squareMeters * 1_000_000,
+    squareMiles: squareMeters / 2_589_988.110336,
+    squareYards: squareMeters * 1.1959900463011,
+    squareFeet: squareMeters * 10.7639104167097,
+    squareInches: squareMeters * 1550.0031000062,
+    hectares: squareMeters / 10_000,
+    acres: squareMeters / 4046.8564224,
+  }
+}
+
+export function calculateRectangleAreaDetailed(
+  base: number,
+  height: number,
+  inputUnit: AreaInputUnit = 'm'
+): RectangleAreaDetailedResult {
+  if (!Number.isFinite(base) || !Number.isFinite(height)) {
+    throw new Error('Rectangle dimensions must be finite')
+  }
+  if (base < 0 || height < 0) {
+    throw new Error('Rectangle dimensions cannot be negative')
+  }
+
+  const factor = AREA_INPUT_TO_METERS[inputUnit]
+  const areaInInputUnit = base * height
+  const squareMeters = areaInInputUnit * factor * factor
+
+  return {
+    inputUnit,
+    base,
+    height,
+    perimeterInInputUnit: 2 * (base + height),
+    areaInInputUnit,
+    area: convertAreaFromSquareMeters(squareMeters),
+  }
+}
+
+export function calculateCircleAreaDetailed(
+  radius: number,
+  inputUnit: AreaInputUnit = 'm'
+): CircleAreaDetailedResult {
+  if (!Number.isFinite(radius)) {
+    throw new Error('Radius must be finite')
+  }
+  if (radius < 0) {
+    throw new Error('Radius cannot be negative')
+  }
+
+  const factor = AREA_INPUT_TO_METERS[inputUnit]
+  const areaInInputUnit = Math.PI * radius * radius
+  const squareMeters = areaInInputUnit * factor * factor
+
+  return {
+    inputUnit,
+    radius,
+    diameterInInputUnit: radius * 2,
+    circumferenceInInputUnit: 2 * Math.PI * radius,
+    areaInInputUnit,
+    area: convertAreaFromSquareMeters(squareMeters),
+  }
 }
 
 export function calculateWeightedAverage(values: number[], weights: number[]): number {
@@ -637,28 +844,101 @@ export interface TipResult {
   perPerson: number
 }
 
+export type TipRoundingMode = 'none' | 'nearest_0_05' | 'up_0_05' | 'up_0_10' | 'up_1'
+
+export interface TipDetailedInput {
+  billAmount: number
+  tipPercent: number
+  people: number
+  servicePercent?: number
+  rounding?: TipRoundingMode
+}
+
+export interface TipDetailedResult extends TipResult {
+  serviceAmount: number
+  subtotal: number
+  perPersonRaw: number
+  perPersonRounded: number
+  roundingMode: TipRoundingMode
+  roundingDelta: number
+}
+
+function roundToStep(value: number, step: number, mode: 'nearest' | 'up'): number {
+  if (mode === 'up') {
+    return Math.ceil(value / step) * step
+  }
+  return Math.round(value / step) * step
+}
+
+function applyTipRounding(value: number, mode: TipRoundingMode): number {
+  switch (mode) {
+    case 'nearest_0_05':
+      return roundToStep(value, 0.05, 'nearest')
+    case 'up_0_05':
+      return roundToStep(value, 0.05, 'up')
+    case 'up_0_10':
+      return roundToStep(value, 0.1, 'up')
+    case 'up_1':
+      return Math.ceil(value)
+    case 'none':
+    default:
+      return value
+  }
+}
+
+export function calculateTipDetailed(input: TipDetailedInput): TipDetailedResult {
+  const servicePercent = input.servicePercent ?? 0
+  const roundingMode = input.rounding ?? 'none'
+
+  if (!Number.isFinite(input.billAmount) || input.billAmount < 0) {
+    throw new Error('Bill amount cannot be negative')
+  }
+  if (!Number.isFinite(input.tipPercent) || input.tipPercent < 0) {
+    throw new Error('Tip percent cannot be negative')
+  }
+  if (!Number.isFinite(servicePercent) || servicePercent < 0) {
+    throw new Error('Service percent cannot be negative')
+  }
+  if (!Number.isInteger(input.people) || input.people <= 0) {
+    throw new Error('People must be a positive integer')
+  }
+
+  const serviceAmount = (input.billAmount * servicePercent) / 100
+  const subtotal = input.billAmount + serviceAmount
+  const tipAmount = (input.billAmount * input.tipPercent) / 100
+  const totalAmount = subtotal + tipAmount
+  const perPersonRaw = totalAmount / input.people
+  const perPersonRounded = applyTipRounding(perPersonRaw, roundingMode)
+
+  return {
+    tipAmount,
+    totalAmount,
+    perPerson: perPersonRaw,
+    serviceAmount,
+    subtotal,
+    perPersonRaw,
+    perPersonRounded,
+    roundingMode,
+    roundingDelta: perPersonRounded * input.people - totalAmount,
+  }
+}
+
 export function calculateTip(
   billAmount: number,
   tipPercent: number,
   people: number
 ): TipResult {
-  if (billAmount < 0) {
-    throw new Error('Bill amount cannot be negative')
-  }
-  if (tipPercent < 0) {
-    throw new Error('Tip percent cannot be negative')
-  }
-  if (!Number.isInteger(people) || people <= 0) {
-    throw new Error('People must be a positive integer')
-  }
-
-  const tipAmount = (billAmount * tipPercent) / 100
-  const totalAmount = billAmount + tipAmount
-
+  const detailed = calculateTipDetailed({
+    billAmount,
+    tipPercent,
+    people,
+    servicePercent: 0,
+    rounding: 'none',
+  })
   return {
-    tipAmount,
-    totalAmount,
-    perPerson: totalAmount / people,
+    tipAmount: detailed.tipAmount,
+    totalAmount: detailed.totalAmount,
+    perPerson: detailed.perPerson,
   }
 }
 
@@ -700,6 +980,103 @@ export function calculateCalorieNeeds(input: CalorieInput): CalorieResult {
   return {
     bmr,
     tdee: bmr * activityFactor,
+  }
+}
+
+export interface CalorieMacroSplit {
+  proteinPercent: number
+  carbsPercent: number
+  fatPercent: number
+}
+
+export interface CaloriePlanInput {
+  sex: BiologicalSex
+  age: number
+  weight: number
+  weightUnit?: WeightUnit
+  height: number
+  heightUnit?: HeightUnit
+  activityFactor: number
+  goalPercent?: number
+  macroSplit?: CalorieMacroSplit
+}
+
+export interface CaloriePlanResult extends CalorieResult {
+  weightKg: number
+  heightCm: number
+  goalPercent: number
+  calorieDelta: number
+  targetCalories: number
+  macros: {
+    proteinGrams: number
+    carbsGrams: number
+    fatGrams: number
+  }
+}
+
+const DEFAULT_MACRO_SPLIT: CalorieMacroSplit = {
+  proteinPercent: 30,
+  carbsPercent: 45,
+  fatPercent: 25,
+}
+
+function validateMacroSplit(split: CalorieMacroSplit): void {
+  const values = [split.proteinPercent, split.carbsPercent, split.fatPercent]
+  if (!values.every((value) => Number.isFinite(value) && value >= 0)) {
+    throw new Error('Macro split values must be finite and non-negative')
+  }
+  const total = split.proteinPercent + split.carbsPercent + split.fatPercent
+  if (Math.abs(total - 100) > 0.001) {
+    throw new Error('Macro split must sum to 100')
+  }
+}
+
+export function calculateCaloriePlan(input: CaloriePlanInput): CaloriePlanResult {
+  const weightUnit = input.weightUnit ?? 'kg'
+  const heightUnit = input.heightUnit ?? 'cm'
+  const goalPercent = input.goalPercent ?? 0
+  const macroSplit = input.macroSplit ?? DEFAULT_MACRO_SPLIT
+
+  if (!Number.isFinite(input.weight) || input.weight <= 0) {
+    throw new Error('Weight must be greater than zero')
+  }
+  if (!Number.isFinite(input.height) || input.height <= 0) {
+    throw new Error('Height must be greater than zero')
+  }
+  if (!Number.isFinite(goalPercent) || goalPercent < -80 || goalPercent > 200) {
+    throw new Error('Goal percent must be between -80 and 200')
+  }
+
+  validateMacroSplit(macroSplit)
+
+  const weightKg = toKg(input.weight, weightUnit)
+  const heightCm = toCm(input.height, heightUnit)
+  const baseline = calculateCalorieNeeds({
+    sex: input.sex,
+    age: input.age,
+    weightKg,
+    heightCm,
+    activityFactor: input.activityFactor,
+  })
+
+  const calorieDelta = baseline.tdee * (goalPercent / 100)
+  const targetCalories = baseline.tdee + calorieDelta
+  if (targetCalories <= 0) {
+    throw new Error('Target calories must be greater than zero')
+  }
+
+  return {
+    ...baseline,
+    weightKg,
+    heightCm,
+    goalPercent,
+    calorieDelta,
+    targetCalories,
+    macros: {
+      proteinGrams: (targetCalories * (macroSplit.proteinPercent / 100)) / 4,
+      carbsGrams: (targetCalories * (macroSplit.carbsPercent / 100)) / 4,
+      fatGrams: (targetCalories * (macroSplit.fatPercent / 100)) / 9,
+    },
   }
 }
 
@@ -979,48 +1356,168 @@ export interface RandomNumbersResult {
   allowDuplicates: boolean
 }
 
+export type RandomNumberMode = 'integer' | 'decimal'
+export type RandomSortMode = 'none' | 'asc' | 'desc'
+
+export interface RandomGenerationInput {
+  min: number
+  max: number
+  count: number
+  allowDuplicates: boolean
+  mode?: RandomNumberMode
+  decimalPlaces?: number
+  seed?: string | null
+  sort?: RandomSortMode
+}
+
+export interface RandomGenerationResult extends RandomNumbersResult {
+  mode: RandomNumberMode
+  decimalPlaces: number
+  seed: string | null
+  sort: RandomSortMode
+}
+
+function hashSeed(seed: string): number {
+  let hash = 2166136261
+  for (let i = 0; i < seed.length; i++) {
+    hash ^= seed.charCodeAt(i)
+    hash = Math.imul(hash, 16777619)
+  }
+  return hash >>> 0
+}
+
+function mulberry32(seed: number): () => number {
+  let state = seed >>> 0
+  return () => {
+    state = (state + 0x6d2b79f5) >>> 0
+    let t = Math.imul(state ^ (state >>> 15), 1 | state)
+    t ^= t + Math.imul(t ^ (t >>> 7), 61 | t)
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+function roundDecimal(value: number, decimalPlaces: number): number {
+  const factor = Math.pow(10, decimalPlaces)
+  return Math.round(value * factor) / factor
+}
+
+function generateOneRandomValue(
+  min: number,
+  max: number,
+  mode: RandomNumberMode,
+  decimalPlaces: number,
+  random: () => number
+): number {
+  if (mode === 'integer') {
+    const rangeSize = max - min + 1
+    return min + Math.floor(random() * rangeSize)
+  }
+  const raw = min + random() * (max - min)
+  return roundDecimal(raw, decimalPlaces)
+}
+
+export function generateRandomNumbers(input: RandomGenerationInput): RandomGenerationResult {
+  const mode = input.mode ?? 'integer'
+  const decimalPlaces = mode === 'integer' ? 0 : (input.decimalPlaces ?? 2)
+  const seed = input.seed ?? null
+  const sort = input.sort ?? 'none'
+
+  if (!Number.isFinite(input.min) || !Number.isFinite(input.max)) {
+    throw new Error('Min and max must be finite numbers')
+  }
+  if (mode === 'integer' && (!Number.isInteger(input.min) || !Number.isInteger(input.max))) {
+    throw new Error('Min and max must be integers')
+  }
+  if (input.min > input.max) {
+    throw new Error('Min cannot be greater than max')
+  }
+  if (!Number.isInteger(input.count) || input.count <= 0) {
+    throw new Error('Count must be a positive integer')
+  }
+  if (!Number.isInteger(decimalPlaces) || decimalPlaces < 0 || decimalPlaces > 10) {
+    throw new Error('Decimal places must be an integer between 0 and 10')
+  }
+
+  const random = seed !== null ? mulberry32(hashSeed(seed)) : Math.random
+  const numbers: number[] = []
+
+  if (!input.allowDuplicates) {
+    if (mode === 'integer') {
+      const rangeSize = input.max - input.min + 1
+      if (input.count > rangeSize) {
+        throw new Error('Count cannot exceed range size when duplicates are disabled')
+      }
+    } else {
+      const steps = Math.floor((input.max - input.min) * Math.pow(10, decimalPlaces)) + 1
+      if (input.count > steps) {
+        throw new Error('Count cannot exceed range size when duplicates are disabled')
+      }
+    }
+  }
+
+  if (input.allowDuplicates) {
+    for (let i = 0; i < input.count; i++) {
+      numbers.push(generateOneRandomValue(input.min, input.max, mode, decimalPlaces, random))
+    }
+  } else {
+    const selected = new Set<string>()
+    let attempts = 0
+    const maxAttempts = Math.max(1000, input.count * 500)
+    while (selected.size < input.count) {
+      attempts += 1
+      if (attempts > maxAttempts) {
+        throw new Error('Unable to generate enough unique values with current range')
+      }
+      const value = generateOneRandomValue(input.min, input.max, mode, decimalPlaces, random)
+      const key = mode === 'integer' ? String(value) : value.toFixed(decimalPlaces)
+      if (!selected.has(key)) {
+        selected.add(key)
+        numbers.push(value)
+      }
+    }
+  }
+
+  if (sort === 'asc') {
+    numbers.sort((a, b) => a - b)
+  } else if (sort === 'desc') {
+    numbers.sort((a, b) => b - a)
+  }
+
+  return {
+    numbers,
+    min: input.min,
+    max: input.max,
+    count: input.count,
+    allowDuplicates: input.allowDuplicates,
+    mode,
+    decimalPlaces,
+    seed,
+    sort,
+  }
+}
+
 export function generateRandomIntegers(
   min: number,
   max: number,
   count: number,
   allowDuplicates: boolean
 ): RandomNumbersResult {
-  if (!Number.isInteger(min) || !Number.isInteger(max)) {
-    throw new Error('Min and max must be integers')
-  }
-  if (min > max) {
-    throw new Error('Min cannot be greater than max')
-  }
-  if (!Number.isInteger(count) || count <= 0) {
-    throw new Error('Count must be a positive integer')
-  }
-
-  const rangeSize = max - min + 1
-
-  if (!allowDuplicates && count > rangeSize) {
-    throw new Error('Count cannot exceed range size when duplicates are disabled')
-  }
-
-  const numbers: number[] = []
-
-  if (allowDuplicates) {
-    for (let i = 0; i < count; i++) {
-      numbers.push(min + Math.floor(Math.random() * rangeSize))
-    }
-  } else {
-    const selected = new Set<number>()
-    while (selected.size < count) {
-      selected.add(min + Math.floor(Math.random() * rangeSize))
-    }
-    numbers.push(...selected)
-  }
-
-  return {
-    numbers,
+  const result = generateRandomNumbers({
     min,
     max,
     count,
     allowDuplicates,
+    mode: 'integer',
+    decimalPlaces: 0,
+    seed: null,
+    sort: 'none',
+  })
+  return {
+    numbers: result.numbers,
+    min: result.min,
+    max: result.max,
+    count: result.count,
+    allowDuplicates: result.allowDuplicates,
   }
 }
 
