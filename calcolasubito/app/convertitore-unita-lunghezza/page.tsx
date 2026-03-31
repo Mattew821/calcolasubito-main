@@ -1,9 +1,10 @@
-﻿'use client'
+'use client'
 
 import { useState, type FormEvent } from 'react'
 import Calculator from '@/components/Calculator'
 import AdUnit from '@/components/AdUnit'
 import { convertLength, type LengthUnit } from '@/lib/calculations'
+import { getActiveIntlLocale } from '@/lib/locale'
 
 const LENGTH_UNITS: Array<{ value: LengthUnit; label: string }> = [
   { value: 'm', label: 'Metri (m)' },
@@ -18,7 +19,7 @@ const LENGTH_UNITS: Array<{ value: LengthUnit; label: string }> = [
 ]
 
 function formatNumber(value: number): string {
-  return value.toLocaleString('it-IT', {
+  return value.toLocaleString(getActiveIntlLocale(), {
     minimumFractionDigits: 0,
     maximumFractionDigits: 6,
   })

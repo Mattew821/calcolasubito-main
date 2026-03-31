@@ -1,9 +1,10 @@
-﻿'use client'
+'use client'
 
 import { useMemo, useState, type FormEvent } from 'react'
 import Calculator from '@/components/Calculator'
 import AdUnit from '@/components/AdUnit'
 import { calculateAge } from '@/lib/calculations'
+import { getActiveIntlLocale } from '@/lib/locale'
 
 function toDateInputValue(date: Date): string {
   const year = date.getFullYear()
@@ -91,7 +92,7 @@ export default function CalcoloEtaPage() {
 
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <p className="text-gray-700">
-              <span className="font-semibold">Totale giorni vissuti:</span> {result.totalDays.toLocaleString('it-IT')}
+              <span className="font-semibold">Totale giorni vissuti:</span> {result.totalDays.toLocaleString(getActiveIntlLocale())}
             </p>
             <p className="text-gray-700">
               <span className="font-semibold">Prossimo compleanno tra:</span> {result.nextBirthdayInDays} giorni

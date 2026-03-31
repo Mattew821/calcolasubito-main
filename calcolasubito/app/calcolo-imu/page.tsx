@@ -5,6 +5,7 @@ import Calculator from '@/components/Calculator'
 import AdUnit from '@/components/AdUnit'
 import { calculateImu } from '@/lib/calculations'
 import { imuSchema } from '@/lib/validations'
+import { getActiveIntlLocale } from '@/lib/locale'
 
 const CATASTAL_MULTIPLIERS = [
   { value: '160', label: 'Abitazioni (A escl. A/10) e C/2, C/6, C/7 - 160' },
@@ -16,7 +17,7 @@ const CATASTAL_MULTIPLIERS = [
 ] as const
 
 function formatEuro(value: number): string {
-  return value.toLocaleString('it-IT', {
+  return value.toLocaleString(getActiveIntlLocale(), {
     style: 'currency',
     currency: 'EUR',
     minimumFractionDigits: 2,
@@ -239,7 +240,7 @@ export default function CalcoloImuPage() {
               <span className="font-semibold">Detrazione proporzionata:</span> {formatEuro(result.proportionalDeduction)}
             </p>
             <p className="text-gray-700">
-              <span className="font-semibold">Aliquota effettiva:</span> {result.effectiveRatePerMille.toLocaleString('it-IT')}‰
+              <span className="font-semibold">Aliquota effettiva:</span> {result.effectiveRatePerMille.toLocaleString(getActiveIntlLocale())} per mille
             </p>
           </div>
 

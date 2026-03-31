@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react'
 import Calculator from '@/components/Calculator'
 import AdUnit from '@/components/AdUnit'
 import { calculateIncrease } from '@/lib/calculations'
+import { getActiveIntlLocale } from '@/lib/locale'
 
 export default function AumentoPercentualePage() {
   const [baseValue, setBaseValue] = useState('100')
@@ -66,11 +67,11 @@ export default function AumentoPercentualePage() {
         <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4" role="status" aria-live="polite">
           <p className="text-sm text-gray-600">Aumento assoluto:</p>
           <p className="text-xl font-bold text-blue-700">
-            {result.increaseAmount.toLocaleString('it-IT', { maximumFractionDigits: 2 })}
+            {result.increaseAmount.toLocaleString(getActiveIntlLocale(), { maximumFractionDigits: 2 })}
           </p>
           <p className="text-sm text-gray-600 mt-3">Nuovo valore:</p>
           <p className="text-2xl font-bold text-gray-900">
-            {result.finalValue.toLocaleString('it-IT', { maximumFractionDigits: 2 })}
+            {result.finalValue.toLocaleString(getActiveIntlLocale(), { maximumFractionDigits: 2 })}
           </p>
         </div>
       )}

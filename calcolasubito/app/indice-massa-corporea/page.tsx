@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from 'react'
 import Calculator from '@/components/Calculator'
 import AdUnit from '@/components/AdUnit'
+import { getActiveIntlLocale } from '@/lib/locale'
 import {
   calculateBmiDetailed,
   type HeightUnit,
@@ -23,7 +24,7 @@ const HEIGHT_UNITS: Array<{ value: HeightUnit; label: string }> = [
 ]
 
 function formatNumber(value: number, maximumFractionDigits = 2): string {
-  return value.toLocaleString('it-IT', {
+  return value.toLocaleString(getActiveIntlLocale(), {
     minimumFractionDigits: 0,
     maximumFractionDigits,
   })
@@ -74,7 +75,7 @@ export default function IndiceMassaCorporeaPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Unità peso</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Unita peso</label>
             <select
               value={weightUnit}
               onChange={(e) => setWeightUnit(e.target.value as WeightUnit)}
@@ -101,7 +102,7 @@ export default function IndiceMassaCorporeaPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Unità altezza</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Unita altezza</label>
             <select
               value={heightUnit}
               onChange={(e) => setHeightUnit(e.target.value as HeightUnit)}
@@ -149,7 +150,7 @@ export default function IndiceMassaCorporeaPage() {
             </strong>
           </p>
           <p className="text-xs text-gray-600">
-            Dati convertiti internamente in unità metriche: {formatNumber(result.weightKg, 3)} kg, {formatNumber(result.heightCm, 2)} cm.
+              Dati convertiti internamente in unita metriche: {formatNumber(result.weightKg, 3)} kg, {formatNumber(result.heightCm, 2)} cm.
           </p>
         </div>
       )}

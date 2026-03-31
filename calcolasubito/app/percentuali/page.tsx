@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import Calculator from '@/components/Calculator'
@@ -8,6 +8,7 @@ import AdUnit from '@/components/AdUnit'
 import { useCalculatorWorker } from '@/hooks/useCalculatorWorker'
 import { useRateLimit } from '@/lib/hooks/useRateLimit'
 import { calculatePercentageChange, applySequentialPercentages } from '@/lib/calculations'
+import { getActiveIntlLocale } from '@/lib/locale'
 
 type PercentageMode = 'calculate' | 'percentage-of' | 'change' | 'sequential'
 
@@ -269,7 +270,7 @@ export default function CalcoloPercentuali() {
             <div aria-live="polite" role="status" className="bg-blue-50 border border-blue-200 rounded-lg p-6">
               <p className="text-gray-600 text-sm mb-2">Risultato:</p>
               <p className="text-3xl sm:text-4xl font-bold text-blue-600 break-words">
-                {numericResult.toLocaleString('it-IT', {
+                {numericResult.toLocaleString(getActiveIntlLocale(), {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}
@@ -281,11 +282,11 @@ export default function CalcoloPercentuali() {
             <div aria-live="polite" role="status" className="bg-blue-50 border border-blue-200 rounded-lg p-6 space-y-2">
               <p className="text-sm text-gray-600">Variazione assoluta</p>
               <p className="text-2xl font-bold text-gray-900">
-                {changeResult.absoluteChange.toLocaleString('it-IT', { maximumFractionDigits: 4 })}
+                {changeResult.absoluteChange.toLocaleString(getActiveIntlLocale(), { maximumFractionDigits: 4 })}
               </p>
               <p className="text-sm text-gray-600">Variazione percentuale</p>
               <p className="text-3xl font-bold text-blue-600">
-                {changeResult.percentChange.toLocaleString('it-IT', { maximumFractionDigits: 4 })}%
+                {changeResult.percentChange.toLocaleString(getActiveIntlLocale(), { maximumFractionDigits: 4 })}%
               </p>
             </div>
           )}
@@ -294,10 +295,10 @@ export default function CalcoloPercentuali() {
             <div aria-live="polite" role="status" className="bg-blue-50 border border-blue-200 rounded-lg p-6 space-y-3">
               <p className="text-sm text-gray-600">Valore finale</p>
               <p className="text-3xl font-bold text-blue-600">
-                {sequentialResult.finalValue.toLocaleString('it-IT', { maximumFractionDigits: 4 })}
+                {sequentialResult.finalValue.toLocaleString(getActiveIntlLocale(), { maximumFractionDigits: 4 })}
               </p>
               <p className="text-sm text-gray-600">
-                Variazione totale: {sequentialResult.totalPercentChange.toLocaleString('it-IT', { maximumFractionDigits: 4 })}%
+                Variazione totale: {sequentialResult.totalPercentChange.toLocaleString(getActiveIntlLocale(), { maximumFractionDigits: 4 })}%
               </p>
             </div>
           )}

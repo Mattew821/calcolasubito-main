@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from 'react'
 import Calculator from '@/components/Calculator'
 import AdUnit from '@/components/AdUnit'
+import { getActiveIntlLocale } from '@/lib/locale'
 import {
   calculateCircleAreaDetailed,
   type AreaInputUnit,
@@ -20,7 +21,7 @@ const AREA_UNITS: Array<{ value: AreaInputUnit; label: string }> = [
 ]
 
 function formatNumber(value: number, maximumFractionDigits = 6): string {
-  return value.toLocaleString('it-IT', {
+  return value.toLocaleString(getActiveIntlLocale(), {
     minimumFractionDigits: 0,
     maximumFractionDigits,
   })
@@ -63,7 +64,7 @@ export default function AreaCerchioPage() {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Unità di misura</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Unita di misura</label>
           <select
             value={unit}
             onChange={(e) => setUnit(e.target.value as AreaInputUnit)}
@@ -90,7 +91,7 @@ export default function AreaCerchioPage() {
         <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-4" role="status" aria-live="polite">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <p className="text-sm text-gray-600">Area ({unit}²)</p>
+              <p className="text-sm text-gray-600">Area ({unit}^2)</p>
               <p className="text-2xl font-bold text-gray-900">{formatNumber(result.areaInInputUnit)}</p>
             </div>
             <div>
@@ -103,12 +104,12 @@ export default function AreaCerchioPage() {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-            <p><span className="font-semibold">m²:</span> {formatNumber(result.area.squareMeters)}</p>
-            <p><span className="font-semibold">km²:</span> {formatNumber(result.area.squareKilometers, 9)}</p>
+            <p><span className="font-semibold">m^2:</span> {formatNumber(result.area.squareMeters)}</p>
+            <p><span className="font-semibold">km^2:</span> {formatNumber(result.area.squareKilometers, 9)}</p>
             <p><span className="font-semibold">ha:</span> {formatNumber(result.area.hectares, 6)}</p>
             <p><span className="font-semibold">acri:</span> {formatNumber(result.area.acres, 6)}</p>
-            <p><span className="font-semibold">ft²:</span> {formatNumber(result.area.squareFeet)}</p>
-            <p><span className="font-semibold">in²:</span> {formatNumber(result.area.squareInches)}</p>
+            <p><span className="font-semibold">ft^2:</span> {formatNumber(result.area.squareFeet)}</p>
+            <p><span className="font-semibold">in^2:</span> {formatNumber(result.area.squareInches)}</p>
           </div>
         </div>
       )}

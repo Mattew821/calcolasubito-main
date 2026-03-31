@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useMemo } from 'react'
 import { Share2, Facebook, Linkedin, Twitter } from 'lucide-react'
+import { useAppPreferences } from '@/components/AppPreferencesProvider'
 
 interface ShareButtonsProps {
   title: string
@@ -16,6 +17,7 @@ export function ShareButtons({
   description,
   url: providedUrl,
 }: ShareButtonsProps) {
+  const { text } = useAppPreferences()
   const [url, setUrl] = useState(providedUrl || '')
   const [isReady, setIsReady] = useState(false)
   const [isSharing, setIsSharing] = useState(false)
@@ -69,6 +71,7 @@ export function ShareButtons({
   const encodedUrl = encodeURIComponent(url)
   const encodedTitle = encodeURIComponent(title)
   const encodedDescription = encodeURIComponent(description)
+  const shareLabel = text.calculator.share
 
   const shareLinks = {
     facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
@@ -78,7 +81,7 @@ export function ShareButtons({
 
   return (
     <div className="flex items-center gap-3 mt-6 pt-6 border-t border-gray-200">
-      <span className="text-sm font-medium text-gray-600">Condividi:</span>
+      <span className="text-sm font-medium text-gray-600">{shareLabel}:</span>
 
       {/* Native share (mobile) */}
       {typeof navigator !== 'undefined' && 'share' in navigator && (
@@ -86,8 +89,8 @@ export function ShareButtons({
           onClick={handleShare}
           disabled={isSharing}
           className="p-2 hover:bg-blue-100 rounded-lg transition-colors text-gray-600 hover:text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-          title="Condividi"
-          aria-label="Condividi questa pagina"
+          title={shareLabel}
+          aria-label={shareLabel}
         >
           <Share2 className="w-5 h-5" aria-hidden="true" />
         </button>
@@ -99,8 +102,8 @@ export function ShareButtons({
         target="_blank"
         rel="noopener noreferrer"
         className="p-2 hover:bg-blue-100 rounded-lg transition-colors text-gray-600 hover:text-blue-600"
-        title="Condividi su Facebook"
-        aria-label="Condividi su Facebook"
+        title={`${shareLabel} Facebook`}
+        aria-label={`${shareLabel} Facebook`}
       >
         <Facebook className="w-5 h-5" aria-hidden="true" />
       </a>
@@ -111,8 +114,8 @@ export function ShareButtons({
         target="_blank"
         rel="noopener noreferrer"
         className="p-2 hover:bg-blue-100 rounded-lg transition-colors text-gray-600 hover:text-blue-600"
-        title="Condividi su Twitter"
-        aria-label="Condividi su Twitter"
+        title={`${shareLabel} Twitter`}
+        aria-label={`${shareLabel} Twitter`}
       >
         <Twitter className="w-5 h-5" aria-hidden="true" />
       </a>
@@ -123,8 +126,8 @@ export function ShareButtons({
         target="_blank"
         rel="noopener noreferrer"
         className="p-2 hover:bg-blue-100 rounded-lg transition-colors text-gray-600 hover:text-blue-600"
-        title="Condividi su LinkedIn"
-        aria-label="Condividi su LinkedIn"
+        title={`${shareLabel} LinkedIn`}
+        aria-label={`${shareLabel} LinkedIn`}
       >
         <Linkedin className="w-5 h-5" aria-hidden="true" />
       </a>

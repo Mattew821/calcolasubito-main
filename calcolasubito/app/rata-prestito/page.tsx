@@ -1,12 +1,13 @@
-﻿'use client'
+'use client'
 
 import { useState, type FormEvent } from 'react'
 import Calculator from '@/components/Calculator'
 import AdUnit from '@/components/AdUnit'
 import { calculateLoanPayment } from '@/lib/calculations'
+import { getActiveIntlLocale } from '@/lib/locale'
 
 function formatEuro(value: number): string {
-  return value.toLocaleString('it-IT', {
+  return value.toLocaleString(getActiveIntlLocale(), {
     style: 'currency',
     currency: 'EUR',
     minimumFractionDigits: 2,

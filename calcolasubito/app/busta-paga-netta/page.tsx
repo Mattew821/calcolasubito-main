@@ -5,9 +5,10 @@ import Calculator from '@/components/Calculator'
 import AdUnit from '@/components/AdUnit'
 import { calculateNetSalary } from '@/lib/calculations'
 import { bustaPagaNettaSchema } from '@/lib/validations'
+import { getActiveIntlLocale } from '@/lib/locale'
 
 function formatEuro(value: number): string {
-  return value.toLocaleString('it-IT', {
+  return value.toLocaleString(getActiveIntlLocale(), {
     style: 'currency',
     currency: 'EUR',
     minimumFractionDigits: 2,
@@ -82,7 +83,7 @@ export default function BustaPagaNettaPage() {
           </div>
           <div>
             <label htmlFor="monthlyPayments" className="block text-sm font-medium text-gray-700 mb-2">
-              Mensilità annue
+              Mensilita annue
             </label>
             <select
               id="monthlyPayments"

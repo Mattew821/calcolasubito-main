@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from 'react'
 import Calculator from '@/components/Calculator'
 import AdUnit from '@/components/AdUnit'
+import { getActiveIntlLocale } from '@/lib/locale'
 import {
   calculateFuelConsumptionDetailed,
   type DistanceUnit,
@@ -37,14 +38,14 @@ const FUEL_PROFILES: Array<{
 ]
 
 function formatNumber(value: number): string {
-  return value.toLocaleString('it-IT', {
+  return value.toLocaleString(getActiveIntlLocale(), {
     minimumFractionDigits: 0,
     maximumFractionDigits: 4,
   })
 }
 
 function formatEuro(value: number): string {
-  return value.toLocaleString('it-IT', {
+  return value.toLocaleString(getActiveIntlLocale(), {
     style: 'currency',
     currency: 'EUR',
     minimumFractionDigits: 2,

@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState, type FormEvent } from 'react'
 import Calculator from '@/components/Calculator'
@@ -6,6 +6,7 @@ import { ToastContainer, useToast } from '@/components/Toast'
 import AdUnit from '@/components/AdUnit'
 import { useRateLimit } from '@/lib/hooks/useRateLimit'
 import { calculateDaysBetween, calculateBusinessDaysBetween } from '@/lib/calculations'
+import { getActiveIntlLocale } from '@/lib/locale'
 
 type DaysMode = 'calendar' | 'business'
 
@@ -208,10 +209,10 @@ export default function CalcoloGiorni() {
             <div aria-live="polite" role="status" className="bg-blue-50 border border-blue-200 rounded-lg p-6">
               <p className="text-gray-600 text-sm mb-2">Differenza:</p>
               <p className="text-3xl sm:text-4xl font-bold text-blue-600 mb-4 break-words">
-                {result.toLocaleString('it-IT')} giorni
+                {result.toLocaleString(getActiveIntlLocale())} giorni
               </p>
               <p className="text-sm text-gray-600">
-                Dal {new Date(startDate).toLocaleDateString('it-IT')} al {new Date(endDate).toLocaleDateString('it-IT')}
+                Dal {new Date(startDate).toLocaleDateString(getActiveIntlLocale())} al {new Date(endDate).toLocaleDateString(getActiveIntlLocale())}
               </p>
             </div>
           )}
