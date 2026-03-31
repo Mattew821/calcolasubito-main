@@ -1,0 +1,54 @@
+name: Sync Current
+
+on:
+  push:
+    branches:
+      - calcolasubito-main
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  sync-current:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: calcolasubito
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: calcolasubito/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Update CURRENT.md
+        env:
+          CURRENT_PUSH_COMMIT: ${{ github.sha }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: node scripts/update-current.mjs
+
+      - name: Commit and push CURRENT.md if changed
+        run: |
+          if git diff --quiet -- CURRENT.md; then
+            echo "CURRENT.md unchanged"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CURRENT.md
+          git commit -m "docs(current): auto-update after push"
+          git push origin "${{ github.ref_name }}"

@@ -1,14 +1,14 @@
 # Current
 
-- Last Push Date (Europe/Rome): 2026-03-31 18:19
-- Last Pushed Commit: `55df060`
+- Last Push Date (Europe/Rome): 2026-03-31 18:26
+- Last Pushed Commit: `5849217`
 - Branch: `calcolasubito-main`
 - Domain: `vercel.vercel.app`
-- Last Vercel Current Update (Europe/Rome): 2026-03-31 18:19
+- Last Vercel Current Update (Europe/Rome): 2026-03-31 18:26
 - Vercel Current:
   - Connector API status: `token-missing`
   - Public health check: `https://vercel.vercel.app/` -> `200`
-  - X-Vercel-Id: `fra1::66dnv-1774973998228-78d9f2622dea`
+  - X-Vercel-Id: `cdg1::wpwqr-1774974379666-f2ef104bcf86`
   - X-Vercel-Cache: `HIT`
   - X-Request-Guard: `n/a`
   - Security probes:
@@ -25,3 +25,4 @@
 - Quality Gates Policy:
   - Local pre-push hook: `npm run verify:full` (required)
   - CI required checks: `test`, `lint`, `build`, `e2e`
+  - GitHub workflow: `.github/workflows/current-sync.yml` (auto-update CURRENT.md)

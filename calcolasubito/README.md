@@ -67,7 +67,6 @@ npm run current:update
 Il repository include hook Git versionati in `calcolasubito/.githooks`:
 
 - `pre-push`: esegue `npm run verify:full` e blocca il push se fallisce
-- `post-push`: aggiorna `CURRENT.md` e pubblica automaticamente il commit di allineamento
 
 Installazione hook (una sola volta per clone):
 
@@ -75,7 +74,9 @@ Installazione hook (una sola volta per clone):
 npm run hooks:install
 ```
 
-Nota: il push automatico interno usato dal `post-push` non rientra in loop grazie alla variabile `CURRENT_AUTO_PUSH`.
+L'aggiornamento automatico di `CURRENT.md` su ogni push e gestito dal workflow GitHub:
+
+- `.github/workflows/current-sync.yml`: aggiorna `CURRENT.md` e, se cambia, crea commit `docs(current): auto-update after push`
 
 ## CURRENT e stato Vercel
 

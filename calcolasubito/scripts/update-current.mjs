@@ -223,6 +223,7 @@ async function main() {
   lines.push('- Quality Gates Policy:')
   lines.push('  - Local pre-push hook: `npm run verify:full` (required)')
   lines.push('  - CI required checks: `test`, `lint`, `build`, `e2e`')
+  lines.push('  - GitHub workflow: `.github/workflows/current-sync.yml` (auto-update CURRENT.md)')
 
   lines.push('')
 
