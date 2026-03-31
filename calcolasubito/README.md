@@ -123,6 +123,58 @@ REQUEST_RATE_LIMIT_MAX_KEYS=20000
 
 Nota: il rate limit in-memory a livello middleware riduce flood/bot semplici, ma non sostituisce un WAF/CDN enterprise.
 
+## API commerciale (API key + quota + pagamento)
+
+Sistema implementato:
+- creazione API key per singolo calcolatore
+- quota mensile inclusa per key
+- blocco automatico oltre soglia (`402`)
+- link checkout Stripe per acquistare crediti extra
+- webhook Stripe che accredita i crediti sulla key
+
+Route disponibili:
+- `POST /api/v1/keys` (admin) -> crea key
+- `GET /api/v1/keys` (admin) -> lista key
+- `PATCH /api/v1/keys/{keyId}` (admin) -> aggiorna key
+- `GET /api/v1/usage` (x-api-key) -> uso e quota corrente
+- `POST /api/v1/calculate` (x-api-key) -> esegue calcolo
+- `POST /api/v1/billing/webhook` (Stripe) -> accredito crediti
+
+Header auth:
+- admin: `x-admin-token: <API_ADMIN_TOKEN>`
+- client API: `x-api-key: <rawApiKey>`
+
+Esempio creazione key:
+
+```bash
+curl -X POST http://localhost:3000/api/v1/keys \
+  -H "Content-Type: application/json" \
+  -H "x-admin-token: YOUR_ADMIN_TOKEN" \
+  -d '{
+    "name": "Cliente A - Percentuali",
+    "calculatorId": "percentuali",
+    "monthlyQuota": 5000,
+    "overagePackCredits": 10000,
+    "overagePackPriceCents": 1990,
+    "currency": "eur"
+  }'
+```
+
+Esempio chiamata calcolo:
+
+```bash
+curl -X POST http://localhost:3000/api/v1/calculate \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: cs_live...." \
+  -d '{
+    "calculatorId": "percentuali",
+    "operation": "calculate",
+    "input": { "number": 250, "percentage": 22 }
+  }'
+```
+
+Se la quota e finita la risposta e `402` con `checkoutUrl`.
+
 ## Calcolatori disponibili (24)
 
 1. Calcolo Percentuali

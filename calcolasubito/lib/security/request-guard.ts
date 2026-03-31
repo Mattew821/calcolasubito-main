@@ -1,4 +1,5 @@
 export const ALLOWED_METHODS = new Set(['GET', 'HEAD', 'OPTIONS'])
+const API_ALLOWED_METHODS = new Set(['GET', 'HEAD', 'OPTIONS', 'POST', 'PATCH'])
 
 const BLOCKED_PATH_PATTERNS: RegExp[] = [
   /^\/(?:wp-admin|wp-login\.php|xmlrpc\.php)(?:\/|$)/i,
@@ -81,7 +82,9 @@ function normalizeSearch(search: string): string {
 
 export function evaluateRequestThreat(input: RequestThreatCheckInput): RequestThreatCheckResult {
   const method = (input.method || 'GET').toUpperCase()
-  if (!ALLOWED_METHODS.has(method)) {
+  const normalizedPath = normalizePath(input.pathname)
+  const allowedMethods = normalizedPath.startsWith('/api/') ? API_ALLOWED_METHODS : ALLOWED_METHODS
+  if (!allowedMethods.has(method)) {
     return {
       allowed: false,
       statusCode: 405,
@@ -100,7 +103,6 @@ export function evaluateRequestThreat(input: RequestThreatCheckInput): RequestTh
     }
   }
 
-  const normalizedPath = normalizePath(input.pathname)
   const decodedPath = safeDecode(normalizedPath)
 
   if (PATH_TRAVERSAL_PATTERN.test(normalizedPath) || PATH_TRAVERSAL_PATTERN.test(decodedPath)) {

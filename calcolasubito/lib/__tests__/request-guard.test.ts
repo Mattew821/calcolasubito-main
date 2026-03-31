@@ -29,6 +29,20 @@ describe('request guard', () => {
     expect(result.reason).toBe('method-not-allowed')
   })
 
+  it('allows API write methods on /api routes', () => {
+    const result = evaluateRequestThreat({
+      method: 'POST',
+      pathname: '/api/v1/calculate',
+      search: '',
+      userAgent: 'Mozilla/5.0',
+    })
+
+    expect(result).toEqual({
+      allowed: true,
+      reason: 'allowed',
+    })
+  })
+
   it('blocks suspiciously large request components', () => {
     const result = evaluateRequestThreat({
       method: 'GET',
