@@ -3,6 +3,17 @@
 - Last Push Date (Europe/Rome): 2026-03-31 10:48
 - Branch: `calcolasubito-main`
 - Domain: `calcolasubito.vercel.app`
+- Last Vercel Current Update (Europe/Rome): 2026-03-31 17:54
+- Vercel Current:
+  - Connector API status: `Auth required` in current session
+  - Public health check: `https://calcolasubito.vercel.app/` -> `200`
+  - `X-Vercel-Id`: `fra1::d4bl4-1774972429542-52b933787493`
+  - `X-Vercel-Cache`: `HIT`
+  - Security probes:
+    - `/wp-admin` -> `403`
+    - `/percentuali?q=%27%20OR%201%3D1--` -> `403`
+  - Key routes:
+    - `/`, `/percentuali`, `/scorporo-iva`, `/cookie`, `/privacy`, `/sitemap.xml`, `/robots.txt` -> `200`
 - Quality Gates:
   - `npm test -- --runInBand` PASS (143/143)
   - `npm run lint` PASS
