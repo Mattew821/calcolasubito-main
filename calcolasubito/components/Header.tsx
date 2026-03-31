@@ -38,11 +38,11 @@ export default function Header() {
     )
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/40 bg-white/80 backdrop-blur-xl shadow-sm">
+    <header className="site-header sticky top-0 z-50 border-b border-white/40 bg-white/80 backdrop-blur-xl shadow-sm">
       <nav className="max-w-7xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between gap-4">
         <Link
           href="/"
-          className="group inline-flex items-center gap-2.5 font-display font-bold text-lg text-cyan-800"
+          className="group inline-flex items-center gap-2.5 font-display font-bold text-lg text-cyan-800 transition-transform duration-300 hover:-translate-y-0.5"
           aria-label={`${text.header.nav.home} - ${text.common.brandName}`}
         >
           <span className="grid place-items-center w-9 h-9 rounded-xl bg-cyan-100 text-cyan-700 transition-transform duration-300 group-hover:scale-105">
@@ -53,7 +53,7 @@ export default function Header() {
 
         <button
           type="button"
-          className="md:hidden inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white p-2 text-slate-700"
+          className="interactive-control md:hidden inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white p-2 text-slate-700"
           onClick={() => setIsOpen((prev) => !prev)}
           aria-label={isOpen ? text.header.closeMenu : text.header.openMenu}
           aria-expanded={isOpen}
@@ -66,13 +66,13 @@ export default function Header() {
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm font-semibold text-slate-600 hover:text-cyan-700 transition-colors"
+              className="header-link text-sm font-semibold text-slate-600 hover:text-cyan-700 transition-colors"
             >
               {text.header.nav[item.key]}
             </Link>
           ))}
 
-          <div className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-slate-700">
+          <div className="surface-control inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-slate-700">
             <label htmlFor="header-language" className="sr-only">
               {text.common.language}
             </label>
@@ -91,7 +91,7 @@ export default function Header() {
             </select>
           </div>
 
-          <div className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-slate-700">
+          <div className="surface-control inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-slate-700">
             {themeIcon}
             <label htmlFor="header-theme" className="sr-only">
               {text.common.theme}
@@ -114,13 +114,13 @@ export default function Header() {
       </nav>
 
       {isOpen && (
-        <div className="md:hidden border-t border-slate-200 bg-white/95 backdrop-blur-xl animate-fadeIn">
+        <div className="mobile-sheet md:hidden border-t border-slate-200 bg-white/95 backdrop-blur-xl animate-fadeIn">
           <div className="max-w-7xl mx-auto px-4 py-3 space-y-2">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="block rounded-lg px-3 py-2 text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors"
+                className="mobile-nav-link block rounded-lg px-3 py-2 text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 {text.header.nav[item.key]}

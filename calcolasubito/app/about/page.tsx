@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { CALCULATOR_CATALOG, CALCULATOR_CATEGORIES } from '@/lib/calculator-catalog'
 
 export const metadata = {
@@ -21,12 +21,12 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen page-surface relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0 opacity-60">
-        <div className="hero-orb hero-orb-1" />
-        <div className="hero-orb hero-orb-2" />
+        <div className="hero-orb hero-orb-1" data-parallax data-parallax-speed="7" />
+        <div className="hero-orb hero-orb-2" data-parallax data-parallax-speed="11" />
       </div>
 
       <div className="relative max-w-4xl mx-auto px-4 md:px-8 py-12 md:py-16 space-y-8">
-        <header className="glass-panel rounded-3xl p-8 md:p-10 fade-in-up">
+        <header className="glass-panel rounded-3xl p-8 md:p-10 fade-in-up" data-reveal>
           <h1 className="font-display text-3xl md:text-5xl text-slate-900">Chi Siamo</h1>
           <p className="mt-4 text-slate-600 text-base md:text-lg">
             CalcolaSubito nasce con un obiettivo semplice: offrire strumenti di calcolo online
@@ -34,7 +34,7 @@ export default function AboutPage() {
           </p>
         </header>
 
-        <section className="portal-card fade-in-up space-y-4">
+        <section className="portal-card interactive-lift fade-in-up space-y-4" data-reveal>
           <h2 className="font-display text-2xl text-slate-900">Il Portale Oggi</h2>
           <p className="text-slate-600">
             Il portale include <strong>{CALCULATOR_CATALOG.length} calcolatori</strong> organizzati
@@ -52,7 +52,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="portal-card fade-in-up space-y-4">
+        <section className="portal-card interactive-lift fade-in-up space-y-4" data-reveal>
           <h2 className="font-display text-2xl text-slate-900">Calcolatori Più Utilizzati</h2>
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {highlightedCalculators.map((calculator) => (
@@ -66,7 +66,7 @@ export default function AboutPage() {
           </ul>
         </section>
 
-        <section className="portal-card fade-in-up space-y-4">
+        <section className="portal-card interactive-lift fade-in-up space-y-4" data-reveal>
           <h2 className="font-display text-2xl text-slate-900">Affidabilità e Privacy</h2>
           <p className="text-slate-600">
             I calcoli vengono eseguiti nel browser dell&apos;utente. Per contesti fiscali, sanitari o
@@ -74,7 +74,7 @@ export default function AboutPage() {
           </p>
         </section>
 
-        <section className="portal-card fade-in-up space-y-3">
+        <section className="portal-card interactive-lift fade-in-up space-y-3" data-reveal>
           <h2 className="font-display text-2xl text-slate-900">Contatti</h2>
           <p className="text-slate-600">
             Per segnalazioni o suggerimenti puoi scrivere a{' '}
@@ -99,3 +99,4 @@ export default function AboutPage() {
     </div>
   )
 }
+

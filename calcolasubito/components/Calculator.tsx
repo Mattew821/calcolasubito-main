@@ -38,6 +38,8 @@ const RECENTS_STORAGE_KEY = 'calcolasubito:recents'
 const SNAPSHOT_STORAGE_PREFIX = 'calcolasubito:snapshots:'
 const MAX_RECENTS = 8
 const MAX_SNAPSHOTS = 6
+const ACTION_BUTTON_CLASS = 'tool-action-btn'
+const ACTION_BUTTON_DANGER_CLASS = 'tool-action-btn tool-action-btn-danger'
 
 function readStringListStorage(key: string): string[] {
   try {
@@ -599,8 +601,8 @@ export default function Calculator({
   return (
     <div className="min-h-screen page-surface relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0 opacity-60">
-        <div className="hero-orb hero-orb-1" />
-        <div className="hero-orb hero-orb-2" />
+        <div className="hero-orb hero-orb-1" data-parallax data-parallax-speed="8" />
+        <div className="hero-orb hero-orb-2" data-parallax data-parallax-speed="12" />
       </div>
 
       <div className="relative max-w-5xl mx-auto px-4 md:px-8 py-12 md:py-16 space-y-8">
@@ -612,7 +614,7 @@ export default function Calculator({
           <p className="mt-3 text-base md:text-lg text-slate-600 max-w-3xl">{description}</p>
         </header>
 
-        <section className="portal-card md:p-8 p-6 fade-in-up space-y-5" data-reveal>
+        <section className="portal-card interactive-lift md:p-8 p-6 fade-in-up space-y-5" data-reveal>
           <input
             ref={importInputRef}
             type="file"
@@ -621,11 +623,12 @@ export default function Calculator({
             onChange={handleImportSnapshots}
           />
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2" data-reveal-stagger>
             <button
               type="button"
               onClick={toggleFavorite}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-cyan-300 hover:text-cyan-700 transition-colors"
+              className={ACTION_BUTTON_CLASS}
+              data-stagger-item
             >
               <Star className={`w-4 h-4 ${isFavorite ? 'fill-current text-amber-500' : ''}`} />
               {isFavorite ? text.calculator.favorite : text.calculator.addFavorite}
@@ -633,7 +636,8 @@ export default function Calculator({
             <button
               type="button"
               onClick={copyCalculatorLink}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-cyan-300 hover:text-cyan-700 transition-colors"
+              className={ACTION_BUTTON_CLASS}
+              data-stagger-item
             >
               <Link2 className="w-4 h-4" />
               {text.calculator.copyLink}
@@ -641,7 +645,8 @@ export default function Calculator({
             <button
               type="button"
               onClick={shareCalculator}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-cyan-300 hover:text-cyan-700 transition-colors"
+              className={ACTION_BUTTON_CLASS}
+              data-stagger-item
             >
               <Share2 className="w-4 h-4" />
               {text.calculator.share}
@@ -649,7 +654,8 @@ export default function Calculator({
             <button
               type="button"
               onClick={printCalculator}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-cyan-300 hover:text-cyan-700 transition-colors"
+              className={ACTION_BUTTON_CLASS}
+              data-stagger-item
             >
               <Printer className="w-4 h-4" />
               {text.calculator.print}
@@ -657,7 +663,8 @@ export default function Calculator({
             <button
               type="button"
               onClick={resetFormValues}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-cyan-300 hover:text-cyan-700 transition-colors"
+              className={ACTION_BUTTON_CLASS}
+              data-stagger-item
             >
               <RotateCcw className="w-4 h-4" />
               {text.calculator.resetForm}
@@ -665,7 +672,8 @@ export default function Calculator({
             <button
               type="button"
               onClick={submitFormNow}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-cyan-300 hover:text-cyan-700 transition-colors"
+              className={ACTION_BUTTON_CLASS}
+              data-stagger-item
             >
               <RefreshCw className="w-4 h-4" />
               {text.calculator.recalculate}
@@ -673,7 +681,8 @@ export default function Calculator({
             <button
               type="button"
               onClick={restoreLastInputs}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-cyan-300 hover:text-cyan-700 transition-colors"
+              className={ACTION_BUTTON_CLASS}
+              data-stagger-item
             >
               <RotateCcw className="w-4 h-4" />
               {text.calculator.restoreValues}
@@ -681,7 +690,8 @@ export default function Calculator({
             <button
               type="button"
               onClick={exportSnapshots}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-cyan-300 hover:text-cyan-700 transition-colors"
+              className={ACTION_BUTTON_CLASS}
+              data-stagger-item
             >
               <Download className="w-4 h-4" />
               {text.calculator.exportHistory}
@@ -689,7 +699,8 @@ export default function Calculator({
             <button
               type="button"
               onClick={openImportDialog}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-cyan-300 hover:text-cyan-700 transition-colors"
+              className={ACTION_BUTTON_CLASS}
+              data-stagger-item
             >
               <Upload className="w-4 h-4" />
               {text.calculator.importHistory}
@@ -698,7 +709,8 @@ export default function Calculator({
               <button
                 type="button"
                 onClick={clearSnapshots}
-                className="inline-flex items-center gap-2 rounded-xl border border-rose-300 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-100 transition-colors"
+                className={ACTION_BUTTON_DANGER_CLASS}
+                data-stagger-item
               >
                 <Trash2 className="w-4 h-4" />
                 {text.calculator.clearHistory}
@@ -726,7 +738,7 @@ export default function Calculator({
           )}
         </section>
 
-        <section ref={formSectionRef} className="portal-card md:p-8 p-6 fade-in-up" data-reveal>
+        <section ref={formSectionRef} className="portal-card interactive-lift md:p-8 p-6 fade-in-up" data-reveal>
           {children}
         </section>
 

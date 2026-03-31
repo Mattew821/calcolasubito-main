@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export type ToastType = 'success' | 'error' | 'info' | 'warning'
 
@@ -49,18 +49,14 @@ function ToastItem({ id, message, type, duration = 3000, onClose }: ToastItemPro
     <div
       role="alert"
       aria-live="assertive"
-      className={`fixed bottom-4 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:right-4 w-[calc(100%-2rem)] sm:w-auto max-w-sm ${bgColor} text-white px-4 sm:px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-fadeIn z-50`}
+      className={`animate-toast-in fixed bottom-4 left-1/2 z-50 flex w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 items-center gap-3 rounded-lg ${bgColor} px-4 py-3 text-white shadow-lg sm:left-auto sm:right-4 sm:w-auto sm:translate-x-0 sm:px-6`}
     >
       <span className="text-xl font-bold">{icon}</span>
-      <span className="text-sm sm:text-base break-words">{message}</span>
+      <span className="text-sm break-words sm:text-base">{message}</span>
     </div>
   )
 }
 
-/**
- * Toast Container component - renders all active toasts
- * Usage: <ToastContainer toasts={toasts} onClose={removeToast} />
- */
 export function ToastContainer({
   toasts,
   onClose,
@@ -79,14 +75,6 @@ export function ToastContainer({
   )
 }
 
-/**
- * Hook for managing multiple toasts with ID-based array approach
- * Prevents duplicate messages and ensures proper cleanup
- *
- * Example:
- * const { toasts, showToast, removeToast } = useToast()
- * showToast('Success!', 'success', 3000)
- */
 export function useToast() {
   const [toasts, setToasts] = useState<ToastItem[]>([])
 

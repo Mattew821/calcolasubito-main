@@ -65,8 +65,8 @@ export default function Home() {
   return (
     <div className="min-h-screen page-surface relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0 opacity-70">
-        <div className="hero-orb hero-orb-1" />
-        <div className="hero-orb hero-orb-2" />
+        <div className="hero-orb hero-orb-1" data-parallax data-parallax-speed="7" />
+        <div className="hero-orb hero-orb-2" data-parallax data-parallax-speed="11" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 md:px-8 py-12 md:py-16 space-y-10">
@@ -126,7 +126,7 @@ export default function Home() {
 
         <AdUnit adSlot="1234567890" />
 
-        <section className="space-y-4 fade-in-up" id="calcolatori" data-reveal>
+        <section className="space-y-4 fade-in-up" id="calcolatori">
           <div className="flex items-end justify-between gap-4 flex-wrap">
             <div>
               <h2 className="font-display text-2xl md:text-3xl text-slate-900">{text.home.allCalculatorsTitle}</h2>
@@ -139,13 +139,13 @@ export default function Home() {
               {text.home.noResults}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-              {filteredCalculators.map((calculator, index) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5" data-reveal-stagger>
+              {filteredCalculators.map((calculator) => (
                 <Link
                   key={calculator.id}
                   href={`/${calculator.id}`}
-                  className="calculator-card fade-in-up"
-                  style={{ animationDelay: `${Math.min(index * 50, 350)}ms` }}
+                  className="calculator-card interactive-lift"
+                  data-stagger-item
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="w-11 h-11 rounded-xl bg-cyan-100 text-cyan-700 grid place-items-center">
@@ -154,7 +154,9 @@ export default function Home() {
                     <span className="badge-popularity">{text.popularity[calculator.popularity]}</span>
                   </div>
 
-                  <h3 className="mt-4 text-xl font-bold text-slate-900">{calculator.title}</h3>
+                  <h3 className="mt-4 text-xl font-bold text-slate-900">
+                    {calculator.title}
+                  </h3>
                   <p className="mt-2 text-sm text-slate-600">{calculator.description}</p>
 
                   <div className="mt-4 flex items-center justify-between gap-3">
@@ -175,9 +177,14 @@ export default function Home() {
           <h2 className="font-display text-2xl md:text-3xl text-slate-900">{text.home.highlightedTitle}</h2>
           <p className="mt-2 text-slate-600">{text.home.highlightedSubtitle}</p>
 
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4" data-reveal-stagger>
             {highlightedCalculators.map((calculator) => (
-              <Link key={calculator.id} href={`/${calculator.id}`} className="highlight-card">
+              <Link
+                key={calculator.id}
+                href={`/${calculator.id}`}
+                className="highlight-card interactive-lift"
+                data-stagger-item
+              >
                 <p className="text-sm uppercase tracking-wide text-cyan-700 font-semibold">{text.categories[calculator.category]}</p>
                 <h3 className="font-semibold text-slate-900 text-lg mt-1">{calculator.title}</h3>
                 <p className="text-sm text-slate-600 mt-1">{calculator.description}</p>

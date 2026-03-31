@@ -40,13 +40,13 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               {quickLinks.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className="text-slate-400 hover:text-cyan-300 transition-colors">
+                  <Link href={item.href} className="footer-link text-slate-400 hover:text-cyan-300 transition-colors">
                     {text.header.nav[item.key]}
                   </Link>
                 </li>
               ))}
               <li>
-                <Link href="/cookie" className="text-slate-400 hover:text-cyan-300 transition-colors">
+                <Link href="/cookie" className="footer-link text-slate-400 hover:text-cyan-300 transition-colors">
                   Cookie Policy
                 </Link>
               </li>
@@ -58,7 +58,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               {featuredCalculators.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className="text-slate-400 hover:text-cyan-300 transition-colors">
+                  <Link href={item.href} className="footer-link text-slate-400 hover:text-cyan-300 transition-colors">
                     {item.label}
                   </Link>
                 </li>
