@@ -64,7 +64,7 @@ npm run current:update
 
 ## Automazione CURRENT ad ogni push
 
-Il repository include hook Git versionati in `.githooks`:
+Il repository include hook Git versionati in `calcolasubito/.githooks`:
 
 - `pre-push`: esegue `npm run verify:full` e blocca il push se fallisce
 - `post-push`: aggiorna `CURRENT.md` e pubblica automaticamente il commit di allineamento
