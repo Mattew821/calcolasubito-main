@@ -515,3 +515,23 @@ Stato task esterni:
     - audit temporaneo su next start locale (porta 4301) -> PASS (28/28)
   - Esito:
     - hardening completato con regressione nulla; baseline sicurezza rinforzata su input malevoli, header e comportamento middleware.
+
+- Recursive verification cycle (2026-03-31, generic calculator expansion):
+  - Estensioni motore calcolo:
+    - carburante: nuova funzione calculateFuelConsumptionDetailed con unita distanza (km/mi), unita energia-carburante (L, gal US/UK, kg, kWh), MPG US/UK e costi viaggio
+    - temperatura: nuova conversione generica convertTemperature tra C/F/K/Rankine, con controllo zero assoluto
+    - lunghezze: nuova convertLength da qualsiasi unita (m, km, cm, mm, mi, yd, ft, in, nmi)
+  - Compatibilita preservata:
+    - calculateFuelConsumption, convertCelsius, convertLengthFromMeters mantenute come wrapper backward-compatible
+  - UI calcolatori aggiornata:
+    - /consumo-carburante: supporto multi-unita + profili alimentazione + costo per unita + costo/100km
+    - /conversione-temperatura: input su scala selezionabile e output completo C/F/K/Rankine
+    - /convertitore-unita-lunghezza: input con unita di partenza selezionabile e output esteso
+  - Catalogo aggiornato (lib/calculator-catalog.ts) con nuove descrizioni funzionali
+  - Quality gates:
+    - npm test -- --runInBand -> PASS (119/119)
+    - npm run lint -> PASS
+    - npm run build -> PASS
+    - python validation_framework.py --no-interactive --no-auto-git-push --max-attempts-per-problem 2 --max-global-iterations 2 -> PASS (0 problemi)
+  - Esito:
+    - calcolatori resi significativamente piu generici su unita e scenari reali, con test di regressione verde.

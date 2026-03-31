@@ -165,7 +165,7 @@ export const CALCULATOR_CATALOG: CalculatorCatalogEntry[] = [
     title: 'Conversione Temperatura',
     category: 'Utilita',
     popularity: 'Medio',
-    description: 'Converti Celsius in Fahrenheit e Kelvin.',
+    description: 'Converti tra Celsius, Fahrenheit, Kelvin e Rankine.',
     tags: ['temperatura', 'conversione', 'unita'],
   },
   {
@@ -173,7 +173,7 @@ export const CALCULATOR_CATALOG: CalculatorCatalogEntry[] = [
     title: 'Convertitore Lunghezze',
     category: 'Utilita',
     popularity: 'Alto',
-    description: 'Converte metri in km, cm, mm, miglia, piedi e pollici.',
+    description: 'Converte da qualsiasi unita in metriche, imperiali e nautiche.',
     tags: ['conversione', 'lunghezza', 'metri', 'miglia', 'piedi'],
   },
   {
@@ -205,7 +205,7 @@ export const CALCULATOR_CATALOG: CalculatorCatalogEntry[] = [
     title: 'Consumo Carburante',
     category: 'Utilita',
     popularity: 'Medio',
-    description: 'Calcola km/l e l/100km.',
+    description: 'Calcola consumi multi-unita, MPG e costo percorso.',
     tags: ['carburante', 'auto', 'consumi'],
   },
 ]

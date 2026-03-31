@@ -13,14 +13,17 @@ import {
   calculateCompoundInterest,
   calculateBMI,
   calculateFuelConsumption,
+  calculateFuelConsumptionDetailed,
   calculateRectangleArea,
   calculateCircleArea,
   calculateWeightedAverage,
   convertCelsius,
+  convertTemperature,
   calculateAge,
   calculateLoanPayment,
   calculateTip,
   calculateCalorieNeeds,
+  convertLength,
   convertLengthFromMeters,
   generateRandomIntegers,
   calculateImu,
@@ -291,6 +294,41 @@ describe('calculateFuelConsumption', () => {
     expect(() => calculateFuelConsumption(0, 10)).toThrow('Distance must be greater than zero')
     expect(() => calculateFuelConsumption(100, 0)).toThrow('Fuel liters must be greater than zero')
   })
+
+  it('should calculate detailed fuel metrics with imperial units', () => {
+    const result = calculateFuelConsumptionDetailed({
+      distance: 300,
+      distanceUnit: 'mi',
+      fuelAmount: 10,
+      fuelUnit: 'gal_us',
+      unitPrice: 1.8,
+    })
+
+    expect(result.distanceKm).toBeCloseTo(482.8032, 4)
+    expect(result.kmPerFuelUnit).toBeCloseTo(48.28032, 5)
+    expect(result.kmPerLiter).toBeCloseTo(12.754, 3)
+    expect(result.litersPer100Km).toBeCloseTo(7.8405, 3)
+    expect(result.mpgUs).toBeCloseTo(30, 2)
+    expect(result.mpgUk).toBeCloseTo(36, 1)
+    expect(result.totalCost).toBeCloseTo(18, 8)
+    expect(result.costPer100Km).toBeCloseTo(3.7282, 3)
+  })
+
+  it('should keep liter-specific metrics null for non-liter fuel units', () => {
+    const result = calculateFuelConsumptionDetailed({
+      distance: 100,
+      distanceUnit: 'km',
+      fuelAmount: 12,
+      fuelUnit: 'kwh',
+    })
+
+    expect(result.kmPerFuelUnit).toBeCloseTo(8.3333, 4)
+    expect(result.fuelUnitsPer100Km).toBeCloseTo(12, 8)
+    expect(result.kmPerLiter).toBeNull()
+    expect(result.litersPer100Km).toBeNull()
+    expect(result.mpgUs).toBeNull()
+    expect(result.mpgUk).toBeNull()
+  })
 })
 
 describe('areas', () => {
@@ -323,10 +361,24 @@ describe('convertCelsius', () => {
     const result = convertCelsius(25)
     expect(result.fahrenheit).toBe(77)
     expect(result.kelvin).toBeCloseTo(298.15, 2)
+    expect(result.rankine).toBeCloseTo(536.67, 2)
   })
 
   it('should reject non-finite Celsius values', () => {
-    expect(() => convertCelsius(Number.POSITIVE_INFINITY)).toThrow('Celsius value must be finite')
+    expect(() => convertCelsius(Number.POSITIVE_INFINITY)).toThrow('Temperature value must be finite')
+  })
+})
+
+describe('convertTemperature', () => {
+  it('should convert Fahrenheit input correctly', () => {
+    const result = convertTemperature(32, 'f')
+    expect(result.celsius).toBeCloseTo(0, 8)
+    expect(result.kelvin).toBeCloseTo(273.15, 8)
+    expect(result.rankine).toBeCloseTo(491.67, 2)
+  })
+
+  it('should reject temperatures below absolute zero', () => {
+    expect(() => convertTemperature(-500, 'f')).toThrow('Temperature cannot be below absolute zero')
   })
 })
 
@@ -431,13 +483,26 @@ describe('convertLengthFromMeters', () => {
     expect(result.centimeters).toBe(100000)
     expect(result.millimeters).toBe(1000000)
     expect(result.miles).toBeCloseTo(0.621371, 6)
+    expect(result.yards).toBeCloseTo(1093.6133, 4)
     expect(result.feet).toBeCloseTo(3280.839895, 6)
     expect(result.inches).toBeCloseTo(39370.07874, 5)
+    expect(result.nauticalMiles).toBeCloseTo(0.5399568, 6)
   })
 
   it('should reject invalid meter values', () => {
     expect(() => convertLengthFromMeters(-1)).toThrow('Meters value cannot be negative')
     expect(() => convertLengthFromMeters(Number.NaN)).toThrow('Meters value must be finite')
+  })
+})
+
+describe('convertLength', () => {
+  it('should convert from miles to metric and imperial units', () => {
+    const result = convertLength(1, 'mi')
+    expect(result.meters).toBeCloseTo(1609.344, 6)
+    expect(result.kilometers).toBeCloseTo(1.609344, 6)
+    expect(result.yards).toBeCloseTo(1760, 6)
+    expect(result.feet).toBeCloseTo(5280, 6)
+    expect(result.inches).toBeCloseTo(63360, 4)
   })
 })
 

@@ -295,6 +295,106 @@ export interface FuelConsumptionResult {
   litersPer100Km: number
 }
 
+export type DistanceUnit = 'km' | 'mi'
+export type FuelUnit = 'l' | 'gal_us' | 'gal_uk' | 'kg' | 'kwh'
+
+export interface FuelConsumptionDetailedInput {
+  distance: number
+  distanceUnit?: DistanceUnit
+  fuelAmount: number
+  fuelUnit?: FuelUnit
+  unitPrice?: number | null
+}
+
+export interface FuelConsumptionDetailedResult {
+  distanceKm: number
+  distanceUnit: DistanceUnit
+  fuelAmount: number
+  fuelUnit: FuelUnit
+  kmPerFuelUnit: number
+  fuelUnitsPer100Km: number
+  kmPerLiter: number | null
+  litersPer100Km: number | null
+  mpgUs: number | null
+  mpgUk: number | null
+  totalCost: number | null
+  costPer100Km: number | null
+}
+
+const DISTANCE_TO_KM: Record<DistanceUnit, number> = {
+  km: 1,
+  mi: 1.609344,
+}
+
+const FUEL_TO_LITER: Partial<Record<FuelUnit, number>> = {
+  l: 1,
+  gal_us: 3.785411784,
+  gal_uk: 4.54609,
+}
+
+function toKm(distance: number, unit: DistanceUnit): number {
+  const factor = DISTANCE_TO_KM[unit]
+  return distance * factor
+}
+
+function toLiters(fuelAmount: number, unit: FuelUnit): number | null {
+  const factor = FUEL_TO_LITER[unit]
+  if (factor === undefined) {
+    return null
+  }
+  return fuelAmount * factor
+}
+
+export function calculateFuelConsumptionDetailed(
+  input: FuelConsumptionDetailedInput
+): FuelConsumptionDetailedResult {
+  const distanceUnit = input.distanceUnit ?? 'km'
+  const fuelUnit = input.fuelUnit ?? 'l'
+
+  if (!Number.isFinite(input.distance) || input.distance <= 0) {
+    throw new Error('Distance must be greater than zero')
+  }
+  if (!Number.isFinite(input.fuelAmount) || input.fuelAmount <= 0) {
+    throw new Error('Fuel amount must be greater than zero')
+  }
+  if (input.unitPrice !== undefined && input.unitPrice !== null) {
+    if (!Number.isFinite(input.unitPrice) || input.unitPrice < 0) {
+      throw new Error('Unit price must be greater or equal to zero')
+    }
+  }
+
+  const distanceKm = toKm(input.distance, distanceUnit)
+  const liters = toLiters(input.fuelAmount, fuelUnit)
+  const kmPerFuelUnit = distanceKm / input.fuelAmount
+  const fuelUnitsPer100Km = (input.fuelAmount / distanceKm) * 100
+
+  const kmPerLiter = liters ? distanceKm / liters : null
+  const litersPer100Km = liters ? (liters / distanceKm) * 100 : null
+  const mpgUs = kmPerLiter ? kmPerLiter * 2.352145833 : null
+  const mpgUk = kmPerLiter ? kmPerLiter * 2.824809364548 : null
+
+  const totalCost =
+    input.unitPrice !== undefined && input.unitPrice !== null
+      ? input.fuelAmount * input.unitPrice
+      : null
+  const costPer100Km = totalCost !== null ? (totalCost / distanceKm) * 100 : null
+
+  return {
+    distanceKm,
+    distanceUnit,
+    fuelAmount: input.fuelAmount,
+    fuelUnit,
+    kmPerFuelUnit,
+    fuelUnitsPer100Km,
+    kmPerLiter,
+    litersPer100Km,
+    mpgUs,
+    mpgUk,
+    totalCost,
+    costPer100Km,
+  }
+}
+
 export function calculateFuelConsumption(
   distanceKm: number,
   fuelLiters: number
@@ -306,9 +406,18 @@ export function calculateFuelConsumption(
     throw new Error('Fuel liters must be greater than zero')
   }
 
+  const detailed = calculateFuelConsumptionDetailed({
+    distance: distanceKm,
+    distanceUnit: 'km',
+    fuelAmount: fuelLiters,
+    fuelUnit: 'l',
+  })
+  if (detailed.kmPerLiter === null || detailed.litersPer100Km === null) {
+    throw new Error('Fuel liters conversion unavailable')
+  }
   return {
-    kmPerLiter: distanceKm / fuelLiters,
-    litersPer100Km: (fuelLiters / distanceKm) * 100,
+    kmPerLiter: detailed.kmPerLiter,
+    litersPer100Km: detailed.litersPer100Km,
   }
 }
 
@@ -364,17 +473,49 @@ export interface TemperatureConversionResult {
   celsius: number
   fahrenheit: number
   kelvin: number
+  rankine: number
+}
+
+export type TemperatureUnit = 'c' | 'f' | 'k' | 'r'
+
+function toCelsius(value: number, unit: TemperatureUnit): number {
+  switch (unit) {
+    case 'c':
+      return value
+    case 'f':
+      return ((value - 32) * 5) / 9
+    case 'k':
+      return value - 273.15
+    case 'r':
+      return ((value - 491.67) * 5) / 9
+    default:
+      return value
+  }
+}
+
+export function convertTemperature(value: number, fromUnit: TemperatureUnit): TemperatureConversionResult {
+  if (!Number.isFinite(value)) {
+    throw new Error('Temperature value must be finite')
+  }
+  const celsius = toCelsius(value, fromUnit)
+  if (celsius < -273.15) {
+    throw new Error('Temperature cannot be below absolute zero')
+  }
+
+  const kelvin = celsius + 273.15
+  const fahrenheit = (celsius * 9) / 5 + 32
+  const rankine = (kelvin * 9) / 5
+
+  return {
+    celsius,
+    fahrenheit,
+    kelvin,
+    rankine,
+  }
 }
 
 export function convertCelsius(celsius: number): TemperatureConversionResult {
-  if (!Number.isFinite(celsius)) {
-    throw new Error('Celsius value must be finite')
-  }
-  return {
-    celsius,
-    fahrenheit: (celsius * 9) / 5 + 32,
-    kelvin: celsius + 273.15,
-  }
+  return convertTemperature(celsius, 'c')
 }
 
 // ===== ETA =====
@@ -569,8 +710,48 @@ export interface LengthConversionResult {
   centimeters: number
   millimeters: number
   miles: number
+  yards: number
   feet: number
   inches: number
+  nauticalMiles: number
+}
+
+export type LengthUnit = 'm' | 'km' | 'cm' | 'mm' | 'mi' | 'yd' | 'ft' | 'in' | 'nmi'
+
+const LENGTH_TO_METERS: Record<LengthUnit, number> = {
+  m: 1,
+  km: 1000,
+  cm: 0.01,
+  mm: 0.001,
+  mi: 1609.344,
+  yd: 0.9144,
+  ft: 0.3048,
+  in: 0.0254,
+  nmi: 1852,
+}
+
+export function convertLength(value: number, fromUnit: LengthUnit): LengthConversionResult {
+  if (!Number.isFinite(value)) {
+    throw new Error('Length value must be finite')
+  }
+  if (value < 0) {
+    throw new Error('Length value cannot be negative')
+  }
+
+  const factor = LENGTH_TO_METERS[fromUnit]
+  const meters = value * factor
+
+  return {
+    meters,
+    kilometers: meters / 1000,
+    centimeters: meters * 100,
+    millimeters: meters * 1000,
+    miles: meters / 1609.344,
+    yards: meters / 0.9144,
+    feet: meters * 3.280839895,
+    inches: meters * 39.37007874,
+    nauticalMiles: meters / 1852,
+  }
 }
 
 export function convertLengthFromMeters(meters: number): LengthConversionResult {
@@ -580,16 +761,7 @@ export function convertLengthFromMeters(meters: number): LengthConversionResult 
   if (meters < 0) {
     throw new Error('Meters value cannot be negative')
   }
-
-  return {
-    meters,
-    kilometers: meters / 1000,
-    centimeters: meters * 100,
-    millimeters: meters * 1000,
-    miles: meters / 1609.344,
-    feet: meters * 3.280839895,
-    inches: meters * 39.37007874,
-  }
+  return convertLength(meters, 'm')
 }
 
 function roundCurrency(value: number): number {
