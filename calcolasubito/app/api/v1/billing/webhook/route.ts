@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
       const creditsRaw = session.metadata?.credits
       const credits = Number(creditsRaw)
 
-      if (!apiKeyId || !monthKey || !Number.isFinite(credits) || credits <= 0) {
+      if (!apiKeyId || !monthKey || !Number.isFinite(credits) || !Number.isInteger(credits) || credits <= 0) {
         throw new Error('Metadata checkout incompleta')
       }
 

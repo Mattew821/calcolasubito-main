@@ -14,6 +14,7 @@ const DEFAULT_MONTHLY_QUOTA = 1000
 const DEFAULT_OVERAGE_PACK_CREDITS = 1000
 const DEFAULT_OVERAGE_PACK_PRICE_CENTS = 790
 const DEFAULT_CURRENCY = 'eur'
+const MONTH_KEY_REGEX = /^\d{4}-(0[1-9]|1[0-2])$/
 
 const initialState: BillingState = {
   keys: {},
@@ -152,6 +153,22 @@ function sanitizePositiveInteger(
     return fallback
   }
   return Math.min(max, Math.max(min, Math.floor(parsed)))
+}
+
+function sanitizeStrictPositiveInteger(value: number, min: number, max: number): number {
+  if (!Number.isFinite(value) || !Number.isInteger(value)) {
+    throw new Error('Credits non validi')
+  }
+  if (value < min || value > max) {
+    throw new Error('Credits non validi')
+  }
+  return value
+}
+
+function assertValidMonthKey(monthKey: string): void {
+  if (!MONTH_KEY_REGEX.test(monthKey)) {
+    throw new Error('Month key non valido')
+  }
 }
 
 export function generateApiKey(params: {
@@ -299,12 +316,13 @@ export function addPurchasedCredits(
   monthKey: string,
   credits: number
 ): UsageMonthRecord {
-  const normalizedCredits = sanitizePositiveInteger(credits, 0, 1, 10_000_000)
-  if (normalizedCredits <= 0) {
-    throw new Error('Credits non validi')
-  }
+  const normalizedCredits = sanitizeStrictPositiveInteger(credits, 1, 10_000_000)
+  assertValidMonthKey(monthKey)
 
   const state = loadState()
+  if (!(apiKeyId in state.keys)) {
+    throw new Error('API key non trovata')
+  }
   const nextState = cloneState(state)
   const mapKey = buildUsageMapKey(apiKeyId, monthKey)
   const usageRecord = nextState.usageByMonth[mapKey] ?? createUsageMonthRecord()

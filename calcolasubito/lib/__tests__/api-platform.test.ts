@@ -406,4 +406,25 @@ describe('api platform', () => {
     expect(updated.active).toBe(false)
     expect(store.authenticateApiKey(rawApiKey)?.key.id).toBe(record.id)
   })
+
+  it('validates purchased credits strictly (integer, month key, existing key)', async () => {
+    const store = await import('@/lib/api-platform/store')
+    const { record } = store.generateApiKey({
+      name: 'Credits Key',
+      calculatorId: 'percentuali',
+      monthlyQuota: 1,
+    })
+
+    const monthKey = store.getUsageSnapshot(record, 'percentuali').monthKey
+    const usageRecord = store.addPurchasedCredits(record.id, monthKey, 10)
+    expect(usageRecord.purchasedCredits).toBe(10)
+
+    expect(() => store.addPurchasedCredits(record.id, monthKey, 0)).toThrow('Credits non validi')
+    expect(() => store.addPurchasedCredits(record.id, monthKey, -5)).toThrow('Credits non validi')
+    expect(() => store.addPurchasedCredits(record.id, monthKey, 1.5)).toThrow('Credits non validi')
+    expect(() => store.addPurchasedCredits(record.id, '2026-13', 1)).toThrow('Month key non valido')
+    expect(() => store.addPurchasedCredits('ak_deadbeefdeadbeef', monthKey, 1)).toThrow(
+      'API key non trovata'
+    )
+  })
 })
