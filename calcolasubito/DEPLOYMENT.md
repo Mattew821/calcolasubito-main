@@ -610,3 +610,17 @@ Stato task esterni:
     - `python validation_framework.py --no-interactive --no-auto-git-push --max-attempts-per-problem 1 --max-global-iterations 1` -> PASS (0 issues)
   - Outcome:
     - frontend now supports modern animated UX, accessible theming, and runtime multilingual UI controls with production-ready validation green.
+
+- Recursive verification cycle (2026-03-31, full portal re-check pass):
+  - End-to-end revalidation executed across unit, integration, build, E2E and bounded framework loops.
+  - Real issue found and fixed:
+    - E2E regression on homepage search test due hardcoded Italian accessible-name after dynamic i18n support.
+    - Fix applied in `e2e/calculators.spec.ts`: search locator now resilient to runtime language (`input[type="search"]`) while preserving functional assertions.
+  - Full quality gates after fix:
+    - `npm test -- --runInBand` -> PASS (138/138)
+    - `npm run lint` -> PASS
+    - `npm run build` -> PASS
+    - `npx playwright test` -> PASS (24/24)
+    - `python validation_framework.py --no-interactive --no-auto-git-push --max-attempts-per-problem 2 --max-global-iterations 2` -> PASS (0 issues)
+  - Outcome:
+    - no remaining reproducible defects found in current codebase/test surface for this cycle.

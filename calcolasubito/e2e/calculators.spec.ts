@@ -31,10 +31,13 @@ test('homepage search should find new calculators', async ({ page }) => {
 
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
 
-  await page.getByRole('searchbox', { name: 'Cerca calcolatore' }).fill('imu')
+  const searchInput = page.locator('input[type="search"]').first()
+  await expect(searchInput).toBeVisible()
+
+  await searchInput.fill('imu')
   await expect(page.locator('a[href="/calcolo-imu"]').first()).toBeVisible()
 
-  await page.getByRole('searchbox', { name: 'Cerca calcolatore' }).fill('busta paga')
+  await searchInput.fill('busta paga')
   await expect(page.locator('a[href="/busta-paga-netta"]').first()).toBeVisible()
 })
 
