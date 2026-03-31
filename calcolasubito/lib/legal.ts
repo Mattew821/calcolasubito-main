@@ -1,0 +1,1 @@
+export const LEGAL_LAST_UPDATED_LABEL = '31/03/2026'

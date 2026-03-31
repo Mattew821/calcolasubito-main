@@ -1,3 +1,5 @@
+import { LEGAL_LAST_UPDATED_LABEL } from '@/lib/legal'
+
 export const metadata = {
   title: 'Cookie Policy | CalcolaSubito',
   description: 'Informativa sui cookie di CalcolaSubito',
@@ -42,10 +44,10 @@ export default function CookiePolicy() {
               Puoi controllare i cookie tramite le impostazioni del tuo browser:
             </p>
             <ul className="list-disc list-inside text-gray-600 space-y-2 ml-4">
-              <li>Chrome: Impostazioni → Privacy e sicurezza → Cookie e dati sito</li>
-              <li>Firefox: Opzioni → Privacy → Cookie e cronologia del sito</li>
-              <li>Safari: Preferenze → Privacy → Gestisci dati dei siti web</li>
-              <li>Edge: Impostazioni → Privacy → Cookie e autorizzazioni</li>
+              <li>Chrome: Impostazioni, Privacy e sicurezza, Cookie e dati sito</li>
+              <li>Firefox: Opzioni, Privacy, Cookie e cronologia del sito</li>
+              <li>Safari: Preferenze, Privacy, Gestisci dati dei siti web</li>
+              <li>Edge: Impostazioni, Privacy, Cookie e autorizzazioni</li>
             </ul>
           </section>
 
@@ -54,7 +56,7 @@ export default function CookiePolicy() {
               4. Cookie di Terze Parti
             </h2>
             <p className="text-gray-600 mb-4">
-              Google Analytics è gestito da Google secondo la loro Privacy Policy.
+              Google Analytics e gestito da Google secondo la loro Privacy Policy.
               Consulta la{' '}
               <a
                 href="https://policies.google.com/privacy"
@@ -73,14 +75,14 @@ export default function CookiePolicy() {
               5. Cookie Disabilitati
             </h2>
             <p className="text-gray-600">
-              Se disabiliti i cookie, il sito continuerà a funzionare normalmente.
+              Se disabiliti i cookie, il sito continuera a funzionare normalmente.
               Solo le funzioni analitiche non saranno disponibili.
             </p>
           </section>
 
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <p className="text-sm text-blue-800">
-              <strong>Ultima modifica:</strong> {new Date().toLocaleDateString('it-IT')}
+              <strong>Ultima modifica:</strong> {LEGAL_LAST_UPDATED_LABEL}
             </p>
           </div>
         </div>

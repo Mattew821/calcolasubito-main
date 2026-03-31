@@ -1,3 +1,5 @@
+import { LEGAL_LAST_UPDATED_LABEL } from '@/lib/legal'
+
 export const metadata = {
   title: 'Privacy Policy | CalcolaSubito',
   description: 'Informativa sulla privacy di CalcolaSubito',
@@ -15,7 +17,7 @@ export default function PrivacyPolicy() {
               1. Informazioni su CalcolaSubito
             </h2>
             <p className="text-gray-600 mb-4">
-              CalcolaSubito è un sito web che fornisce strumenti di calcolo online
+              CalcolaSubito e un sito web che fornisce strumenti di calcolo online
               gratuiti. Questa privacy policy descrive come trattiamo i dati personali.
             </p>
           </section>
@@ -75,7 +77,7 @@ export default function PrivacyPolicy() {
 
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <p className="text-sm text-blue-800">
-              <strong>Ultima modifica:</strong> {new Date().toLocaleDateString('it-IT')}
+              <strong>Ultima modifica:</strong> {LEGAL_LAST_UPDATED_LABEL}
             </p>
           </div>
         </div>

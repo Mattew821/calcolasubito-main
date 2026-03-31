@@ -17,6 +17,7 @@ import {
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { CALCULATOR_CATALOG } from '@/lib/calculator-catalog'
 import { useAppPreferences } from '@/components/AppPreferencesProvider'
+import { getIntlLocale } from '@/lib/locale'
 
 interface CalculatorProps {
   title: string
@@ -719,7 +720,7 @@ export default function Calculator({
               </p>
               <p className="mt-2 text-xs text-slate-500">
                 {text.calculator.localHistoryLastSaved}:{' '}
-                {new Date(snapshots[0]?.timestamp ?? Date.now()).toLocaleString(language === 'en' ? 'en-US' : language === 'es' ? 'es-ES' : 'it-IT')}
+                {new Date(snapshots[0]?.timestamp ?? Date.now()).toLocaleString(getIntlLocale(language))}
               </p>
             </div>
           )}

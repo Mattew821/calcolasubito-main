@@ -645,3 +645,25 @@ Stato task esterni:
     - `npx playwright test` -> PASS (24/24, executed sequentially; parallel run with validation was discarded as infrastructure contention on `.next`)
   - Outcome:
     - locale formatting and share accessibility text are now coherent with active UI language without regressions.
+
+- Recursive verification cycle (2026-03-31, legal pages consistency + deterministic loops):
+  - Scientific loop execution (bounded recursive):
+    - ran 2 full deterministic loops of `npm test -- --runInBand`, `npm run lint`, `npm run build`.
+  - Real issue found and fixed:
+    - `app/cookie/page.tsx` had JSX parsing failure due raw `->` symbols in list items.
+    - replaced with plain readable text separators to keep JSX parse-safe.
+  - Consistency fixes:
+    - `app/privacy/page.tsx` and `app/cookie/page.tsx` now use a fixed legal update date label via `lib/legal.ts` instead of `new Date()` (avoids misleading moving date).
+    - `components/Calculator.tsx` now uses centralized `getIntlLocale(language)` from `lib/locale.ts` for snapshot timestamp formatting.
+    - cleaned visible mojibake fragments in legal page copy.
+  - Validation and tests:
+    - `npm test -- --runInBand` -> PASS (143/143)
+    - `npm run lint` -> PASS
+    - `npm run build` -> PASS
+    - `python validation_framework.py --no-interactive --no-auto-git-push --max-attempts-per-problem 2 --max-global-iterations 2` -> PASS (0 issues)
+    - `npx playwright test` -> PASS (24/24, executed sequentially)
+  - Production smoke/security checks:
+    - `https://calcolasubito.vercel.app/` and key routes (`/percentuali`, `/scorporo-iva`, `/cookie`, `/privacy`, `/sitemap.xml`, `/robots.txt`) -> 200
+    - malicious probes (`/wp-admin`, SQLi-like query on `/percentuali`) -> 403
+  - Outcome:
+    - no residual reproducible defects after recursive loop verification for this cycle.
