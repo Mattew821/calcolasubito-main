@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+set -eu
+
+if [ "${CURRENT_AUTO_PUSH:-}" = "1" ]; then
+  exit 0
+fi
+
+echo "[pre-push] running required quality gate (verify:full)"
+npm run verify:full

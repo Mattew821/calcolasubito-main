@@ -58,6 +58,39 @@ npm test
 npm run lint
 npm run build
 npm run e2e
+npm run verify:full
+npm run current:update
+```
+
+## Automazione CURRENT ad ogni push
+
+Il repository include hook Git versionati in `.githooks`:
+
+- `pre-push`: esegue `npm run verify:full` e blocca il push se fallisce
+- `post-push`: aggiorna `CURRENT.md` e pubblica automaticamente il commit di allineamento
+
+Installazione hook (una sola volta per clone):
+
+```bash
+npm run hooks:install
+```
+
+Nota: il push automatico interno usato dal `post-push` non rientra in loop grazie alla variabile `CURRENT_AUTO_PUSH`.
+
+## CURRENT e stato Vercel
+
+`CURRENT.md` viene aggiornato dallo script `scripts/update-current.mjs` con:
+
+- branch, commit e timestamp dell'ultimo push
+- stato runtime pubblico del dominio
+- route principali e probe sicurezza
+- stato deployment Vercel da API quando `VERCEL_TOKEN` e disponibile
+
+Per abilitare la lettura deployment via API:
+
+```bash
+# PowerShell (sessione corrente)
+$env:VERCEL_TOKEN="xxxxxxxx"
 ```
 
 ## Configurazione dominio

@@ -1,22 +1,27 @@
 # Current
 
-- Last Push Date (Europe/Rome): 2026-03-31 10:48
+- Last Push Date (Europe/Rome): 2026-03-31 18:19
+- Last Pushed Commit: `55df060`
 - Branch: `calcolasubito-main`
-- Domain: `calcolasubito.vercel.app`
-- Last Vercel Current Update (Europe/Rome): 2026-03-31 17:54
+- Domain: `vercel.vercel.app`
+- Last Vercel Current Update (Europe/Rome): 2026-03-31 18:19
 - Vercel Current:
-  - Connector API status: `Auth required` in current session
-  - Public health check: `https://calcolasubito.vercel.app/` -> `200`
-  - `X-Vercel-Id`: `fra1::d4bl4-1774972429542-52b933787493`
-  - `X-Vercel-Cache`: `HIT`
+  - Connector API status: `token-missing`
+  - Public health check: `https://vercel.vercel.app/` -> `200`
+  - X-Vercel-Id: `fra1::66dnv-1774973998228-78d9f2622dea`
+  - X-Vercel-Cache: `HIT`
+  - X-Request-Guard: `n/a`
   - Security probes:
     - `/wp-admin` -> `403`
-    - `/percentuali?q=%27%20OR%201%3D1--` -> `403`
+    - `/percentuali?q=%27%20OR%201%3D1--` -> `404`
   - Key routes:
-    - `/`, `/percentuali`, `/scorporo-iva`, `/cookie`, `/privacy`, `/sitemap.xml`, `/robots.txt` -> `200`
-- Quality Gates:
-  - `npm test -- --runInBand` PASS (143/143)
-  - `npm run lint` PASS
-  - `npm run build` PASS
-  - `npx playwright test` PASS (24/24)
-  - `python validation_framework.py ...` PASS (0 issues)
+    - `/` -> `200`
+    - `/percentuali` -> `404`
+    - `/scorporo-iva` -> `404`
+    - `/cookie` -> `404`
+    - `/privacy` -> `404`
+    - `/sitemap.xml` -> `404`
+    - `/robots.txt` -> `404`
+- Quality Gates Policy:
+  - Local pre-push hook: `npm run verify:full` (required)
+  - CI required checks: `test`, `lint`, `build`, `e2e`

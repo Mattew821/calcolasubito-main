@@ -1,3 +1,4 @@
+import React from 'react'
 import { LEGAL_LAST_UPDATED_LABEL } from '@/lib/legal'
 
 export const metadata = {
@@ -56,7 +57,7 @@ export default function CookiePolicy() {
               4. Cookie di Terze Parti
             </h2>
             <p className="text-gray-600 mb-4">
-              Google Analytics e gestito da Google secondo la loro Privacy Policy.
+              Google Analytics &egrave; gestito da Google secondo la loro Privacy Policy.
               Consulta la{' '}
               <a
                 href="https://policies.google.com/privacy"
@@ -75,7 +76,7 @@ export default function CookiePolicy() {
               5. Cookie Disabilitati
             </h2>
             <p className="text-gray-600">
-              Se disabiliti i cookie, il sito continuera a funzionare normalmente.
+              Se disabiliti i cookie, il sito continuer&agrave; a funzionare normalmente.
               Solo le funzioni analitiche non saranno disponibili.
             </p>
           </section>
