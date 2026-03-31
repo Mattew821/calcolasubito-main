@@ -1,12 +1,16 @@
 import {
   calculatePercentage,
   calculatePercentageOf,
+  calculatePercentageChange,
+  applySequentialPercentages,
   calculateDaysBetween,
+  calculateBusinessDaysBetween,
   calculateWeeksBetween,
   calculateMonthsBetween,
   calculateGrossFromNet,
   calculateNetFromGross,
   calculateMortgage,
+  calculateMortgageAdvanced,
   calculateDiscount,
   calculateIncrease,
   calculateSimpleInterest,
@@ -86,6 +90,33 @@ describe('calculatePercentageOf', () => {
   })
 })
 
+describe('calculatePercentageChange', () => {
+  it('should calculate absolute and percent changes', () => {
+    const result = calculatePercentageChange(100, 125)
+    expect(result.absoluteChange).toBe(25)
+    expect(result.percentChange).toBe(25)
+  })
+
+  it('should support decreases', () => {
+    const result = calculatePercentageChange(200, 150)
+    expect(result.absoluteChange).toBe(-50)
+    expect(result.percentChange).toBe(-25)
+  })
+
+  it('should reject zero initial value', () => {
+    expect(() => calculatePercentageChange(0, 10)).toThrow('Initial value cannot be zero')
+  })
+})
+
+describe('applySequentialPercentages', () => {
+  it('should apply chained percentage changes in order', () => {
+    const result = applySequentialPercentages(100, [10, -20, 5])
+    expect(result.finalValue).toBeCloseTo(92.4, 8)
+    expect(result.totalPercentChange).toBeCloseTo(-7.6, 8)
+    expect(result.steps).toHaveLength(3)
+  })
+})
+
 describe('calculateDaysBetween', () => {
   it('should calculate days between two dates', () => {
     const startDate = new Date('2024-01-01')
@@ -118,6 +149,27 @@ describe('calculateDaysBetween', () => {
       const ba = calculateDaysBetween(b, a)
       expect(ab + ba).toBe(0)
     }
+  })
+})
+
+describe('calculateBusinessDaysBetween', () => {
+  it('should count weekdays only by default', () => {
+    const start = new Date('2026-03-02') // Monday
+    const end = new Date('2026-03-09') // next Monday (exclusive)
+    expect(calculateBusinessDaysBetween(start, end)).toBe(5)
+  })
+
+  it('should include end date when requested', () => {
+    const start = new Date('2026-03-02') // Monday
+    const end = new Date('2026-03-02') // same day
+    expect(calculateBusinessDaysBetween(start, end, { includeEndDate: true })).toBe(1)
+  })
+
+  it('should exclude custom holidays', () => {
+    const start = new Date('2026-04-01')
+    const end = new Date('2026-04-06')
+    const holidays = [new Date('2026-04-02')]
+    expect(calculateBusinessDaysBetween(start, end, { holidays })).toBe(2)
   })
 })
 
@@ -228,6 +280,52 @@ describe('calculateMortgage', () => {
       expect(result.amortizationSchedule[months - 1].balance).toBeGreaterThanOrEqual(0)
       expect(result.amortizationSchedule[months - 1].balance).toBeLessThan(1)
     }
+  })
+})
+
+describe('calculateMortgageAdvanced', () => {
+  it('should reduce duration and interest with extra monthly payments', () => {
+    const baseline = calculateMortgage(200000, 4.5, 300)
+    const advanced = calculateMortgageAdvanced({
+      principal: 200000,
+      annualRate: 4.5,
+      months: 300,
+      extraMonthlyPayment: 200,
+      monthlyFees: 0,
+      upfrontCosts: 0,
+    })
+
+    expect(advanced.actualMonths).toBeLessThan(300)
+    expect(advanced.totalInterest).toBeLessThan(baseline.totalInterest)
+    expect(advanced.totalInterestSaved).toBeGreaterThan(0)
+    expect(advanced.monthsSaved).toBeGreaterThan(0)
+  })
+
+  it('should include fees and upfront costs in total paid', () => {
+    const advanced = calculateMortgageAdvanced({
+      principal: 120000,
+      annualRate: 3,
+      months: 180,
+      extraMonthlyPayment: 0,
+      monthlyFees: 5,
+      upfrontCosts: 1200,
+    })
+
+    expect(advanced.totalPaidWithFeesAndCosts).toBeCloseTo(
+      advanced.totalAmountPaid + advanced.actualMonths * 5 + 1200,
+      6
+    )
+  })
+
+  it('should reject negative extras and fees', () => {
+    expect(() =>
+      calculateMortgageAdvanced({
+        principal: 100000,
+        annualRate: 3.5,
+        months: 240,
+        extraMonthlyPayment: -1,
+      })
+    ).toThrow('Extra monthly payment cannot be negative')
   })
 })
 

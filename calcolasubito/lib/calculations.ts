@@ -14,6 +14,82 @@ export function calculatePercentageOf(part: number, total: number): number {
   return (part / total) * 100
 }
 
+export interface PercentageChangeResult {
+  initialValue: number
+  finalValue: number
+  absoluteChange: number
+  percentChange: number
+}
+
+export function calculatePercentageChange(
+  initialValue: number,
+  finalValue: number
+): PercentageChangeResult {
+  if (!Number.isFinite(initialValue) || !Number.isFinite(finalValue)) {
+    throw new Error('Values must be finite numbers')
+  }
+  if (initialValue === 0) {
+    throw new Error('Initial value cannot be zero')
+  }
+
+  const absoluteChange = finalValue - initialValue
+  const percentChange = (absoluteChange / initialValue) * 100
+  return {
+    initialValue,
+    finalValue,
+    absoluteChange,
+    percentChange,
+  }
+}
+
+export interface SequentialPercentageResult {
+  baseValue: number
+  changes: number[]
+  finalValue: number
+  totalPercentChange: number
+  steps: Array<{
+    changePercent: number
+    previousValue: number
+    nextValue: number
+  }>
+}
+
+export function applySequentialPercentages(
+  baseValue: number,
+  changes: number[]
+): SequentialPercentageResult {
+  if (!Number.isFinite(baseValue)) {
+    throw new Error('Base value must be finite')
+  }
+  if (!changes.every((value) => Number.isFinite(value))) {
+    throw new Error('All percentage changes must be finite numbers')
+  }
+
+  let currentValue = baseValue
+  const steps: SequentialPercentageResult['steps'] = []
+
+  for (const changePercent of changes) {
+    const previousValue = currentValue
+    currentValue = currentValue * (1 + changePercent / 100)
+    steps.push({
+      changePercent,
+      previousValue,
+      nextValue: currentValue,
+    })
+  }
+
+  const totalPercentChange =
+    baseValue === 0 ? Number.NaN : ((currentValue - baseValue) / baseValue) * 100
+
+  return {
+    baseValue,
+    changes,
+    finalValue: currentValue,
+    totalPercentChange,
+    steps,
+  }
+}
+
 // ===== GIORNI TRA DATE =====
 export function calculateDaysBetween(startDate: Date, endDate: Date): number {
   const msPerDay = 24 * 60 * 60 * 1000
@@ -28,6 +104,60 @@ export function calculateDaysBetween(startDate: Date, endDate: Date): number {
     endDate.getDate()
   )
   return Math.floor((endUtc - startUtc) / msPerDay)
+}
+
+function addDays(date: Date, days: number): Date {
+  const result = new Date(date)
+  result.setDate(result.getDate() + days)
+  return result
+}
+
+function isWeekendDay(date: Date): boolean {
+  const day = date.getDay()
+  return day === 0 || day === 6
+}
+
+export interface BusinessDaysOptions {
+  includeEndDate?: boolean
+  holidays?: Date[]
+}
+
+export function calculateBusinessDaysBetween(
+  startDate: Date,
+  endDate: Date,
+  options: BusinessDaysOptions = {}
+): number {
+  if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+    throw new Error('Invalid start or end date')
+  }
+  if (startDate > endDate) {
+    throw new Error('Start date must be before or equal to end date')
+  }
+
+  const includeEndDate = options.includeEndDate ?? false
+  const holidays = new Set(
+    (options.holidays ?? []).map((date) => {
+      const normalized = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+      return normalized.getTime()
+    })
+  )
+
+  const normalizedStart = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
+  const normalizedEnd = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate())
+  const endBoundary = includeEndDate ? addDays(normalizedEnd, 1) : normalizedEnd
+
+  let current = normalizedStart
+  let businessDays = 0
+
+  while (current < endBoundary) {
+    const timestamp = current.getTime()
+    if (!isWeekendDay(current) && !holidays.has(timestamp)) {
+      businessDays += 1
+    }
+    current = addDays(current, 1)
+  }
+
+  return businessDays
 }
 
 export function calculateWeeksBetween(startDate: Date, endDate: Date): number {
@@ -174,6 +304,105 @@ export function calculateMortgage(
     totalInterest: monthlyPayment * months - principal,
     totalAmountPaid: monthlyPayment * months,
     amortizationSchedule: schedule,
+  }
+}
+
+export interface MortgageAdvancedInput {
+  principal: number
+  annualRate: number
+  months: number
+  extraMonthlyPayment?: number
+  monthlyFees?: number
+  upfrontCosts?: number
+}
+
+export interface MortgageAdvancedResult extends MortgageCalculation {
+  extraMonthlyPayment: number
+  monthlyFees: number
+  upfrontCosts: number
+  actualMonths: number
+  monthsSaved: number
+  totalInterestSaved: number
+  totalPaidWithFeesAndCosts: number
+}
+
+export function calculateMortgageAdvanced(
+  input: MortgageAdvancedInput
+): MortgageAdvancedResult {
+  const {
+    principal,
+    annualRate,
+    months,
+    extraMonthlyPayment = 0,
+    monthlyFees = 0,
+    upfrontCosts = 0,
+  } = input
+
+  if (!Number.isFinite(extraMonthlyPayment) || extraMonthlyPayment < 0) {
+    throw new Error('Extra monthly payment cannot be negative')
+  }
+  if (!Number.isFinite(monthlyFees) || monthlyFees < 0) {
+    throw new Error('Monthly fees cannot be negative')
+  }
+  if (!Number.isFinite(upfrontCosts) || upfrontCosts < 0) {
+    throw new Error('Upfront costs cannot be negative')
+  }
+
+  const baseline = calculateMortgage(principal, annualRate, months)
+  const monthlyRate = annualRate / 100 / 12
+  const baseMonthlyPayment = baseline.monthlyPayment
+
+  let remainingBalance = principal
+  let currentMonth = 0
+  let totalInterest = 0
+  let totalPaid = 0
+  const schedule: MortgageCalculation['amortizationSchedule'] = []
+
+  while (remainingBalance > 1e-8 && currentMonth < months) {
+    currentMonth += 1
+    const interestPayment = remainingBalance * monthlyRate
+    let principalPayment = baseMonthlyPayment + extraMonthlyPayment - interestPayment
+
+    if (monthlyRate === 0) {
+      principalPayment = Math.min(
+        remainingBalance,
+        principal / months + extraMonthlyPayment
+      )
+    } else {
+      principalPayment = Math.min(remainingBalance, Math.max(0, principalPayment))
+    }
+
+    const actualPaymentWithoutFees = principalPayment + interestPayment
+    const actualPaymentWithFees = actualPaymentWithoutFees + monthlyFees
+
+    remainingBalance -= principalPayment
+    totalInterest += interestPayment
+    totalPaid += actualPaymentWithFees
+
+    schedule.push({
+      month: currentMonth,
+      payment: actualPaymentWithoutFees,
+      principal: principalPayment,
+      interest: interestPayment,
+      balance: Math.max(0, remainingBalance),
+    })
+  }
+
+  const totalAmountPaid = schedule.reduce((sum, row) => sum + row.payment, 0)
+  const totalPaidWithFeesAndCosts = totalPaid + upfrontCosts
+
+  return {
+    monthlyPayment: baseMonthlyPayment,
+    totalInterest,
+    totalAmountPaid,
+    amortizationSchedule: schedule,
+    extraMonthlyPayment,
+    monthlyFees,
+    upfrontCosts,
+    actualMonths: schedule.length,
+    monthsSaved: Math.max(0, months - schedule.length),
+    totalInterestSaved: Math.max(0, baseline.totalInterest - totalInterest),
+    totalPaidWithFeesAndCosts,
   }
 }
 

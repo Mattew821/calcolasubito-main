@@ -558,3 +558,29 @@ Stato task esterni:
     - `python validation_framework.py --no-interactive --no-auto-git-push --max-attempts-per-problem 2 --max-global-iterations 2` -> PASS (0 issues)
   - Outcome:
     - Genericity significantly improved across units, modes and edge-case handling with full regression green.
+
+- Recursive verification cycle (2026-03-31, advanced completion pass):
+  - Completed remaining high-priority calculator tasks:
+    - `/percentuali`:
+      - added modes: direct %, inverse %, percentage change, sequential chained percentages
+    - `/giorni-tra-date`:
+      - added modes: calendar days vs business days (Mon-Fri)
+      - added options: include end date, custom holiday dates list
+    - `/rata-mutuo`:
+      - added advanced simulation with extra monthly payment, monthly fees and upfront costs
+      - added outputs: effective duration, months saved, interest saved, total cost with fees/costs
+  - Engine extensions (`lib/calculations.ts`):
+    - `calculatePercentageChange`, `applySequentialPercentages`
+    - `calculateBusinessDaysBetween`
+    - `calculateMortgageAdvanced`
+  - Tests added (`lib/__tests__/calculations.test.ts`):
+    - percentage change + sequential chain invariants
+    - business-day calculations with inclusive mode and holidays
+    - advanced mortgage scenarios (months/interest saved, fee+cost accounting)
+  - Quality gates:
+    - `npm test -- --runInBand` -> PASS (138/138)
+    - `npm run lint` -> PASS
+    - `npm run build` -> PASS
+    - `python validation_framework.py --no-interactive --no-auto-git-push --max-attempts-per-problem 2 --max-global-iterations 2` -> PASS (0 issues)
+  - Outcome:
+    - all pending finite enhancement tasks from prior backlog closed for these calculators; no residual errors found in validation loop.
