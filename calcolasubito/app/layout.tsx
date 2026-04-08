@@ -122,13 +122,19 @@ const INITIAL_PREFERENCES_SCRIPT = `
     const root = document.documentElement;
     const langStored = localStorage.getItem('${LANGUAGE_STORAGE_KEY}');
     const themeStored = localStorage.getItem('${THEME_STORAGE_KEY}');
+    const userAgent = navigator.userAgent || '';
+    const isCrawler = /(googlebot|bingbot|duckduckbot|baiduspider|yandexbot|slurp|facebookexternalhit|twitterbot|linkedinbot|semrushbot|ahrefsbot)/i.test(userAgent);
     const navLang = (navigator.languages && navigator.languages[0]) || navigator.language || 'it';
     const detectedLang = String(navLang).toLowerCase().startsWith('es')
       ? 'es'
       : String(navLang).toLowerCase().startsWith('en')
         ? 'en'
         : 'it';
-    const lang = ['it', 'en', 'es'].includes(langStored || '') ? langStored : detectedLang;
+    const lang = ['it', 'en', 'es'].includes(langStored || '')
+      ? langStored
+      : isCrawler
+        ? 'it'
+        : detectedLang;
     root.lang = lang;
 
     const pref = ['system', 'light', 'dark'].includes(themeStored || '') ? themeStored : 'system';
@@ -150,10 +156,6 @@ export default function RootLayout({
   return (
     <html lang="it" suppressHydrationWarning>
       <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="google-site-verification" content="35trzUPu96FBBZV6byuA-J6D3cs2ewPLUNhURQHf0_Y" />
-
         <script
           dangerouslySetInnerHTML={{
             __html: INITIAL_PREFERENCES_SCRIPT,

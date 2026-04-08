@@ -32,6 +32,12 @@ interface AppPreferencesContextValue {
 
 const AppPreferencesContext = createContext<AppPreferencesContextValue | null>(null)
 
+function isCrawlerUserAgent(userAgent: string): boolean {
+  return /(googlebot|bingbot|duckduckbot|baiduspider|yandexbot|slurp|facebookexternalhit|twitterbot|linkedinbot|semrushbot|ahrefsbot)/i.test(
+    userAgent
+  )
+}
+
 function getInitialLanguage(): AppLanguage {
   if (typeof window === 'undefined') {
     return 'it'
@@ -39,6 +45,9 @@ function getInitialLanguage(): AppLanguage {
   const stored = window.localStorage.getItem(LANGUAGE_STORAGE_KEY)
   if (isSupportedLanguage(stored)) {
     return stored
+  }
+  if (isCrawlerUserAgent(window.navigator.userAgent || '')) {
+    return 'it'
   }
   return detectLanguage(window.navigator.language)
 }
