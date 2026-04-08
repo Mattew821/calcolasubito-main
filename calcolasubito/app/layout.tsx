@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Manrope, Space_Grotesk } from 'next/font/google'
+import Script from 'next/script'
 import '@/styles/globals.css'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
@@ -155,37 +156,32 @@ export default function RootLayout({
 }) {
   return (
     <html lang="it" suppressHydrationWarning>
-      <head>
-        <script
+      <body className={`flex flex-col min-h-screen ${manrope.variable} ${spaceGrotesk.variable}`}>
+        <Script
+          id="initial-preferences"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: INITIAL_PREFERENCES_SCRIPT,
           }}
         />
-
-        {/* Google AdSense */}
-        <script
-          async
+        <Script
+          id="adsense-loader"
+          strategy="afterInteractive"
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4449622526771169"
           crossOrigin="anonymous"
-        ></script>
-
-        {/* JSON-LD Organization Schema */}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(organizationSchema),
           }}
         />
-
-        {/* JSON-LD WebApplication Schema */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(webApplicationSchema),
           }}
         />
-      </head>
-      <body className={`flex flex-col min-h-screen ${manrope.variable} ${spaceGrotesk.variable}`}>
         <AppPreferencesProvider>
           {GA_ID && <GoogleAnalytics measurementId={GA_ID} />}
           <ScrollReveal />
