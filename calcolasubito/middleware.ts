@@ -9,6 +9,20 @@ const canonicalUrl = new URL(normalizedBaseUrl)
 const canonicalHost = canonicalUrl.host.toLowerCase()
 const canonicalHostname = canonicalUrl.hostname.toLowerCase()
 const canonicalProtocol = canonicalUrl.protocol
+const CONTENT_SECURITY_POLICY = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googleadservices.com",
+  "script-src-elem 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googleadservices.com",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: https:",
+  "font-src 'self' data:",
+  "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googleadservices.com",
+  "frame-src 'self' https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://*.googlesyndication.com",
+  "frame-ancestors 'none'",
+  "form-action 'self'",
+  "base-uri 'self'",
+  "object-src 'none'",
+].join('; ')
 
 function parseIntegerEnv(name: string, fallback: number, min: number, max: number): number {
   const value = Number(process.env[name])
@@ -89,6 +103,7 @@ function buildBlockedResponse(status: 403 | 405, reason: string): NextResponse {
   const response = new NextResponse('Request blocked by security policy.', { status })
   response.headers.set('Cache-Control', 'no-store')
   response.headers.set('x-request-guard', reason)
+  response.headers.set('Content-Security-Policy', CONTENT_SECURITY_POLICY)
   if (status === 405) {
     response.headers.set('Allow', [...ALLOWED_METHODS].join(', '))
   }
@@ -100,6 +115,7 @@ function buildRateLimitedResponse(retryAfterSeconds: number, reason: string): Ne
   response.headers.set('Cache-Control', 'no-store')
   response.headers.set('Retry-After', String(retryAfterSeconds))
   response.headers.set('x-request-guard', reason)
+  response.headers.set('Content-Security-Policy', CONTENT_SECURITY_POLICY)
   return response
 }
 
@@ -145,6 +161,7 @@ export function middleware(request: NextRequest) {
   if (!requestHost || isLocalHost(requestHost) || requestHostname === canonicalHostname) {
     const response = NextResponse.next()
     response.headers.set('x-request-guard', 'active')
+    response.headers.set('Content-Security-Policy', CONTENT_SECURITY_POLICY)
     return response
   }
 
@@ -154,6 +171,7 @@ export function middleware(request: NextRequest) {
   )
   const response = NextResponse.redirect(redirectUrl, 308)
   response.headers.set('x-request-guard', 'active')
+  response.headers.set('Content-Security-Policy', CONTENT_SECURITY_POLICY)
   return response
 }
 
