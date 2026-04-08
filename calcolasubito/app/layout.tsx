@@ -60,7 +60,7 @@ export const metadata: Metadata = {
   icons: {
     icon: '/icon.svg',
     apple: '/icon.svg',
-    shortcut: '/favicon.ico.svg',
+    shortcut: '/favicon.ico',
   },
   robots: {
     index: true,
