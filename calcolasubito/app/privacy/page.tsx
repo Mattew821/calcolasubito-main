@@ -4,6 +4,9 @@ import { LEGAL_LAST_UPDATED_LABEL } from '@/lib/legal'
 export const metadata = {
   title: 'Privacy Policy | CalcolaSubito',
   description: 'Informativa sulla privacy di CalcolaSubito',
+  alternates: {
+    canonical: '/privacy',
+  },
 }
 
 export default function PrivacyPolicy() {

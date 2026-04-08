@@ -4,6 +4,7 @@ export const metadata: Metadata = {
   title: 'Generatore Numeri Casuali Online | CalcolaSubito',
   description: 'Estrai numeri casuali in un intervallo personalizzato, con o senza ripetizioni.',
   keywords: 'numeri casuali, generatore random, estrazione numeri, calcolatore random',
+  alternates: { canonical: '/numeri-casuali' },
   openGraph: {
     title: 'Generatore Numeri Casuali - CalcolaSubito',
     description: 'Genera estrazioni casuali in pochi secondi.',

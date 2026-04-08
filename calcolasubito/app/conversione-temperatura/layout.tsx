@@ -4,6 +4,7 @@ export const metadata: Metadata = {
   title: 'Conversione Temperatura Online | CalcolaSubito',
   description: 'Converti Celsius in Fahrenheit e Kelvin con conversione immediata.',
   keywords: 'conversione temperatura, celsius fahrenheit kelvin, convertitore',
+  alternates: { canonical: '/conversione-temperatura' },
   openGraph: {
     title: 'Conversione Temperatura - CalcolaSubito',
     description: 'Converti temperature in tempo reale.',

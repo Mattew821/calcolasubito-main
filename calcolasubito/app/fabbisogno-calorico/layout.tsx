@@ -4,6 +4,7 @@ export const metadata: Metadata = {
   title: 'Fabbisogno Calorico Online (BMR/TDEE) | CalcolaSubito',
   description: 'Calcola metabolismo basale e calorie giornaliere stimate con formula Mifflin-St Jeor e livello attivita.',
   keywords: 'fabbisogno calorico, bmr, tdee, calorie giornaliere',
+  alternates: { canonical: '/fabbisogno-calorico' },
   openGraph: {
     title: 'Fabbisogno Calorico - CalcolaSubito',
     description: 'Stima BMR e TDEE in pochi secondi.',

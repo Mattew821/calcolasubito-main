@@ -4,6 +4,9 @@ import { LEGAL_LAST_UPDATED_LABEL } from '@/lib/legal'
 export const metadata = {
   title: 'Cookie Policy | CalcolaSubito',
   description: 'Informativa sui cookie di CalcolaSubito',
+  alternates: {
+    canonical: '/cookie',
+  },
 }
 
 export default function CookiePolicy() {

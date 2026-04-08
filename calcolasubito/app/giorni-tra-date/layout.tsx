@@ -4,6 +4,7 @@ export const metadata: Metadata = {
   title: 'Calcolo Giorni tra Due Date Online | CalcolaSubito',
   description: 'Calcola i giorni, settimane e mesi tra due date. Strumento online gratuito e preciso per contare i giorni passati o futuri. Nessuna registrazione.',
   keywords: 'calcolo giorni, giorni tra date, settimane, mesi, differenza date, anni',
+  alternates: { canonical: '/giorni-tra-date' },
   openGraph: {
     title: 'Calcolo Giorni tra Date - CalcolaSubito',
     description: 'Scopri quanti giorni passano tra due date',

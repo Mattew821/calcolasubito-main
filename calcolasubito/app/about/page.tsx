@@ -5,6 +5,9 @@ export const metadata = {
   title: 'Chi Siamo | CalcolaSubito',
   description:
     'Scopri la missione di CalcolaSubito: calcolatori online gratuiti, affidabili e facili da usare.',
+  alternates: {
+    canonical: '/about',
+  },
 }
 
 const POPULARITY_SCORE = {

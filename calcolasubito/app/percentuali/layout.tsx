@@ -4,6 +4,7 @@ export const metadata: Metadata = {
   title: 'Calcolo Percentuali Online Gratuito | CalcolaSubito',
   description: 'Calcola percentuali, sconti e proporzioni online gratis. Strumento preciso e veloce per qualsiasi calcolo percentuale. Nessuna registrazione richiesta.',
   keywords: 'calcolo percentuali, sconto percentuale, percentuale di, aumento percentuale, proporzioni',
+  alternates: { canonical: '/percentuali' },
   openGraph: {
     title: 'Calcolo Percentuali - CalcolaSubito',
     description: 'Calcola facilmente percentuali, sconti e proporzioni',

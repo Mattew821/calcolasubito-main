@@ -4,6 +4,7 @@ export const metadata: Metadata = {
   title: 'Calcolo Sconto Percentuale Online | CalcolaSubito',
   description: 'Calcola risparmio e prezzo finale con sconto percentuale.',
   keywords: 'sconto percentuale, prezzo scontato, calcolo sconto, risparmio',
+  alternates: { canonical: '/sconto-percentuale' },
   openGraph: {
     title: 'Calcolo Sconto Percentuale - CalcolaSubito',
     description: 'Trova subito risparmio e prezzo finale con lo sconto.',

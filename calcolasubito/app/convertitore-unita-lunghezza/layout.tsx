@@ -4,6 +4,7 @@ export const metadata: Metadata = {
   title: 'Convertitore Lunghezze Online | CalcolaSubito',
   description: 'Converti metri in chilometri, centimetri, millimetri, miglia, piedi e pollici in tempo reale.',
   keywords: 'convertitore unita lunghezza, metri km cm mm miglia piedi pollici',
+  alternates: { canonical: '/convertitore-unita-lunghezza' },
   openGraph: {
     title: 'Convertitore Lunghezze - CalcolaSubito',
     description: 'Conversione precisa delle unita di lunghezza.',

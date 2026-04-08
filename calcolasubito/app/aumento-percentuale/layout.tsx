@@ -4,6 +4,7 @@ export const metadata: Metadata = {
   title: 'Calcolo Aumento Percentuale Online | CalcolaSubito',
   description: 'Calcola aumento percentuale, incremento assoluto e valore finale.',
   keywords: 'aumento percentuale, incremento percentuale, calcolo aumento',
+  alternates: { canonical: '/aumento-percentuale' },
   openGraph: {
     title: 'Calcolo Aumento Percentuale - CalcolaSubito',
     description: 'Ottieni incremento e valore finale in pochi secondi.',

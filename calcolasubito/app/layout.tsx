@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'CalcolaSubito' }],
   metadataBase: new URL(BASE_URL),
   alternates: {
-    canonical: './',
+    canonical: '/',
   },
   openGraph: {
     type: 'website',
