@@ -1,14 +1,14 @@
 # Current
 
-- Last Push Date (Europe/Rome): 2026-03-31 20:10
-- Last Pushed Commit: `fca12c3`
+- Last Push Date (Europe/Rome): 2026-04-08 17:21
+- Last Pushed Commit: `a963f98`
 - Branch: `calcolasubito-main`
 - Domain: `calcolasubito.vercel.app`
-- Last Vercel Current Update (Europe/Rome): 2026-03-31 20:10
+- Last Vercel Current Update (Europe/Rome): 2026-04-08 17:21
 - Vercel Current:
   - Connector API status: `token-missing`
   - Public health check: `https://calcolasubito.vercel.app/` -> `200`
-  - X-Vercel-Id: `cdg1::h96tc-1774980637374-9c18eb5a925e`
+  - X-Vercel-Id: `fra1::cw8p2-1775661712569-b6446135b5d6`
   - X-Vercel-Cache: `HIT`
   - X-Request-Guard: `active`
   - Security probes:
