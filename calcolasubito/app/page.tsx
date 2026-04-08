@@ -20,15 +20,18 @@ const calculators = [
   { id: 'conversione-temperatura', title: 'Conversione Temperatura', volume: 'Medio' },
 ]
 
+export const metadata = {
+  title: 'CalcolaSubito | Calcolatori Online Gratuiti',
+  description:
+    'Calcolatori online gratuiti per percentuali, IVA, mutuo, codice fiscale e date. Risultati rapidi, chiari e senza registrazione.',
+}
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
       <div className="max-w-6xl mx-auto px-4 py-12">
-        {/* Hero Section */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Calcolatori Online Gratuiti
-          </h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Calcolatori Online Gratuiti</h1>
           <p className="text-lg md:text-xl text-gray-600 mb-8">
             Suite completa di strumenti per calcolare IVA, busta paga, mutui, codice fiscale e molto altro.
           </p>
@@ -37,10 +40,8 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Ad 1 */}
         <AdUnit adSlot="1234567890" />
 
-        {/* Calcolatori Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {calculators.map((calc) => (
             <Link
@@ -59,30 +60,40 @@ export default function Home() {
                 <h2 className="text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
                   {calc.title}
                 </h2>
-                <p className="text-sm text-gray-500 mt-2">
-                  Clicca per accedere al calcolatore
-                </p>
+                <p className="text-sm text-gray-500 mt-2">Clicca per accedere al calcolatore</p>
               </div>
             </Link>
           ))}
         </div>
 
-        {/* Ad 2 */}
         <AdUnit adSlot="1234567891" />
 
-        {/* CTA Section */}
         <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Stai cercando un calcolatore specifico?
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Stai cercando un calcolatore specifico?</h2>
           <p className="text-gray-600 mb-6">
             Stiamo aggiungendo continuamente nuovi calcolatori. Visita regolarmente il sito per trovare nuovi strumenti.
           </p>
         </div>
 
-        {/* Ad 3 */}
+        <section className="bg-white rounded-lg shadow-lg p-8 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Come funzionano i calcolatori di CalcolaSubito</h2>
+          <p className="text-gray-700 leading-relaxed mb-4">
+            CalcolaSubito e un portale di strumenti pratici per calcoli finanziari, fiscali e matematici. Puoi calcolare
+            percentuali, scorporo IVA, giorni tra due date, rata mutuo e codice fiscale con formule chiare e risultati
+            immediati. Ogni calcolo viene eseguito direttamente nel browser, senza registrazione e senza invio di dati
+            sensibili a servizi esterni.
+          </p>
+          <p className="text-gray-700 leading-relaxed">
+            Per i temi legati a finanziamento e ammortamento, il sistema applica i parametri inseriti dall&apos;utente
+            (capitale, tasso, durata) e mostra valori utili per confrontare scenari diversi. Per i calcoli fiscali come
+            IVA o codice fiscale, i passaggi seguono regole standard italiane e forniscono un supporto rapido alle
+            attivita quotidiane.
+          </p>
+        </section>
+
         <AdUnit adSlot="1234567892" />
       </div>
     </div>
   )
 }
+

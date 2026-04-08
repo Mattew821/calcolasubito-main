@@ -6,7 +6,7 @@ import { BASE_URL } from '@/lib/site-config'
 
 export const metadata: Metadata = {
   title: 'CalcolaSubito | Calcolatori Online Gratuiti',
-  description: 'Suite di calcolatori online gratuiti per l\'Italia: IVA, busta paga, IMU, codice fiscale e molti altri.',
+  description: "Suite di calcolatori online gratuiti per l'Italia: IVA, busta paga, IMU, codice fiscale e molti altri.",
   keywords: 'calcolatori online, calcolo IVA, busta paga, codice fiscale, IMU, TARI',
   authors: [{ name: 'CalcolaSubito' }],
   metadataBase: new URL(BASE_URL),
@@ -19,7 +19,8 @@ export const metadata: Metadata = {
     url: BASE_URL,
     siteName: 'CalcolaSubito',
     title: 'CalcolaSubito - Calcolatori Online Gratuiti',
-    description: 'Suite di calcolatori online gratuiti per l\'Italia: percentuali, IVA, codice fiscale, mutuo e molto altro.',
+    description:
+      "Suite di calcolatori online gratuiti per l'Italia: percentuali, IVA, codice fiscale, mutuo e molto altro.",
     images: [
       {
         url: '/opengraph-image.svg',
@@ -32,7 +33,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'CalcolaSubito',
-    description: 'Calcolatori online gratuiti per l\'Italia',
+    description: "Calcolatori online gratuiti per l'Italia",
     images: ['/twitter-image.svg'],
   },
   icons: {
@@ -51,7 +52,6 @@ export const metadata: Metadata = {
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID || null
 
-// Log warning in development if GA_ID is not configured
 if (!GA_ID && process.env.NODE_ENV === 'development') {
   console.warn(
     'Google Analytics is not configured. Set NEXT_PUBLIC_GA_ID environment variable to enable GA4 tracking.'
@@ -64,10 +64,7 @@ const organizationSchema = {
   name: 'CalcolaSubito',
   url: BASE_URL,
   logo: `${BASE_URL}/logo.png`,
-  sameAs: [
-    'https://www.facebook.com/calcolasubito',
-    'https://twitter.com/calcolasubito',
-  ],
+  sameAs: ['https://www.facebook.com/calcolasubito', 'https://twitter.com/calcolasubito'],
   contactPoint: {
     '@type': 'ContactPoint',
     contactType: 'Customer Support',
@@ -80,7 +77,7 @@ const webApplicationSchema = {
   '@type': 'WebApplication',
   name: 'CalcolaSubito',
   url: BASE_URL,
-  description: 'Suite di calcolatori online gratuiti per l\'Italia',
+  description: "Suite di calcolatori online gratuiti per l'Italia",
   applicationCategory: 'UtilityApplication',
   offers: {
     '@type': 'Offer',
@@ -106,20 +103,15 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="google-site-verification" content="35trzUPu96FBBZV6byuA-J6D3cs2ewPLUNhURQHf0_Y" />
 
-        {/* Google AdSense */}
         <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4449622526771169"
           crossOrigin="anonymous"
         ></script>
 
-        {/* Google Analytics - Only load if GA_ID is configured */}
         {GA_ID && (
           <>
-            <script
-              async
-              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-            ></script>
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
             <script
               dangerouslySetInnerHTML={{
                 __html: `
@@ -135,7 +127,6 @@ export default function RootLayout({
           </>
         )}
 
-        {/* JSON-LD Organization Schema */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -143,7 +134,6 @@ export default function RootLayout({
           }}
         />
 
-        {/* JSON-LD WebApplication Schema */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -153,11 +143,10 @@ export default function RootLayout({
       </head>
       <body className="flex flex-col min-h-screen">
         <Header />
-        <main className="flex-1">
-          {children}
-        </main>
+        <main className="flex-1">{children}</main>
         <Footer />
       </body>
     </html>
   )
 }
+
