@@ -77,6 +77,29 @@ export default function AboutPage() {
           </p>
         </section>
 
+        <section className="portal-card interactive-lift fade-in-up space-y-4" data-reveal>
+          <h2 className="font-display text-2xl text-slate-900">Qualità dei contenuti</h2>
+          <p className="text-slate-600">
+            Ogni area del sito viene aggiornata per mantenere una struttura chiara, con una
+            descrizione utile del problema risolto e del contesto d&apos;uso. Questo aiuta gli utenti
+            a capire subito se il calcolatore è adatto al loro caso.
+          </p>
+          <p className="text-slate-600">
+            I contenuti sono pensati per essere concreti: esempi reali, nomi comprensibili,
+            categorizzazione coerente e collegamenti rapidi verso strumenti affini.
+          </p>
+        </section>
+
+        <section className="portal-card interactive-lift fade-in-up space-y-4" data-reveal>
+          <h2 className="font-display text-2xl text-slate-900">Uso corretto del portale</h2>
+          <ul className="list-disc list-inside text-slate-600 space-y-2">
+            <li>Usa il calcolatore più vicino al tuo scenario reale.</li>
+            <li>Se hai dubbi su unità, periodi o formule, leggi prima la descrizione.</li>
+            <li>Per situazioni fiscali, mediche o legali, verifica sempre il risultato con un esperto.</li>
+            <li>Preferisci i percorsi guidati quando il problema ha varianti o casi limite.</li>
+          </ul>
+        </section>
+
         <section className="portal-card interactive-lift fade-in-up space-y-3" data-reveal>
           <h2 className="font-display text-2xl text-slate-900">Contatti</h2>
           <p className="text-slate-600">

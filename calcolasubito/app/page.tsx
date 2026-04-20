@@ -193,6 +193,95 @@ export default function Home() {
           </div>
         </section>
 
+        <section className="glass-panel rounded-3xl p-7 md:p-9 fade-in-up" data-reveal>
+          <h2 className="font-display text-2xl md:text-3xl text-slate-900">
+            Perche questo portale ha valore
+          </h2>
+          <p className="mt-3 text-slate-600 max-w-3xl">
+            CalcolaSubito non e solo una raccolta di moduli. Ogni calcolatore e stato pensato per
+            uno scenario reale, con spiegazioni chiare, unità di misura pratiche e collegamenti
+            utili tra problemi simili. Questo aiuta l&apos;utente a capire non solo il risultato,
+            ma anche quando quel risultato e davvero affidabile.
+          </p>
+
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="rounded-2xl border border-slate-200 bg-white p-5">
+              <h3 className="font-semibold text-slate-900">Privacy by design</h3>
+              <p className="mt-2 text-sm text-slate-600">
+                I calcoli vengono eseguiti nel browser. I dati inseriti non vengono inviati ai
+                server del portale per essere conservati.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-white p-5">
+              <h3 className="font-semibold text-slate-900">Contesto reale</h3>
+              <p className="mt-2 text-sm text-slate-600">
+                Le pagine spiegano come interpretare il risultato, quali casi coprono e quali
+                limiti tenere presenti in ambito fiscale, sanitario o finanziario.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-white p-5">
+              <h3 className="font-semibold text-slate-900">Varianti utili</h3>
+              <p className="mt-2 text-sm text-slate-600">
+                Dove serve, sono incluse unità diverse, formule alternative e scenari più
+                specifici, come conversioni, extra versamenti o casi con più input.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-white p-5">
+              <h3 className="font-semibold text-slate-900">Esperienza pulita</h3>
+              <p className="mt-2 text-sm text-slate-600">
+                La navigazione è pensata per passare rapidamente da un problema all&apos;altro,
+                senza rumore visivo e senza schermate inutili.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="glass-panel rounded-3xl p-7 md:p-9 fade-in-up" data-reveal>
+          <h2 className="font-display text-2xl md:text-3xl text-slate-900">Domande frequenti</h2>
+          <p className="mt-2 text-slate-600">
+            Risposte rapide per capire come usare il portale e perche e strutturato cosi.
+          </p>
+
+          <div className="mt-6 space-y-3">
+            <details className="rounded-2xl border border-slate-200 bg-white p-5">
+              <summary className="cursor-pointer list-none font-semibold text-slate-900">
+                I calcoli vengono salvati?
+              </summary>
+              <p className="mt-3 text-sm text-slate-600">
+                No. I calcoli sono eseguiti localmente nel browser. Questo riduce i tempi e aiuta a
+                proteggere i dati inseriti nei moduli.
+              </p>
+            </details>
+            <details className="rounded-2xl border border-slate-200 bg-white p-5">
+              <summary className="cursor-pointer list-none font-semibold text-slate-900">
+                Perche ci sono tanti calcolatori simili?
+              </summary>
+              <p className="mt-3 text-sm text-slate-600">
+                Perche molti problemi hanno casi diversi: unità di misura, regole fiscali, formule
+                alternative o input aggiuntivi. Un solo strumento non basta sempre.
+              </p>
+            </details>
+            <details className="rounded-2xl border border-slate-200 bg-white p-5">
+              <summary className="cursor-pointer list-none font-semibold text-slate-900">
+                Posso usarlo per lavoro?
+              </summary>
+              <p className="mt-3 text-sm text-slate-600">
+                Sì, come supporto rapido e per verifiche preliminari. Per pratiche fiscali, legali o
+                mediche serve comunque una verifica professionale finale.
+              </p>
+            </details>
+            <details className="rounded-2xl border border-slate-200 bg-white p-5">
+              <summary className="cursor-pointer list-none font-semibold text-slate-900">
+                Perche le pagine hanno molto testo?
+              </summary>
+              <p className="mt-3 text-sm text-slate-600">
+                Perche un calcolatore utile non deve mostrare solo numeri. Spiegazioni, esempi e
+                contesto aumentano la qualità percepita e quella reale.
+              </p>
+            </details>
+          </div>
+        </section>
+
         <AdUnit adSlot="1234567892" />
       </div>
     </div>
