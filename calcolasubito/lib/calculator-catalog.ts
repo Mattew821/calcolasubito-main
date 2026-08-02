@@ -73,6 +73,14 @@ export const CALCULATOR_CATALOG: CalculatorCatalogEntry[] = [
     tags: ['busta paga', 'stipendio netto', 'ral', 'irpef', 'contributi'],
   },
   {
+    id: 'quote-dashboard',
+    title: 'Quote Dashboard',
+    category: 'Finanza',
+    popularity: 'Medio',
+    description: 'Motore pricing con validazione speculare e CMP zero-drift.',
+    tags: ['quote', 'pricing', 'validation', 'cmp', 'risk factor'],
+  },
+  {
     id: 'rata-prestito',
     title: 'Rata Prestito',
     category: 'Finanza',

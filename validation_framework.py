@@ -909,7 +909,10 @@ class ValidationOrchestrator:
         max_global_iterations: Optional[int] = None,
         auto_git_push: bool = False,
         git_remote: str = "origin",
-        git_branch: str = "main"
+        git_branch: str = "main",
+        continuous: bool = False,
+        continuous_sleep_seconds: float = 0.0,
+        continuous_max_cycles: Optional[int] = None
     ):
         self.project_root = project_root
         self.logger = logger
@@ -919,74 +922,127 @@ class ValidationOrchestrator:
         self.auto_git_push = auto_git_push
         self.git_remote = git_remote
         self.git_branch = git_branch
+        self.continuous = continuous
+        self.continuous_sleep_seconds = max(0.0, continuous_sleep_seconds)
+        self.continuous_max_cycles = continuous_max_cycles
 
-    def run(self) -> bool:
-        """Execute complete validation flow"""
+    def _run_single_cycle(self, cycle_label: Optional[str] = None) -> bool:
+        """Execute one full validation cycle."""
+        cycle_suffix = f" | cycle {cycle_label}" if cycle_label else ""
+
         print("\n" + "=" * 80)
-        print("BOUNDED EXHAUSTIVE VALIDATION FRAMEWORK")
+        print(f"BOUNDED EXHAUSTIVE VALIDATION FRAMEWORK{cycle_suffix}")
         print("Professional Enterprise-Grade Validation System")
         print("=" * 80 + "\n")
 
         self.logger.info("=" * 80)
-        self.logger.info("BOUNDED EXHAUSTIVE VALIDATION FRAMEWORK")
+        self.logger.info(f"BOUNDED EXHAUSTIVE VALIDATION FRAMEWORK{cycle_suffix}")
         self.logger.info("Professional Enterprise-Grade Validation System")
         self.logger.info("=" * 80)
 
         start_time = time.time()
 
-        try:
-            # PHASE 1: Discover problems
-            analyzer = ProjectAnalyzer(self.project_root)
-            problems = analyzer.discover_problems()
+        # PHASE 1: Discover problems
+        analyzer = ProjectAnalyzer(self.project_root)
+        problems = analyzer.discover_problems()
 
-            # PHASE 2-4: Validate recursively with Claude in loop
-            validator = RecursiveValidator(
-                self.project_root,
-                npm_cmd=analyzer.npm_cmd,
-                interactive=self.interactive,
-                max_attempts_per_problem=self.max_attempts_per_problem,
-                max_global_iterations=self.max_global_iterations,
-                auto_git_push=self.auto_git_push,
-                git_remote=self.git_remote,
-                git_branch=self.git_branch
-            )
-            final_result = validator.validate_and_loop(problems)
+        # PHASE 2-4: Validate recursively with Claude in loop
+        validator = RecursiveValidator(
+            self.project_root,
+            npm_cmd=analyzer.npm_cmd,
+            interactive=self.interactive,
+            max_attempts_per_problem=self.max_attempts_per_problem,
+            max_global_iterations=self.max_global_iterations,
+            auto_git_push=self.auto_git_push,
+            git_remote=self.git_remote,
+            git_branch=self.git_branch
+        )
+        final_result = validator.validate_and_loop(problems)
 
-            elapsed = time.time() - start_time
+        elapsed = time.time() - start_time
 
-            # Summary
-            self.logger.info("\n" + "=" * 80)
-            self.logger.info("FINAL VALIDATION SUMMARY")
-            self.logger.info("=" * 80)
-            self.logger.info(f"Total problems discovered: {len(problems)}")
-            self.logger.info(f"Execution time: {elapsed:.2f}s")
-            self.logger.info("=" * 80)
+        # Summary
+        self.logger.info("\n" + "=" * 80)
+        self.logger.info("FINAL VALIDATION SUMMARY")
+        self.logger.info("=" * 80)
+        self.logger.info(f"Total problems discovered: {len(problems)}")
+        self.logger.info(f"Execution time: {elapsed:.2f}s")
+        self.logger.info("=" * 80)
 
-            print(f"\n{'='*80}")
-            print("FINAL VALIDATION SUMMARY")
-            print(f"{'='*80}")
-            print(f"Total problems discovered: {len(problems)}")
-            print(f"Execution time: {elapsed:.2f}s")
-            print(f"{'='*80}")
+        print(f"\n{'='*80}")
+        print("FINAL VALIDATION SUMMARY")
+        print(f"{'='*80}")
+        print(f"Total problems discovered: {len(problems)}")
+        print(f"Execution time: {elapsed:.2f}s")
+        print(f"{'='*80}")
 
-            if final_result:
-                self.logger.info("\n[SUCCESS] VALIDATION PASSED [SUCCESS]")
-                self.logger.info("All problems have been resolved!")
-                print("\n[OK] VALIDATION PASSED [OK]")
-                print("All problems have been resolved!\n")
-                return True
-            else:
-                self.logger.error("\n[INCOMPLETE] VALIDATION INCOMPLETE [INCOMPLETE]")
-                self.logger.error("Some problems could not be resolved within max iterations")
-                print("\n[FAIL] VALIDATION INCOMPLETE [FAIL]")
-                print("Some problems could not be resolved within max iterations\n")
+        if final_result:
+            self.logger.info("\n[SUCCESS] VALIDATION PASSED [SUCCESS]")
+            self.logger.info("All problems have been resolved!")
+            print("\n[OK] VALIDATION PASSED [OK]")
+            print("All problems have been resolved!\n")
+            return True
+
+        self.logger.error("\n[INCOMPLETE] VALIDATION INCOMPLETE [INCOMPLETE]")
+        self.logger.error("Some problems could not be resolved within max iterations")
+        print("\n[FAIL] VALIDATION INCOMPLETE [FAIL]")
+        print("Some problems could not be resolved within max iterations\n")
+        return False
+
+    def run(self) -> bool:
+        """Execute validation flow once or continuously based on CLI flags."""
+        if not self.continuous:
+            try:
+                return self._run_single_cycle()
+            except KeyboardInterrupt:
+                self.logger.info("\n[WARN] Validation interrupted by user")
+                return False
+            except Exception as e:
+                self.logger.error(f"Fatal error: {e}", exc_info=True)
                 return False
 
+        cycle = 0
+        all_cycles_passed = True
+        max_cycles_label = str(self.continuous_max_cycles) if self.continuous_max_cycles is not None else "inf"
+
+        try:
+            while True:
+                if self.continuous_max_cycles is not None and cycle >= self.continuous_max_cycles:
+                    self.logger.info(
+                        f"[CONTINUOUS] Reached cycle limit ({self.continuous_max_cycles}), stopping continuous mode."
+                    )
+                    break
+
+                cycle += 1
+                cycle_label = f"{cycle}/{max_cycles_label}"
+
+                self.logger.info("=" * 80)
+                self.logger.info(f"[CONTINUOUS] STARTING CYCLE {cycle_label}")
+                self.logger.info("=" * 80)
+                print("\n" + "#" * 80)
+                print(f"CONTINUOUS MODE - CYCLE {cycle_label}")
+                print("#" * 80 + "\n")
+
+                cycle_passed = self._run_single_cycle(cycle_label=cycle_label)
+                all_cycles_passed = all_cycles_passed and cycle_passed
+
+                if cycle_passed:
+                    self.logger.info(f"[CONTINUOUS] Cycle {cycle_label} PASSED.")
+                else:
+                    self.logger.error(f"[CONTINUOUS] Cycle {cycle_label} FAILED (continuing as requested).")
+
+                if self.continuous_sleep_seconds > 0:
+                    self.logger.info(
+                        f"[CONTINUOUS] Sleeping {self.continuous_sleep_seconds:.2f}s before next cycle."
+                    )
+                    time.sleep(self.continuous_sleep_seconds)
+
+            return all_cycles_passed
         except KeyboardInterrupt:
-            self.logger.info("\n[WARN] Validation interrupted by user")
-            return False
+            self.logger.info("\n[WARN] Continuous validation interrupted by user")
+            return all_cycles_passed
         except Exception as e:
-            self.logger.error(f"Fatal error: {e}", exc_info=True)
+            self.logger.error(f"Fatal error in continuous mode: {e}", exc_info=True)
             return False
 
 if __name__ == "__main__":
@@ -1042,6 +1098,24 @@ if __name__ == "__main__":
         default="main",
         help="Git branch used by --auto-git-push."
     )
+    parser.add_argument(
+        "--continuous",
+        dest="continuous",
+        action="store_true",
+        help="Run validation in continuous loop mode (Ctrl+C to stop)."
+    )
+    parser.add_argument(
+        "--continuous-sleep-seconds",
+        type=float,
+        default=0.0,
+        help="Sleep time between continuous cycles."
+    )
+    parser.add_argument(
+        "--continuous-max-cycles",
+        type=int,
+        default=0,
+        help="Cycle limit for continuous mode; 0 means infinite."
+    )
     parser.set_defaults(auto_git_push=True)
     args = parser.parse_args()
 
@@ -1070,6 +1144,7 @@ if __name__ == "__main__":
 
     max_attempts = None if args.max_attempts_per_problem <= 0 else args.max_attempts_per_problem
     max_iterations = None if args.max_global_iterations <= 0 else args.max_global_iterations
+    max_continuous_cycles = None if args.continuous_max_cycles <= 0 else args.continuous_max_cycles
 
     orchestrator = ValidationOrchestrator(
         project_root,
@@ -1078,7 +1153,10 @@ if __name__ == "__main__":
         max_global_iterations=max_iterations,
         auto_git_push=args.auto_git_push,
         git_remote=args.git_remote,
-        git_branch=args.git_branch
+        git_branch=args.git_branch,
+        continuous=args.continuous,
+        continuous_sleep_seconds=args.continuous_sleep_seconds,
+        continuous_max_cycles=max_continuous_cycles
     )
     success = orchestrator.run()
     sys.exit(0 if success else 1)

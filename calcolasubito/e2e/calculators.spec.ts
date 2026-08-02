@@ -24,6 +24,7 @@ const calculatorRoutes = [
   '/calcolo-mancia',
   '/calcolo-imu',
   '/busta-paga-netta',
+  '/quote-dashboard',
 ]
 
 test('homepage search should find new calculators', async ({ page }) => {

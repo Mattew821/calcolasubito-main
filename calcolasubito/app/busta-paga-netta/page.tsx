@@ -248,6 +248,69 @@ export default function BustaPagaNettaPage() {
         Simulazione orientativa: le buste paga reali dipendono da contratto, bonus, detrazioni specifiche e normativa aggiornata.
       </div>
 
+      <div className="space-y-8 mt-12 pt-8 border-t border-gray-200">
+        <section>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Cosa include questa simulazione della busta paga</h2>
+          <p className="text-gray-600 mb-4">
+            Il calcolatore parte dalla RAL annua e stima contributi del dipendente, imponibile fiscale, IRPEF,
+            detrazioni, addizionali e trattamento integrativo. In questo modo ottieni una vista sintetica ma utile
+            del netto mensile, del netto annuo e del costo azienda.
+          </p>
+          <p className="text-gray-600">
+            La simulazione e pensata per orientamento personale, colloqui di lavoro, confronti tra offerte o analisi
+            rapide del rapporto tra lordo e netto. Non sostituisce comunque il cedolino ufficiale elaborato dal consulente o dal payroll provider.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Come usare correttamente i campi</h2>
+          <ul className="list-disc list-inside text-gray-600 space-y-2">
+            <li><strong>RAL annua:</strong> il lordo contrattuale annuo prima di imposte e contributi.</li>
+            <li><strong>Mensilita annue:</strong> 12, 13 o 14 in base al contratto applicato.</li>
+            <li><strong>Contributi dipendente:</strong> quota previdenziale trattenuta in busta paga.</li>
+            <li><strong>Addizionali regionali e comunali:</strong> variano in base al territorio e al reddito.</li>
+            <li><strong>Contributi azienda:</strong> servono a stimare il costo complessivo per il datore di lavoro.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Domande frequenti</h2>
+          <div className="space-y-6">
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-2">Perche il netto mensile cambia anche con la stessa RAL?</h3>
+              <p className="text-gray-600">
+                Perche incidono numero di mensilita, addizionali locali, trattamento integrativo, detrazioni e
+                in alcuni casi voci contrattuali non incluse in una simulazione standard.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-2">Il trattamento integrativo e sempre dovuto?</h3>
+              <p className="text-gray-600">
+                No. Dipende dal reddito complessivo e da altre condizioni fiscali. In questa pagina viene stimato in
+                modo automatico per fornire un ordine di grandezza coerente.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-2">Perche il cedolino reale puo essere diverso?</h3>
+              <p className="text-gray-600">
+                Straordinari, bonus, welfare, premi, assenze, fringe benefit, detrazioni specifiche e aggiornamenti
+                normativi possono modificare sensibilmente il risultato finale rispetto a una simulazione generale.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Calcolatori correlati</h2>
+          <ul className="list-disc list-inside text-blue-600 space-y-2">
+            <li><a href="/rata-mutuo" className="hover:underline">Rata Mutuo</a></li>
+            <li><a href="/rata-prestito" className="hover:underline">Rata Prestito</a></li>
+            <li><a href="/scorporo-iva" className="hover:underline">Scorporo IVA</a></li>
+            <li><a href="/calcolo-imu" className="hover:underline">Calcolo IMU</a></li>
+          </ul>
+        </section>
+      </div>
+
       <AdUnit adSlot="1234567918" />
     </Calculator>
   )

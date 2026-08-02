@@ -143,6 +143,7 @@ export default function CalcoloPercentuali() {
       <Calculator
         title="Calcolo Percentuali"
         description="Percentuale diretta, inversa, variazione tra due valori e percentuali concatenate."
+        keyword="percentuali"
       >
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -311,6 +312,82 @@ export default function CalcoloPercentuali() {
           )}
 
           <AdUnit adSlot="1234567894" />
+
+          <div className="space-y-8 mt-12 pt-8 border-t border-gray-200">
+            <section>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Quando serve davvero un calcolo percentuale</h2>
+              <p className="text-gray-600 mb-4">
+                Le percentuali sono utili in acquisti, sconti, report commerciali, variazioni di prezzo,
+                analisi di margine e confronti tra periodi diversi. Questa pagina copre i casi piu comuni:
+                percentuale di un numero, rapporto parte/totale, variazione percentuale e sequenze di
+                aumenti o riduzioni applicati uno dopo l&apos;altro.
+              </p>
+              <p className="text-gray-600">
+                Inserire esempi reali aiuta anche a leggere meglio il risultato: 20% di 250, passaggio da
+                180 a 216, oppure sconto del 10% seguito da un aumento del 5% non sono la stessa operazione
+                matematica, anche se a prima vista sembrano simili.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">I quattro scenari coperti dal tool</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-600">
+                <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                  <h3 className="font-semibold text-gray-900 mb-2">Numero e percentuale</h3>
+                  <p>Calcola una quota di un valore base. Esempio: il 22% di 1.000 equivale a 220.</p>
+                </div>
+                <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                  <h3 className="font-semibold text-gray-900 mb-2">Parte su totale</h3>
+                  <p>Misura quanto pesa una parte rispetto al totale. Esempio: 35 su 140 corrisponde al 25%.</p>
+                </div>
+                <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                  <h3 className="font-semibold text-gray-900 mb-2">Variazione percentuale</h3>
+                  <p>Confronta un valore iniziale con uno finale per capire incremento o riduzione in termini percentuali.</p>
+                </div>
+                <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                  <h3 className="font-semibold text-gray-900 mb-2">Percentuali concatenate</h3>
+                  <p>Applica piu variazioni in sequenza, utile per listini, promozioni, rincari e simulazioni iterative.</p>
+                </div>
+              </div>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Domande frequenti</h2>
+              <div className="space-y-6">
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">Qual e la differenza tra percentuale diretta e inversa?</h3>
+                  <p className="text-gray-600">
+                    La percentuale diretta calcola una quota di un numero. La modalita inversa, invece, misura
+                    quale percentuale rappresenta una parte rispetto al totale.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">Perche -10% e poi +10% non riportano al valore iniziale?</h3>
+                  <p className="text-gray-600">
+                    Perche la seconda operazione viene applicata a una base diversa. Se riduci 100 del 10% ottieni 90;
+                    aumentare poi 90 del 10% porta a 99, non a 100.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">Quando conviene usare le percentuali concatenate?</h3>
+                  <p className="text-gray-600">
+                    Quando hai piu variazioni consecutive sullo stesso importo: sconti progressivi, rivalutazioni,
+                    rincari periodici o simulazioni commerciali con passaggi multipli.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Calcolatori correlati</h2>
+              <ul className="list-disc list-inside text-blue-600 space-y-2">
+                <li><a href="/sconto-percentuale" className="hover:underline">Sconto Percentuale</a></li>
+                <li><a href="/aumento-percentuale" className="hover:underline">Aumento Percentuale</a></li>
+                <li><a href="/scorporo-iva" className="hover:underline">Scorporo IVA</a></li>
+                <li><a href="/interesse-composto" className="hover:underline">Interesse Composto</a></li>
+              </ul>
+            </section>
+          </div>
         </div>
       </Calculator>
     </>

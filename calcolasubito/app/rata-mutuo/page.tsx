@@ -83,6 +83,7 @@ export default function CalcoloRataMutuo() {
       <Calculator
         title="Calcolo Rata Mutuo"
         description="Rata mutuo con opzioni avanzate: extra rata, spese mensili, costi iniziali e risparmio interessi."
+        keyword="mutuo"
       >
         <div className="space-y-6">
           <form onSubmit={onSubmit} className="space-y-4">
@@ -229,6 +230,70 @@ export default function CalcoloRataMutuo() {
           )}
 
           <AdUnit adSlot="1234567902" />
+
+          <div className="space-y-8 mt-12 pt-8 border-t border-gray-200">
+            <section>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Come leggere il risultato del mutuo</h2>
+              <p className="text-gray-600 mb-4">
+                La rata mensile base rappresenta il pagamento periodico del finanziamento senza includere spese
+                accessorie. Il tool mostra anche durata effettiva, interessi totali e possibile risparmio quando
+                inserisci un extra rata mensile.
+              </p>
+              <p className="text-gray-600">
+                Questo approccio consente di confrontare scenari diversi in modo rapido: stessa cifra finanziata,
+                tassi differenti, durata piu lunga o piu corta, oppure una strategia di rimborso anticipato con
+                versamenti aggiuntivi costanti.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">I fattori che cambiano davvero la rata</h2>
+              <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <li><strong>Capitale finanziato:</strong> piu alto e l&apos;importo, maggiore sara la rata.</li>
+                <li><strong>Tasso annuale:</strong> piccoli scostamenti del tasso incidono molto sul costo totale nel lungo periodo.</li>
+                <li><strong>Durata:</strong> una durata piu lunga abbassa la rata ma aumenta quasi sempre gli interessi complessivi.</li>
+                <li><strong>Extra rata:</strong> versamenti aggiuntivi possono ridurre mesi residui e interessi futuri.</li>
+                <li><strong>Spese e costi iniziali:</strong> servono per stimare meglio il costo reale del finanziamento.</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Domande frequenti</h2>
+              <div className="space-y-6">
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">Il calcolatore usa TAN o TAEG?</h3>
+                  <p className="text-gray-600">
+                    Il campo tasso annuale va interpretato come tasso del piano di ammortamento. Spese mensili e costi
+                    iniziali servono ad avvicinare la simulazione al costo complessivo, ma non sostituiscono un preventivo bancario ufficiale.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">A cosa serve l&apos;extra rata mensile?</h3>
+                  <p className="text-gray-600">
+                    Serve a simulare un rimborso anticipato costante. Anche importi aggiuntivi modesti possono ridurre
+                    la durata residua e il totale interessi pagati nel tempo.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">Perche il dato della banca puo essere diverso?</h3>
+                  <p className="text-gray-600">
+                    Perche ogni istituto applica condizioni specifiche: assicurazioni, spese istruttoria, incasso rata,
+                    perizia, imposta sostitutiva, spread e regole di arrotondamento.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Calcolatori correlati</h2>
+              <ul className="list-disc list-inside text-blue-600 space-y-2">
+                <li><a href="/rata-prestito" className="hover:underline">Rata Prestito</a></li>
+                <li><a href="/interesse-semplice" className="hover:underline">Interesse Semplice</a></li>
+                <li><a href="/interesse-composto" className="hover:underline">Interesse Composto</a></li>
+                <li><a href="/busta-paga-netta" className="hover:underline">Busta Paga Netta</a></li>
+              </ul>
+            </section>
+          </div>
         </div>
       </Calculator>
     </>

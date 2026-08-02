@@ -40,6 +40,9 @@ import {
   calculateImu,
   calculateNetSalary,
   runEnigmaCipher,
+  type EnigmaMachineInput,
+  type EnigmaRotorName,
+  type EnigmaReflectorName,
 } from '../calculations'
 
 /**
@@ -250,10 +253,12 @@ describe('calculateMortgage', () => {
 
   it('should generate correct amortization schedule', () => {
     const result = calculateMortgage(10000, 5, 12)
-    expect(result.amortizationSchedule[0].month).toBe(1)
-    expect(result.amortizationSchedule[result.amortizationSchedule.length - 1].month).toBe(12)
+    const schedule = result.amortizationSchedule
+    expect(schedule.length).toBeGreaterThanOrEqual(12)
+    expect(schedule[0]!.month).toBe(1)
+    expect(schedule[schedule.length - 1]!.month).toBe(12)
     // Last payment should reduce balance to ~0
-    expect(result.amortizationSchedule[11].balance).toBeLessThan(1)
+    expect(schedule[11]!.balance).toBeLessThan(1)
   })
 
   it('should throw on invalid months', () => {
@@ -277,8 +282,12 @@ describe('calculateMortgage', () => {
       expect(result.amortizationSchedule.length).toBe(months)
       expect(result.totalAmountPaid).toBeCloseTo(result.monthlyPayment * months, 8)
       expect(result.totalInterest).toBeCloseTo(result.totalAmountPaid - principal, 8)
-      expect(result.amortizationSchedule[months - 1].balance).toBeGreaterThanOrEqual(0)
-      expect(result.amortizationSchedule[months - 1].balance).toBeLessThan(1)
+      const lastEntry = result.amortizationSchedule[months - 1]
+      expect(lastEntry).toBeDefined()
+      if (lastEntry) {
+        expect(lastEntry.balance).toBeGreaterThanOrEqual(0)
+        expect(lastEntry.balance).toBeLessThan(1)
+      }
     }
   })
 })
@@ -945,24 +954,26 @@ describe('runEnigmaCipher', () => {
   })
 
   it('should be reversible with identical initial settings', () => {
-    const settings = {
-      rotors: ['V', 'III', 'II'] as const,
-      ringSettings: [2, 21, 12] as const,
-      positions: ['M', 'C', 'K'] as const,
-      reflector: 'C' as const,
+    const settings: EnigmaMachineInput = {
+      text: '',
+      rotors: ['V', 'III', 'II'] as [EnigmaRotorName, EnigmaRotorName, EnigmaRotorName],
+      ringSettings: [2, 21, 12],
+      positions: ['M', 'C', 'K'],
+      reflector: 'C',
       plugboardPairs: 'AB CD EF GH',
       preserveNonLetters: true,
     }
 
+    const { text: _, ...cipherSettings } = settings
     const plaintext = 'ATTACCO ALL ALBA, ORE 05:30!'
     const encrypted = runEnigmaCipher({
       text: plaintext,
-      ...settings,
+      ...cipherSettings,
     }).output
 
     const decrypted = runEnigmaCipher({
       text: encrypted,
-      ...settings,
+      ...cipherSettings,
     }).output
 
     expect(decrypted).toBe(plaintext)
@@ -971,7 +982,7 @@ describe('runEnigmaCipher', () => {
   it('should drop non-letters when preserveNonLetters is false', () => {
     const result = runEnigmaCipher({
       text: 'A B-C!',
-      rotors: ['I', 'II', 'III'],
+      rotors: ['I', 'II', 'III'] as [EnigmaRotorName, EnigmaRotorName, EnigmaRotorName],
       ringSettings: [1, 1, 1],
       positions: ['A', 'A', 'A'],
       reflector: 'B',
@@ -987,7 +998,7 @@ describe('runEnigmaCipher', () => {
     expect(() =>
       runEnigmaCipher({
         text: 'CIAO',
-        rotors: ['I', 'II', 'III'],
+        rotors: ['I', 'II', 'III'] as [EnigmaRotorName, EnigmaRotorName, EnigmaRotorName],
         ringSettings: [1, 1, 1],
         positions: ['A', 'A', 'A'],
         reflector: 'B',
@@ -1001,7 +1012,7 @@ describe('runEnigmaCipher', () => {
     expect(() =>
       runEnigmaCipher({
         text: 'CIAO',
-        rotors: ['I', 'I', 'III'],
+        rotors: ['I', 'I', 'III'] as [EnigmaRotorName, EnigmaRotorName, EnigmaRotorName],
         ringSettings: [1, 1, 1],
         positions: ['A', 'A', 'A'],
         reflector: 'B',
