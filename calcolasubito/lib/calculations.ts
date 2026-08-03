@@ -2057,3 +2057,843 @@ export function runEnigmaCipher(input: EnigmaMachineInput): EnigmaMachineResult 
     steppedLetters,
   }
 }
+
+// ===== NUOVI CALCOLATORI AGGIUNTI =====
+
+// ===== MEDIA PONDERATA =====
+export interface WeightedAverageInput {
+  values: number[]
+  weights: number[]
+}
+
+export interface WeightedAverageResult {
+  weightedAverage: number
+  totalWeight: number
+  values: number[]
+  weights: number[]
+}
+
+export function calculateWeightedAverageAdvanced(input: WeightedAverageInput): WeightedAverageResult {
+  const { values, weights } = input
+
+  if (values.length !== weights.length) {
+    throw new Error('Values and weights must have the same length')
+  }
+  if (values.length === 0) {
+    throw new Error('At least one value is required')
+  }
+  if (values.some(v => !Number.isFinite(v)) || weights.some(w => !Number.isFinite(w))) {
+    throw new Error('All values and weights must be finite numbers')
+  }
+  if (weights.some(w => w < 0)) {
+    throw new Error('Weights cannot be negative')
+  }
+
+  const totalWeight = weights.reduce((sum, w) => sum + w, 0)
+  if (totalWeight === 0) {
+    throw new Error('Total weight cannot be zero')
+  }
+
+  let weightedSum = 0
+  values.forEach((value, i) => {
+    weightedSum += value * (weights[i] ?? 0)
+  })
+
+  return {
+    weightedAverage: weightedSum / totalWeight,
+    totalWeight,
+    values,
+    weights,
+  }
+}
+
+// ===== VOLUME PARALLELEPIPEDO =====
+export interface ParallelepipedInput {
+  length: number
+  width: number
+  height: number
+}
+
+export interface ParallelepipedResult {
+  volume: number
+  surfaceArea: number
+  length: number
+  width: number
+  height: number
+}
+
+export function calculateParallelepipedVolume(input: ParallelepipedInput): ParallelepipedResult {
+  const { length, width, height } = input
+
+  if (!Number.isFinite(length) || !Number.isFinite(width) || !Number.isFinite(height)) {
+    throw new Error('All dimensions must be finite numbers')
+  }
+  if (length <= 0 || width <= 0 || height <= 0) {
+    throw new Error('All dimensions must be positive')
+  }
+
+  const volume = length * width * height
+  const surfaceArea = 2 * (length * width + length * height + width * height)
+
+  return { volume, surfaceArea, length, width, height }
+}
+
+// ===== VOLUME SFERA =====
+export interface SphereInput {
+  radius: number
+}
+
+export interface SphereResult {
+  volume: number
+  surfaceArea: number
+  radius: number
+  diameter: number
+}
+
+export function calculateSphereVolume(input: SphereInput): SphereResult {
+  const { radius } = input
+
+  if (!Number.isFinite(radius)) {
+    throw new Error('Radius must be a finite number')
+  }
+  if (radius <= 0) {
+    throw new Error('Radius must be positive')
+  }
+
+  const volume = (4 / 3) * Math.PI * Math.pow(radius, 3)
+  const surfaceArea = 4 * Math.PI * Math.pow(radius, 2)
+
+  return {
+    volume,
+    surfaceArea,
+    radius,
+    diameter: radius * 2,
+  }
+}
+
+// ===== VOLUME CILINDRO =====
+export interface CylinderInput {
+  radius: number
+  height: number
+}
+
+export interface CylinderResult {
+  volume: number
+  surfaceArea: number
+  lateralArea: number
+  radius: number
+  height: number
+}
+
+export function calculateCylinderVolume(input: CylinderInput): CylinderResult {
+  const { radius, height } = input
+
+  if (!Number.isFinite(radius) || !Number.isFinite(height)) {
+    throw new Error('Radius and height must be finite numbers')
+  }
+  if (radius <= 0 || height <= 0) {
+    throw new Error('Radius and height must be positive')
+  }
+
+  const volume = Math.PI * Math.pow(radius, 2) * height
+  const lateralArea = 2 * Math.PI * radius * height
+  const baseArea = Math.PI * Math.pow(radius, 2)
+  const surfaceArea = lateralArea + 2 * baseArea
+
+  return {
+    volume,
+    surfaceArea,
+    lateralArea,
+    radius,
+    height,
+  }
+}
+
+// ===== RATA LEASING =====
+export interface LeasingInput {
+  assetValue: number
+  downPayment: number
+  residualValue: number
+  annualRate: number
+  months: number
+}
+
+export interface LeasingResult {
+  monthlyPayment: number
+  totalInterest: number
+  totalAmountPaid: number
+  financedAmount: number
+}
+
+export function calculateLeasingPayment(input: LeasingInput): LeasingResult {
+  const { assetValue, downPayment, residualValue, annualRate, months } = input
+
+  if (!Number.isFinite(assetValue) || !Number.isFinite(downPayment) || !Number.isFinite(residualValue) || !Number.isFinite(annualRate) || !Number.isFinite(months)) {
+    throw new Error('All inputs must be finite numbers')
+  }
+  if (assetValue <= 0) throw new Error('Asset value must be positive')
+  if (downPayment < 0) throw new Error('Down payment cannot be negative')
+  if (residualValue < 0) throw new Error('Residual value cannot be negative')
+  if (annualRate < 0) throw new Error('Rate cannot be negative')
+  if (months <= 0) throw new Error('Months must be positive')
+
+  const financedAmount = assetValue - downPayment - residualValue
+  if (financedAmount <= 0) {
+    throw new Error('Financed amount must be positive')
+  }
+
+  const monthlyRate = annualRate / 100 / 12
+  let monthlyPayment: number
+
+  if (monthlyRate === 0) {
+    monthlyPayment = financedAmount / months
+  } else {
+    monthlyPayment =
+      (financedAmount * monthlyRate * Math.pow(1 + monthlyRate, months)) /
+      (Math.pow(1 + monthlyRate, months) - 1)
+  }
+
+  const totalAmountPaid = downPayment + monthlyPayment * months + residualValue
+  const totalInterest = totalAmountPaid - assetValue
+
+  return {
+    monthlyPayment,
+    totalInterest,
+    totalAmountPaid,
+    financedAmount,
+  }
+}
+
+// ===== TAN E TAEG =====
+export interface TanTaegInput {
+  principal: number
+  monthlyPayment: number
+  months: number
+  upfrontCosts: number
+  monthlyCosts: number
+}
+
+export interface TanTaegResult {
+  tan: number
+  taeg: number
+  totalInterest: number
+  totalCost: number
+  apr: number
+}
+
+export function calculateTanTaeg(input: TanTaegInput): TanTaegResult {
+  const { principal, monthlyPayment, months, upfrontCosts, monthlyCosts } = input
+
+  if (!Number.isFinite(principal) || !Number.isFinite(monthlyPayment) || !Number.isFinite(months) || !Number.isFinite(upfrontCosts) || !Number.isFinite(monthlyCosts)) {
+    throw new Error('All inputs must be finite numbers')
+  }
+  if (principal <= 0) throw new Error('Principal must be positive')
+  if (monthlyPayment <= 0) throw new Error('Monthly payment must be positive')
+  if (months <= 0) throw new Error('Months must be positive')
+  if (upfrontCosts < 0 || monthlyCosts < 0) throw new Error('Costs cannot be negative')
+  if (upfrontCosts >= principal) throw new Error('Upfront costs must be less than principal')
+
+  // Approximate TAN: find the annual nominal rate r such that
+  //   payment = P * (r/1200) * (1+r/1200)^n / ((1+r/1200)^n - 1)
+  // The payment function is strictly increasing in r, with minimum P/n at r=0.
+  const minPayment = principal / months
+  if (monthlyPayment < minPayment) {
+    throw new Error(
+      `Monthly payment (${monthlyPayment}) is less than the principal share (${minPayment.toFixed(2)}): no real interest rate exists`
+    )
+  }
+  const paymentAt = (rate: number): number => {
+    if (rate === 0) return minPayment
+    return (principal * rate * Math.pow(1 + rate, months)) / (Math.pow(1 + rate, months) - 1)
+  }
+  const MAX_TAN = 100 // % annuo nominale, limite dell'intervallo di ricerca
+  if (paymentAt(MAX_TAN / 100 / 12) < monthlyPayment) {
+    throw new Error(
+      `Monthly payment (${monthlyPayment}) exceeds the maximum rate supported (${MAX_TAN}% annual): reduce the payment or increase the term`
+    )
+  }
+  let tan = 0
+  let low = 0
+  let high = MAX_TAN
+  const tolerance = 0.0001
+
+  for (let i = 0; i < 100; i++) {
+    const mid = (low + high) / 2
+    if (mid === 0) {
+      tan = 0
+      break
+    }
+    const calculatedPayment = paymentAt(mid / 100 / 12)
+    if (Math.abs(calculatedPayment - monthlyPayment) < tolerance) {
+      tan = mid
+      break
+    } else if (calculatedPayment > monthlyPayment) {
+      high = mid
+    } else {
+      low = mid
+    }
+  }
+
+  if (tan === 0) tan = (low + high) / 2
+
+  const totalPayments = monthlyPayment * months
+  const totalCost = upfrontCosts + monthlyCosts * months
+
+  // TAEG: tasso annuo effettivo che equaglia il valore attuale di tutti i flussi
+  // (rata + spese periodiche) al capitale netto erogato (capitale - spese iniziali)
+  const netPrincipal = principal - upfrontCosts
+  const periodicOutflow = monthlyPayment + monthlyCosts
+
+  // PV(r) = outflow * (1 - (1+r)^-n) / r e' decrescente in r, con PV(0) = outflow*n.
+  // Se PV(1) > netPrincipal il tasso non esiste nell'intervallo: nessun valore attuale
+  // puo' scendere fino a netPrincipal (spese iniziali troppo alte rispetto alla rata).
+  const pvAt = (rate: number): number => {
+    if (rate === 0) return periodicOutflow * months
+    return (periodicOutflow * (1 - Math.pow(1 + rate, -months))) / rate
+  }
+  if (netPrincipal > periodicOutflow * months || pvAt(1) > netPrincipal) {
+    throw new Error(
+      'The net principal and the payment/costs are incompatible: no effective rate (TAEG) exists. Reduce upfront costs or increase the payment.'
+    )
+  }
+
+  let monthlyTaegRate = 0
+  low = 0
+  high = 1 // tasso mensile in forma decimale (0-100% mese)
+
+  for (let i = 0; i < 200; i++) {
+    const mid = (low + high) / 2
+    if (mid === 0) {
+      // tasso zero: PV = somma flussi non scontati
+      if (Math.abs(periodicOutflow * months - netPrincipal) < tolerance) {
+        monthlyTaegRate = 0
+        break
+      }
+      low = mid
+      continue
+    }
+    const presentValue = pvAt(mid)
+    if (Math.abs(presentValue - netPrincipal) < tolerance) {
+      monthlyTaegRate = mid
+      break
+    } else if (presentValue > netPrincipal) {
+      low = mid
+    } else {
+      high = mid
+    }
+  }
+
+  if (monthlyTaegRate === 0) {
+    monthlyTaegRate = (low + high) / 2
+  }
+
+  // TAEG effettivo annuo: (1+r)^12 - 1, in percentuale
+  const taeg = (Math.pow(1 + monthlyTaegRate, 12) - 1) * 100
+
+  const totalInterest = totalPayments - principal
+
+  return {
+    tan: Math.round(tan * 100) / 100,
+    taeg: Math.round(taeg * 100) / 100,
+    totalInterest: Math.round(totalInterest * 100) / 100,
+    totalCost: Math.round((totalCost + totalInterest) * 100) / 100,
+    apr: Math.round(taeg * 100) / 100,
+  }
+}
+
+// ===== BOLLO AUTO =====
+// FONTE tariffa base: L. 449/1997 art. 18 (2.58/3.87/4.65/5.82 EUR per kW)
+// FONTE superbollo: L. 147/2013 art. 1 c. 636-637 (20 EUR/kW oltre 185 kW,
+// raddoppio per classe ambientale Euro 0-3).
+// Le maggiorazioni/esenzioni regionali (es. esenzione elettrico) NON sono incluse:
+// variano per regione e sono deliberate localmente.
+export interface BolloAutoInput {
+  power: number // kW
+  emissionClass: string // 'Euro 0' ... 'Euro 6'
+}
+
+export interface BolloAutoResult {
+  annualCost: number // base + superbollo
+  power: number
+  emissionClass: string
+  superbollo: number
+  totalCost: number
+}
+
+function isEuro03(emissionClass: string): boolean {
+  return emissionClass === 'Euro 0' || emissionClass === 'Euro 1' || emissionClass === 'Euro 2' || emissionClass === 'Euro 3'
+}
+
+export function calculateBolloAuto(input: BolloAutoInput): BolloAutoResult {
+  const { power, emissionClass } = input
+
+  if (!Number.isFinite(power)) throw new Error('Power must be a finite number')
+  if (power <= 0) throw new Error('Power must be positive')
+
+  // Tariffa base nazionale per kW (L. 449/1997)
+  let baseRate = 0
+  if (power <= 100) {
+    baseRate = power * 2.58
+  } else if (power <= 130) {
+    baseRate = 100 * 2.58 + (power - 100) * 3.87
+  } else if (power <= 160) {
+    baseRate = 100 * 2.58 + 30 * 3.87 + (power - 130) * 4.65
+  } else {
+    baseRate = 100 * 2.58 + 30 * 3.87 + 30 * 4.65 + (power - 160) * 5.82
+  }
+
+  // Superbollo (L. 147/2013): 20 EUR/kW oltre 185 kW, raddoppiato per Euro 0-3
+  const superbollo = power > 185 ? (power - 185) * 20 * (isEuro03(emissionClass) ? 2 : 1) : 0
+
+  const annualCost = baseRate + superbollo
+
+  return {
+    annualCost: Math.round(annualCost * 100) / 100,
+    power,
+    emissionClass,
+    superbollo: Math.round(superbollo * 100) / 100,
+    totalCost: Math.round(annualCost * 100) / 100,
+  }
+}
+
+// ===== TFR (Trattamento di Fine Rapporto) =====
+export interface TfrInput {
+  grossAnnualSalary: number
+  yearsOfService: number
+  monthsOfService: number
+  inflationRate: number
+  socialSecurityContribution: number
+  severancePay: number
+}
+
+export interface TfrResult {
+  tfrGross: number
+  tfrNet: number
+  inflationAdjustment: number
+  totalWithholding: number
+  yearsOfService: number
+  monthsOfService: number
+}
+
+export function calculateTfr(input: TfrInput): TfrResult {
+  const { grossAnnualSalary, yearsOfService, monthsOfService, inflationRate, socialSecurityContribution, severancePay } = input
+
+  if (!Number.isFinite(grossAnnualSalary) || !Number.isFinite(yearsOfService) || !Number.isFinite(monthsOfService) || !Number.isFinite(inflationRate) || !Number.isFinite(socialSecurityContribution) || !Number.isFinite(severancePay)) {
+    throw new Error('All inputs must be finite numbers')
+  }
+  if (grossAnnualSalary <= 0) throw new Error('Gross annual salary must be positive')
+  if (yearsOfService < 0) throw new Error('Years of service cannot be negative')
+  if (monthsOfService < 0 || monthsOfService > 11) throw new Error('Months must be between 0 and 11')
+  if (inflationRate < 0) throw new Error('Inflation rate cannot be negative')
+
+  // MODELLO (art. 2120 c.c., dipendenti post-1993):
+  // - Accantonamento mensile = retribuzione mensile lorda / 13.5 * (1 - quota INPS 0,5%)
+  // - Rivalutazione annuale = 1,5% fisso + 75% dell'inflazione ISTAT, applicata al fondo al 31/12
+  // - Tassazione finale (imposta sostitutiva, DLgs 47/2000): 17% sulla rivalutazione,
+  //   23% fino a 28.000 EUR e 35% oltre sulla parte non rivalutata.
+  const ssc = socialSecurityContribution / 100
+  const monthlyAccrual = (grossAnnualSalary / 12 / 13.5) * (1 - ssc)
+  const totalMonths = yearsOfService * 12 + monthsOfService
+  const grossAccrual = monthlyAccrual * totalMonths
+
+  // Rivalutazione applicata anno per anno al fondo maturato
+  const revalRate = 0.015 + 0.75 * (inflationRate / 100)
+  let fund = 0
+  const fullYears = Math.floor(totalMonths / 12)
+  for (let y = 0; y < fullYears; y++) {
+    fund += monthlyAccrual * 12
+    fund *= 1 + revalRate
+  }
+  // Mesi residui: accantonati senza rivalutazione (semplificazione documentata)
+  fund += monthlyAccrual * (totalMonths - fullYears * 12)
+
+  // Eventuale buonuscita/indennità extra: non rivalutata
+  if (severancePay > 0) {
+    fund += severancePay
+  }
+
+  const tfrGross = fund
+  const inflationAdjustment = tfrGross - grossAccrual
+
+  // Imposta sostitutiva: 17% sulla rivalutazione, 23%/35% sulla parte non rivalutata
+  const taxableBase = tfrGross - inflationAdjustment
+  let progressiveTax = 0
+  if (taxableBase <= 28000) {
+    progressiveTax = taxableBase * 0.23
+  } else {
+    progressiveTax = 28000 * 0.23 + (taxableBase - 28000) * 0.35
+  }
+  const withholding = inflationAdjustment * 0.17 + progressiveTax
+
+  const tfrNet = tfrGross - withholding
+
+  return {
+    tfrGross: Math.round(tfrGross * 100) / 100,
+    tfrNet: Math.max(0, Math.round(tfrNet * 100) / 100),
+    inflationAdjustment: Math.round(inflationAdjustment * 100) / 100,
+    totalWithholding: Math.round(withholding * 100) / 100,
+    yearsOfService,
+    monthsOfService,
+  }
+}
+
+// ===== RIVALUTAZIONE MONETARIA =====
+export interface RivalutazioneInput {
+  initialAmount: number
+  startDate: Date
+  endDate: Date
+  inflationRate: number
+  isMonthlyInflation: boolean
+}
+
+export interface RivalutazioneResult {
+  initialAmount: number
+  finalAmount: number
+  adjustment: number
+  percentAdjustment: number
+  months: number
+  years: number
+}
+
+export function calculateRivalutazioneMonetaria(input: RivalutazioneInput): RivalutazioneResult {
+  const { initialAmount, startDate, endDate, inflationRate, isMonthlyInflation } = input
+
+  if (!Number.isFinite(initialAmount) || !Number.isFinite(inflationRate)) {
+    throw new Error('Amount and inflation rate must be finite numbers')
+  }
+  if (initialAmount <= 0) throw new Error('Initial amount must be positive')
+  if (startDate >= endDate) throw new Error('End date must be after start date')
+  if (inflationRate < 0) throw new Error('Inflation rate cannot be negative')
+
+  const monthsDiff =
+    (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+    (endDate.getMonth() - startDate.getMonth())
+
+  let adjustment: number
+  if (isMonthlyInflation) {
+    // Compound monthly inflation
+    const monthlyRate = inflationRate / 100 / 12
+    adjustment = initialAmount * (Math.pow(1 + monthlyRate, monthsDiff) - 1)
+  } else {
+    // Annual inflation
+    const years = monthsDiff / 12
+    const annualRate = inflationRate / 100
+    adjustment = initialAmount * (Math.pow(1 + annualRate, years) - 1)
+  }
+
+  const finalAmount = initialAmount + adjustment
+  const percentAdjustment = (adjustment / initialAmount) * 100
+
+  return {
+    initialAmount,
+    finalAmount: Math.round(finalAmount * 100) / 100,
+    adjustment: Math.round(adjustment * 100) / 100,
+    percentAdjustment: Math.round(percentAdjustment * 100) / 100,
+    months: monthsDiff,
+    years: Math.round((monthsDiff / 12) * 10) / 10,
+  }
+}
+
+// ===== CALCOLO PENSIONE =====
+export interface PensioneInput {
+  currentAge: number
+  retirementAge: number
+  currentSalary: number
+  contributionYears: number
+  growthRate: number
+}
+
+export interface PensioneResult {
+  estimatedPension: number
+  replacementRate: number
+  contributionYearsAtRetirement: number
+  yearsToRetirement: number
+}
+
+export function calculatePensioneEstimate(input: PensioneInput): PensioneResult {
+  const { currentAge, retirementAge, currentSalary, contributionYears, growthRate } = input
+
+  if (!Number.isFinite(currentAge) || !Number.isFinite(retirementAge) || !Number.isFinite(currentSalary) || !Number.isFinite(contributionYears) || !Number.isFinite(growthRate)) {
+    throw new Error('All inputs must be finite numbers')
+  }
+  if (currentAge <= 0 || retirementAge <= 0) throw new Error('Age must be positive')
+  if (currentAge >= retirementAge) throw new Error('Current age must be less than retirement age')
+  if (currentSalary <= 0) throw new Error('Salary must be positive')
+  if (contributionYears < 0) throw new Error('Contribution years cannot be negative')
+  if (growthRate < 0) throw new Error('Growth rate cannot be negative')
+
+  const yearsToRetirement = retirementAge - currentAge
+  const contributionYearsAtRetirement = contributionYears + yearsToRetirement
+
+  // Simplified pension formula (contributivo)
+  let contributionBasis = 0
+  const years = contributionYearsAtRetirement
+
+  // Accumulate contributions with salary growth
+  let salary = currentSalary
+  for (let i = 0; i < years; i++) {
+    contributionBasis += salary * 0.33 // 33% contribution rate
+    salary *= 1 + growthRate / 100
+  }
+
+  // Coefficienti di trasformazione 2024 (INPS, aggiornamento annuale DM):
+  // pensione annua = montante * coeff / 100. La tabella ufficiale copre 57-71 anni.
+  const coefficients: Record<number, number> = {
+    57: 4.186,
+    58: 4.221,
+    59: 4.259,
+    60: 4.300,
+    61: 4.345,
+    62: 4.394,
+    63: 4.448,
+    64: 4.507,
+    65: 4.572,
+    66: 4.628,
+    67: 4.683,
+    68: 4.720,
+    69: 4.744,
+    70: 4.770,
+    71: 4.797,
+  }
+
+  const ageCoeff = coefficients[retirementAge] ?? 4.572 // fallback: 65 anni
+  // Pensione mensile = montante * (coeff/100) / 12
+  const estimatedPension = (contributionBasis * (ageCoeff / 100)) / 12
+  // Tasso di sostituzione: pensione mensile / stipendio mensile attuale
+  const replacementRate = (estimatedPension / (currentSalary / 12)) * 100
+
+  return {
+    estimatedPension: Math.round(estimatedPension * 100) / 100,
+    replacementRate: Math.round(replacementRate * 10) / 10,
+    contributionYearsAtRetirement,
+    yearsToRetirement,
+  }
+}
+
+// ===== CALCOLO AREA TRIANGOLO =====
+export interface TriangleInput {
+  base: number
+  height: number
+  sideA?: number
+  sideB?: number
+  sideC?: number
+}
+
+export interface TriangleResult {
+  area: number
+  perimeter: number
+  height: number
+  base: number
+  isValid: boolean
+}
+
+export function calculateTriangleArea(input: TriangleInput): TriangleResult {
+  const { base, height, sideA, sideB, sideC } = input
+
+  if (!Number.isFinite(base) || !Number.isFinite(height)) {
+    throw new Error('Base and height must be finite numbers')
+  }
+  if (base <= 0) throw new Error('Base must be positive')
+  if (height <= 0) throw new Error('Height must be positive')
+
+  const area = (base * height) / 2
+
+  let perimeter = 0
+  let isValid = true
+
+  if (sideA !== undefined && sideB !== undefined && sideC !== undefined) {
+    perimeter = sideA + sideB + sideC
+    // Triangle inequality
+    isValid = sideA + sideB > sideC && sideA + sideC > sideB && sideB + sideC > sideA
+  } else {
+    // Assume isosceles if only base and height
+    const side = Math.sqrt(Math.pow(base / 2, 2) + Math.pow(height, 2))
+    perimeter = base + 2 * side
+  }
+
+  return {
+    area: Math.round(area * 100) / 100,
+    perimeter: Math.round(perimeter * 100) / 100,
+    height,
+    base,
+    isValid,
+  }
+}
+
+// ===== TEOREMA DI PITAGORA =====
+export interface PythagorasInput {
+  cathetusA: number
+  cathetusB: number
+}
+
+export interface PythagorasResult {
+  hypotenuse: number
+  cathetusA: number
+  cathetusB: number
+}
+
+export function calculatePythagoras(input: PythagorasInput): PythagorasResult {
+  const { cathetusA, cathetusB } = input
+
+  if (!Number.isFinite(cathetusA) || !Number.isFinite(cathetusB)) {
+    throw new Error('Both catheti must be finite numbers')
+  }
+  if (cathetusA <= 0) throw new Error('Cathetus A must be positive')
+  if (cathetusB <= 0) throw new Error('Cathetus B must be positive')
+
+  // c = sqrt(a^2 + b^2) — teorema di Pitagora (regola stabile, geometria euclidea)
+  const hypotenuse = Math.sqrt(Math.pow(cathetusA, 2) + Math.pow(cathetusB, 2))
+
+  return {
+    hypotenuse: Math.round(hypotenuse * 100) / 100,
+    cathetusA,
+    cathetusB,
+  }
+}
+
+// ===== REGOLA DEL TRE (PROPORZIONI) =====
+export interface RuleOfThreeInput {
+  a: number
+  b: number
+  c: number
+}
+
+export interface RuleOfThreeResult {
+  x: number
+  a: number
+  b: number
+  c: number
+}
+
+export function calculateRuleOfThree(input: RuleOfThreeInput): RuleOfThreeResult {
+  const { a, b, c } = input
+
+  if (!Number.isFinite(a) || !Number.isFinite(b) || !Number.isFinite(c)) {
+    throw new Error('All three values must be finite numbers')
+  }
+  if (a === 0) throw new Error('The first value (a) cannot be zero in a proportion')
+
+  // a : b = c : x  =>  x = b * c / a (regola stabile)
+  const x = (b * c) / a
+
+  if (!Number.isFinite(x)) throw new Error('Result is not finite')
+
+  return {
+    x: Math.round(x * 100) / 100,
+    a,
+    b,
+    c,
+  }
+}
+
+// ===== AREA TRAPEZIO =====
+export interface TrapezoidInput {
+  majorBase: number
+  minorBase: number
+  height: number
+}
+
+export interface TrapezoidResult {
+  area: number
+  majorBase: number
+  minorBase: number
+  height: number
+}
+
+export function calculateTrapezoidArea(input: TrapezoidInput): TrapezoidResult {
+  const { majorBase, minorBase, height } = input
+
+  if (!Number.isFinite(majorBase) || !Number.isFinite(minorBase) || !Number.isFinite(height)) {
+    throw new Error('Bases and height must be finite numbers')
+  }
+  if (majorBase <= 0) throw new Error('Major base must be positive')
+  if (minorBase <= 0) throw new Error('Minor base must be positive')
+  if (height <= 0) throw new Error('Height must be positive')
+
+  // A = (B + b) * h / 2 (regola stabile, geometria euclidea)
+  const area = ((majorBase + minorBase) * height) / 2
+
+  return {
+    area: Math.round(area * 100) / 100,
+    majorBase,
+    minorBase,
+    height,
+  }
+}
+
+// ===== VOLUME CONO =====
+export interface ConeVolumeInput {
+  radius: number
+  height: number
+}
+
+export interface ConeVolumeResult {
+  volume: number
+  radius: number
+  height: number
+}
+
+export function calculateConeVolume(input: ConeVolumeInput): ConeVolumeResult {
+  const { radius, height } = input
+
+  if (!Number.isFinite(radius) || !Number.isFinite(height)) {
+    throw new Error('Radius and height must be finite numbers')
+  }
+  if (radius <= 0) throw new Error('Radius must be positive')
+  if (height <= 0) throw new Error('Height must be positive')
+
+  // V = (1/3) * pi * r^2 * h (regola stabile, geometria euclidea)
+  const volume = (Math.PI * Math.pow(radius, 2) * height) / 3
+
+  return {
+    volume: Math.round(volume * 100) / 100,
+    radius,
+    height,
+  }
+}
+
+// ===== METABOLISMO BASALE (BMR) — MIFFLIN-ST JEOR 1990 =====
+// FONTE: Mifflin MD, St Jeor ST, et al. "A new predictive equation for resting
+// energy expenditure in healthy individuals". Am J Clin Nutr. 1990;51(2):241-247.
+// Validata su adulti 19-78 anni. Equazione stabile, pubblicata e peer-reviewed.
+// Uomini:  BMR = 10*kg + 6.25*cm - 5*eta + 5
+// Donne:   BMR = 10*kg + 6.25*cm - 5*eta - 161
+// NOTA: stima, non misura clinica (calorimetria indiretta). Non usare per diagnosi.
+export interface BmrInput {
+  weightKg: number
+  heightCm: number
+  ageYears: number
+  sex: 'male' | 'female'
+}
+
+export interface BmrResult {
+  bmr: number
+  weightKg: number
+  heightCm: number
+  ageYears: number
+  sex: 'male' | 'female'
+}
+
+export function calculateBmr(input: BmrInput): BmrResult {
+  const { weightKg, heightCm, ageYears, sex } = input
+
+  if (!Number.isFinite(weightKg) || !Number.isFinite(heightCm) || !Number.isFinite(ageYears)) {
+    throw new Error('Weight, height and age must be finite numbers')
+  }
+  if (weightKg <= 0) throw new Error('Weight must be positive')
+  if (heightCm <= 0) throw new Error('Height must be positive')
+  if (ageYears < 18) throw new Error('The Mifflin-St Jeor equation is validated for adults (age >= 18)')
+  if (ageYears > 120) throw new Error('Age seems unrealistic (max 120)')
+  if (sex !== 'male' && sex !== 'female') throw new Error('Sex must be male or female')
+
+  // Mifflin-St Jeor (1990)
+  const bmr = 10 * weightKg + 6.25 * heightCm - 5 * ageYears + (sex === 'male' ? 5 : -161)
+
+  return {
+    bmr: Math.round(bmr * 100) / 100,
+    weightKg,
+    heightCm,
+    ageYears,
+    sex,
+  }
+}

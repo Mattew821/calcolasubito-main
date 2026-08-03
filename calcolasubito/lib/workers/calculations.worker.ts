@@ -4,6 +4,7 @@
  */
 
 import { resolveCodiceCatastale } from '../codice-fiscale-utils'
+import { buildCodiceFiscale } from '../codice-fiscale'
 
 // ===== GENERIC CSV LOADER =====
 interface CSVRecord {
@@ -160,27 +161,7 @@ function calculateIVA(
 }
 
 // ===== CODICE FISCALE =====
-
-const SPECIAL_LETTER_MAP: Record<string, string> = {
-  Æ: 'AE',
-  Œ: 'OE',
-  Ø: 'O',
-  Ł: 'L',
-  Đ: 'D',
-  Ð: 'D',
-  Þ: 'TH',
-}
-
-function normalizeCodiceFiscaleText(value: string): string {
-  const mapped = value
-    .toUpperCase()
-    .replace(/[ÆŒØŁĐÐÞ]/g, (char) => SPECIAL_LETTER_MAP[char] ?? char)
-
-  return mapped
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^A-Z\s]/g, '')
-}
+// Logica pura in lib/codice-fiscale.ts (fonte unica, testata in lib/__tests__/codice-fiscale.test.ts).
 
 function calculateCodiceFiscaleSimplified(
   surname: string,
@@ -189,89 +170,8 @@ function calculateCodiceFiscaleSimplified(
   gender: 'M' | 'F',
   birthPlace: string = ''
 ): string {
-  const consonants = 'BCDFGHJKLMNPRSTVWXYZ'
-  const vowels = 'AEIOU'
-
-  const extractLetters = (str: string, type: 'consonants' | 'vowels'): string[] => {
-    const cleanStr = normalizeCodiceFiscaleText(str)
-    const parts = cleanStr.split(/\s+/).filter((p) => p.length > 0)
-    const letters = type === 'consonants' ? consonants : vowels
-    let result: string[] = []
-    for (const part of parts) {
-      const extracted = part.split('').filter((c) => letters.includes(c))
-      result = result.concat(extracted)
-    }
-    return result
-  }
-
-  const surnameConsonants = extractLetters(surname, 'consonants')
-  const surnameVowels = extractLetters(surname, 'vowels')
-  // Fixed: Only add vowels if consonants < 3 (don't include extra vowels)
-  let surnamePart = surnameConsonants.slice(0, 3).join('')
-  if (surnamePart.length < 3) {
-    surnamePart += surnameVowels.slice(0, 3 - surnamePart.length).join('')
-  }
-  surnamePart = (surnamePart + '   ').slice(0, 3)
-
-  const nameConsonants = extractLetters(name, 'consonants')
-  const nameVowels = extractLetters(name, 'vowels')
-
-  let namePartBase = ''
-  // Algoritmo ufficiale Agenzia delle Entrate:
-  // Se consonanti > 3: prendi la 1a, 3a e 4a consonante (indici 0, 2, 3)
-  if (nameConsonants.length > 3) {
-    namePartBase = (nameConsonants[0] ?? '') + (nameConsonants[2] ?? '') + (nameConsonants[3] ?? '')
-  } else {
-    namePartBase = nameConsonants.slice(0, 3).join('')
-  }
-
-  const namePart = (namePartBase + nameVowels.slice(0, 3 - namePartBase.length).join('') + '   ').slice(0, 3)
-
-  const date = new Date(birthDate)
-  const year = date.getFullYear().toString().slice(-2)
-  const monthChars = 'ABCDEHLMPRST'
-  const monthLetter = monthChars.charAt(date.getMonth())
-  const dayPart = String(date.getDate() + (gender === 'F' ? 40 : 0)).padStart(2, '0')
-  const datePart = year + monthLetter + dayPart
-
-  // Accept either direct codice catastale (e.g. H501) or municipality name.
   const catastaleCode = resolveCodiceCatastale(birthPlace, searchCodiceCatastale)
-
-  const codiceSenza = (surnamePart + namePart + datePart + catastaleCode).toUpperCase()
-
-  // Calcolo del control digit (16° carattere)
-  // Algoritmo ufficiale Agenzia delle Entrate
-  const pariMap: Record<string, number> = {
-    '0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9,
-    A: 0, B: 1, C: 2, D: 3, E: 4, F: 5, G: 6, H: 7, I: 8, J: 9,
-    K: 10, L: 11, M: 12, N: 13, O: 14, P: 15, Q: 16, R: 17, S: 18, T: 19,
-    U: 20, V: 21, W: 22, X: 23, Y: 24, Z: 25,
-  }
-
-  const dispariMap: Record<string, number> = {
-    '0': 1, '1': 0, '2': 5, '3': 7, '4': 9, '5': 13, '6': 15, '7': 17, '8': 19, '9': 21,
-    A: 1, B: 0, C: 5, D: 7, E: 9, F: 13, G: 15, H: 17, I: 19, J: 21,
-    K: 2, L: 4, M: 18, N: 20, O: 11, P: 3, Q: 6, R: 8, S: 12, T: 14,
-    U: 16, V: 10, W: 22, X: 25, Y: 24, Z: 23,
-  }
-
-  let sum = 0
-  for (let i = 0; i < codiceSenza.length; i++) {
-    const char = codiceSenza.charAt(i)
-    const mapped = i % 2 === 0
-      ? dispariMap[char as keyof typeof dispariMap]
-      : pariMap[char as keyof typeof pariMap]
-    if (mapped === undefined) {
-      throw new Error(`Invalid character in codice fiscale base: ${char}`)
-    }
-    sum += mapped
-  }
-
-  const resto = sum % 26
-  const controlChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-  const controlDigit = controlChars[resto]
-
-  return codiceSenza + controlDigit
+  return buildCodiceFiscale({ surname, name, birthDate, gender, catastaleCode })
 }
 
 // ===== RATA MUTUO =====

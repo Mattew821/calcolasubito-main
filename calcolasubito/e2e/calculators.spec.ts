@@ -25,6 +25,22 @@ const calculatorRoutes = [
   '/calcolo-imu',
   '/busta-paga-netta',
   '/quote-dashboard',
+  '/area-triangolo',
+  '/bollo-auto',
+  '/calcolo-tfr',
+  '/media-ponderata',
+  '/rata-leasing',
+  '/rivalutazione-monetaria',
+  '/stima-pensione',
+  '/tan-taeg',
+  '/volume-cilindro',
+  '/volume-parallelepipedo',
+  '/volume-sfera',
+  '/teorema-pitagora',
+  '/regola-del-tre',
+  '/area-trapezio',
+  '/volume-cono',
+  '/metabolismo-basale',
 ]
 
 test('homepage search should find new calculators', async ({ page }) => {

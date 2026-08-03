@@ -40,6 +40,22 @@ import {
   calculateImu,
   calculateNetSalary,
   runEnigmaCipher,
+  calculateWeightedAverageAdvanced,
+  calculateParallelepipedVolume,
+  calculateSphereVolume,
+  calculateCylinderVolume,
+  calculateLeasingPayment,
+  calculateTanTaeg,
+  calculateBolloAuto,
+  calculateTfr,
+  calculateRivalutazioneMonetaria,
+  calculatePensioneEstimate,
+  calculateTriangleArea,
+  calculatePythagoras,
+  calculateRuleOfThree,
+  calculateTrapezoidArea,
+  calculateConeVolume,
+  calculateBmr,
   type EnigmaMachineInput,
   type EnigmaRotorName,
   type EnigmaReflectorName,
@@ -1113,5 +1129,529 @@ describe('deterministic grid invariants', () => {
         }
       }
     }
+  })
+})
+
+describe('calculateWeightedAverageAdvanced', () => {
+  it('computes weighted average with unit weights (equals arithmetic mean)', () => {
+    const result = calculateWeightedAverageAdvanced({ values: [7, 8, 6, 9], weights: [1, 1, 1, 1] })
+    expect(result.weightedAverage).toBeCloseTo(7.5, 10)
+    expect(result.totalWeight).toBe(4)
+  })
+
+  it('matches the classic media ponderata example (voti con crediti)', () => {
+    // (7*2 + 8*3 + 6*1 + 9*4) / (2+3+1+4) = (14+24+6+36)/10 = 80/10 = 8
+    const result = calculateWeightedAverageAdvanced({ values: [7, 8, 6, 9], weights: [2, 3, 1, 4] })
+    expect(result.weightedAverage).toBeCloseTo(8, 10)
+    expect(result.totalWeight).toBe(10)
+  })
+
+  it('throws on mismatched lengths', () => {
+    expect(() => calculateWeightedAverageAdvanced({ values: [1, 2], weights: [1] })).toThrow()
+  })
+
+  it('throws on empty input', () => {
+    expect(() => calculateWeightedAverageAdvanced({ values: [], weights: [] })).toThrow()
+  })
+
+  it('throws on negative weights', () => {
+    expect(() => calculateWeightedAverageAdvanced({ values: [1, 2], weights: [-1, 2] })).toThrow()
+  })
+
+  it('throws on zero total weight', () => {
+    expect(() => calculateWeightedAverageAdvanced({ values: [1, 2], weights: [0, 0] })).toThrow()
+  })
+
+  it('handles decimals', () => {
+    const result = calculateWeightedAverageAdvanced({ values: [5.5, 6.25], weights: [1.5, 2.5] })
+    // (5.5*1.5 + 6.25*2.5) / 4 = (8.25 + 15.625)/4 = 23.875/4 = 5.96875
+    expect(result.weightedAverage).toBeCloseTo(5.96875, 10)
+  })
+})
+
+describe('calculateParallelepipedVolume', () => {
+  it('computes volume and surface for 10x5x3', () => {
+    const result = calculateParallelepipedVolume({ length: 10, width: 5, height: 3 })
+    expect(result.volume).toBe(150)
+    // 2*(10*5 + 10*3 + 5*3) = 2*(50+30+15) = 190
+    expect(result.surfaceArea).toBe(190)
+  })
+
+  it('cube side 2: volume 8, surface 24', () => {
+    const result = calculateParallelepipedVolume({ length: 2, width: 2, height: 2 })
+    expect(result.volume).toBe(8)
+    expect(result.surfaceArea).toBe(24)
+  })
+
+  it('throws on non-positive dimension', () => {
+    expect(() => calculateParallelepipedVolume({ length: 0, width: 5, height: 3 })).toThrow()
+    expect(() => calculateParallelepipedVolume({ length: -1, width: 5, height: 3 })).toThrow()
+  })
+})
+
+describe('calculateSphereVolume', () => {
+  it('unit sphere: volume 4/3*pi, surface 4*pi', () => {
+    const result = calculateSphereVolume({ radius: 1 })
+    expect(result.volume).toBeCloseTo((4 / 3) * Math.PI, 10)
+    expect(result.surfaceArea).toBeCloseTo(4 * Math.PI, 10)
+    expect(result.diameter).toBe(2)
+  })
+
+  it('radius 5 independent reference', () => {
+    const result = calculateSphereVolume({ radius: 5 })
+    expect(result.volume).toBeCloseTo(523.5987755982989, 6)
+    expect(result.surfaceArea).toBeCloseTo(314.1592653589793, 6)
+  })
+
+  it('throws on non-positive radius', () => {
+    expect(() => calculateSphereVolume({ radius: 0 })).toThrow()
+    expect(() => calculateSphereVolume({ radius: -3 })).toThrow()
+  })
+})
+
+describe('calculateCylinderVolume', () => {
+  it('radius 5, height 10', () => {
+    const result = calculateCylinderVolume({ radius: 5, height: 10 })
+    expect(result.volume).toBeCloseTo(Math.PI * 25 * 10, 10)
+    expect(result.lateralArea).toBeCloseTo(2 * Math.PI * 5 * 10, 10)
+    expect(result.surfaceArea).toBeCloseTo(2 * Math.PI * 5 * 10 + 2 * Math.PI * 25, 10)
+  })
+
+  it('radius 1, height 1: volume pi', () => {
+    const result = calculateCylinderVolume({ radius: 1, height: 1 })
+    expect(result.volume).toBeCloseTo(Math.PI, 10)
+  })
+
+  it('throws on non-positive input', () => {
+    expect(() => calculateCylinderVolume({ radius: 0, height: 5 })).toThrow()
+    expect(() => calculateCylinderVolume({ radius: 2, height: -1 })).toThrow()
+  })
+})
+
+describe('calculateLeasingPayment', () => {
+  it('zero-rate leasing spreads financed amount over months', () => {
+    const result = calculateLeasingPayment({
+      assetValue: 30000, downPayment: 3000, residualValue: 6000,
+      annualRate: 0, months: 60,
+    })
+    // financed = 30000 - 3000 - 6000 = 21000; payment = 21000/60 = 350
+    expect(result.financedAmount).toBe(21000)
+    expect(result.monthlyPayment).toBeCloseTo(350, 10)
+    expect(result.totalInterest).toBeCloseTo(0, 10)
+  })
+
+  it('matches annuity formula for a positive rate', () => {
+    const result = calculateLeasingPayment({
+      assetValue: 25000, downPayment: 2500, residualValue: 5000,
+      annualRate: 6.5, months: 48,
+    })
+    const financed = 25000 - 2500 - 5000 // 17500
+    const r = 0.065 / 12
+    const expected = (financed * r * Math.pow(1 + r, 48)) / (Math.pow(1 + r, 48) - 1)
+    expect(result.monthlyPayment).toBeCloseTo(expected, 8)
+    expect(result.totalAmountPaid).toBeCloseTo(2500 + expected * 48 + 5000, 6)
+  })
+
+  it('throws when financed amount is not positive', () => {
+    expect(() => calculateLeasingPayment({
+      assetValue: 10000, downPayment: 10000, residualValue: 0, annualRate: 5, months: 12,
+    })).toThrow()
+  })
+})
+
+describe('calculateTanTaeg', () => {
+  it('no extra costs: TAEG approximates TAN', () => {
+    const result = calculateTanTaeg({
+      principal: 10000, monthlyPayment: 310, months: 36,
+      upfrontCosts: 0, monthlyCosts: 0,
+    })
+    expect(Math.abs(result.tan - result.taeg)).toBeLessThan(0.5)
+    expect(result.totalInterest).toBeCloseTo(310 * 36 - 10000, 6)
+  })
+
+  it('TAN is consistent with amortization: recompute payment from derived TAN', () => {
+    const result = calculateTanTaeg({
+      principal: 20000, monthlyPayment: 400, months: 60,
+      upfrontCosts: 200, monthlyCosts: 3,
+    })
+    expect(result.tan).toBeGreaterThan(0)
+    const r = result.tan / 100 / 12
+    const recomputed = (20000 * r * Math.pow(1 + r, 60)) / (Math.pow(1 + r, 60) - 1)
+    // derived TAN should reproduce the input payment within tolerance
+    expect(Math.abs(recomputed - 400)).toBeLessThan(0.2)
+  })
+
+  it('throws on non-positive inputs', () => {
+    expect(() => calculateTanTaeg({ principal: 0, monthlyPayment: 100, months: 12, upfrontCosts: 0, monthlyCosts: 0 })).toThrow()
+    expect(() => calculateTanTaeg({ principal: 1000, monthlyPayment: 100, months: 0, upfrontCosts: 0, monthlyCosts: 0 })).toThrow()
+  })
+
+  it('round-trip: payment from known 1% monthly rate reproduces TAN 12% and TAEG effective', () => {
+    // Riferimento indipendente: rata = P * r * (1+r)^n / ((1+r)^n - 1) con r = 1% mensile
+    const P = 10000, n = 24, r = 0.01
+    const payment = (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1)
+    const result = calculateTanTaeg({ principal: P, monthlyPayment: payment, months: n, upfrontCosts: 0, monthlyCosts: 0 })
+    expect(result.tan).toBeCloseTo(12.0, 1) // 12% nominale annuo
+    const expectedEffective = (Math.pow(1.01, 12) - 1) * 100
+    expect(result.taeg).toBeCloseTo(expectedEffective, 1) // ~12.68%
+    // coerenza: TAEG = (1+TAN/1200)^12 - 1 in assenza di costi
+    expect(Math.abs(result.taeg - (Math.pow(1 + result.tan / 100 / 12, 12) - 1) * 100)).toBeLessThan(0.1)
+  })
+
+  it('upfront costs raise TAEG above zero-cost TAEG (independent bisection in test)', () => {
+    const P = 10000, n = 24, r = 0.01
+    const payment = (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1)
+    const zeroCost = calculateTanTaeg({ principal: P, monthlyPayment: payment, months: n, upfrontCosts: 0, monthlyCosts: 0 })
+    const withCosts = calculateTanTaeg({ principal: P, monthlyPayment: payment, months: n, upfrontCosts: 300, monthlyCosts: 0 })
+    // Riferimento indipendente: risolvi 9700 = payment * (1 - (1+r)^-n) / r per bisezione locale
+    const netPrincipal = P - 300
+    let lo = 0, hi = 0.1
+    for (let i = 0; i < 200; i++) {
+      const mid = (lo + hi) / 2
+      const pv = (payment * (1 - Math.pow(1 + mid, -n))) / mid
+      if (pv > netPrincipal) lo = mid; else hi = mid
+    }
+    const expectedTaeg = (Math.pow(1 + (lo + hi) / 2, 12) - 1) * 100
+    expect(withCosts.taeg).toBeCloseTo(expectedTaeg, 1)
+    expect(withCosts.taeg).toBeGreaterThan(zeroCost.taeg)
+    expect(withCosts.tan).toBeCloseTo(zeroCost.tan, 1) // TAN non dipende dai costi
+  })
+
+  it('monthly costs increase TAEG', () => {
+    const base = calculateTanTaeg({ principal: 10000, monthlyPayment: 470.735, months: 24, upfrontCosts: 0, monthlyCosts: 0 })
+    const extra = calculateTanTaeg({ principal: 10000, monthlyPayment: 470.735, months: 24, upfrontCosts: 0, monthlyCosts: 5 })
+    expect(extra.taeg).toBeGreaterThan(base.taeg)
+  })
+
+  it('payment below principal share throws (no real rate exists)', () => {
+    // 800/mese su 10000 in 12 mesi non copre nemmeno la quota capitale (833.33)
+    expect(() => calculateTanTaeg({ principal: 10000, monthlyPayment: 800, months: 12, upfrontCosts: 0, monthlyCosts: 0 })).toThrow(/no real interest rate exists/)
+  })
+
+  it('absurdly high payment throws (beyond supported rate range)', () => {
+    expect(() => calculateTanTaeg({ principal: 10000, monthlyPayment: 20000, months: 24, upfrontCosts: 0, monthlyCosts: 0 })).toThrow(/maximum rate supported/)
+  })
+
+  it('upfront costs >= principal throws', () => {
+    expect(() => calculateTanTaeg({ principal: 10000, upfrontCosts: 10000, monthlyPayment: 1000, months: 12, monthlyCosts: 0 })).toThrow(/less than principal/)
+  })
+
+  it('upfront costs that make TAEG impossible throw', () => {
+    // TAN e' calcolabile (900 >= 833.33) ma il TAEG no: netto 100 < PV(1) ≈ 900
+    expect(() => calculateTanTaeg({ principal: 10000, upfrontCosts: 9900, monthlyPayment: 900, months: 24, monthlyCosts: 0 })).toThrow(/TAEG/)
+  })
+
+  it('boundary: payment == principal/months gives zero-rate loan, no throw', () => {
+    const result = calculateTanTaeg({ principal: 10000, monthlyPayment: 10000 / 12, months: 12, upfrontCosts: 0, monthlyCosts: 0 })
+    expect(result.tan).toBeCloseTo(0, 1)
+    expect(result.taeg).toBeCloseTo(0, 1)
+    expect(result.totalInterest).toBeCloseTo(0, 2)
+  })
+})
+
+describe('calculateBolloAuto', () => {
+  it('100 kW base: 2.58 EUR/kW = 258 EUR (Euro 6)', () => {
+    const result = calculateBolloAuto({ power: 100, emissionClass: 'Euro 6' })
+    expect(result.annualCost).toBeCloseTo(258, 6)
+    expect(result.totalCost).toBeCloseTo(258, 6)
+    expect(result.superbollo).toBe(0)
+  })
+
+  it('130 kW: 100*2.58 + 30*3.87 = 258 + 116.1 = 374.1', () => {
+    const result = calculateBolloAuto({ power: 130, emissionClass: 'Euro 6' })
+    expect(result.annualCost).toBeCloseTo(374.1, 6)
+  })
+
+  it('160 kW: 258 + 116.1 + 30*4.65 = 513.6', () => {
+    const result = calculateBolloAuto({ power: 160, emissionClass: 'Euro 6' })
+    expect(result.annualCost).toBeCloseTo(513.6, 6)
+  })
+
+  it('185 kW (threshold): no superbollo, 513.6 + 25*5.82 = 659.1', () => {
+    const result = calculateBolloAuto({ power: 185, emissionClass: 'Euro 6' })
+    expect(result.annualCost).toBeCloseTo(659.1, 6)
+    expect(result.superbollo).toBe(0)
+  })
+
+  it('200 kW Euro 6: base 746.4 + superbollo 15*20 = 1046.4', () => {
+    const result = calculateBolloAuto({ power: 200, emissionClass: 'Euro 6' })
+    expect(result.annualCost).toBeCloseTo(1046.4, 6)
+    expect(result.superbollo).toBeCloseTo(300, 6)
+  })
+
+  it('200 kW Euro 0: superbollo raddoppiato (20*2 per kW oltre 185)', () => {
+    const result = calculateBolloAuto({ power: 200, emissionClass: 'Euro 0' })
+    expect(result.superbollo).toBeCloseTo(600, 6)
+    expect(result.totalCost).toBeCloseTo(746.4 + 600, 6)
+  })
+
+  it('throws on non-positive power', () => {
+    expect(() => calculateBolloAuto({ power: 0, emissionClass: 'Euro 6' })).toThrow()
+  })
+
+  it('throws on NaN power', () => {
+    expect(() => calculateBolloAuto({ power: Number.NaN, emissionClass: 'Euro 6' })).toThrow()
+  })
+})
+
+
+describe('calculateTfr', () => {
+  it('one year, no inflation: accrual = retribuzione/13.5, revaluation = 1.5% fisso', () => {
+    const result = calculateTfr({
+      grossAnnualSalary: 27000, yearsOfService: 1, monthsOfService: 0,
+      inflationRate: 0, socialSecurityContribution: 0, severancePay: 0,
+    })
+    const accrual = 27000 / 13.5 // 2000
+    expect(result.tfrGross).toBeCloseTo(accrual * 1.015, 6) // 2030
+    expect(result.inflationAdjustment).toBeCloseTo(accrual * 0.015, 6)
+  })
+
+  it('two years compounds revaluation year by year (closed form)', () => {
+    const one = calculateTfr({ grossAnnualSalary: 30000, yearsOfService: 1, monthsOfService: 0, inflationRate: 0, socialSecurityContribution: 0, severancePay: 0 })
+    const two = calculateTfr({ grossAnnualSalary: 30000, yearsOfService: 2, monthsOfService: 0, inflationRate: 0, socialSecurityContribution: 0, severancePay: 0 })
+    // Riferimento indipendente: fondo_n = accantonamento * (1+r) * ((1+r)^n - 1)/r, r = 0.015
+    const accrual = 30000 / 13.5
+    const r = 0.015
+    const f2 = accrual * (1 + r) * ((Math.pow(1 + r, 2) - 1) / r)
+    expect(two.tfrGross).toBeCloseTo(f2, 2) // policy: arrotondamento al centesimo
+    expect(two.tfrGross).toBeGreaterThan(one.tfrGross * 2) // compounding > linear doubling
+  })
+
+  it('positive inflation increases gross TFR', () => {
+    const zero = calculateTfr({ grossAnnualSalary: 30000, yearsOfService: 3, monthsOfService: 0, inflationRate: 0, socialSecurityContribution: 0, severancePay: 0 })
+    const infl = calculateTfr({ grossAnnualSalary: 30000, yearsOfService: 3, monthsOfService: 0, inflationRate: 2, socialSecurityContribution: 0, severancePay: 0 })
+    expect(infl.tfrGross).toBeGreaterThan(zero.tfrGross)
+  })
+
+  it('default case matches independent hand computation (30k, 5y, infl 2%, INPS 0.5%)', () => {
+    const result = calculateTfr({
+      grossAnnualSalary: 30000, yearsOfService: 5, monthsOfService: 0,
+      inflationRate: 2, socialSecurityContribution: 0.5, severancePay: 0,
+    })
+    // Riferimento indipendente: accantonamento mensile = 30000/12/13.5 * 0.995 = 184.259259
+    // fondo dopo 5 anni con rivalutazione 3%/anno: 12091.26185
+    expect(result.tfrGross).toBeCloseTo(12091.26, 2)
+    // rivalutazione = fondo - accantonamenti = 12091.26 - 11055.56 = 1035.71
+    expect(result.inflationAdjustment).toBeCloseTo(1035.71, 2)
+    // trattenute = 17% rivalutazione + 23% base = 176.07 + 2542.78 = 2718.85
+    expect(result.totalWithholding).toBeCloseTo(2718.85, 2)
+    expect(result.tfrNet).toBeCloseTo(9372.41, 2)
+  })
+
+  it('throws on invalid months', () => {
+    expect(() => calculateTfr({ grossAnnualSalary: 30000, yearsOfService: 1, monthsOfService: 12, inflationRate: 0, socialSecurityContribution: 0, severancePay: 0 })).toThrow()
+  })
+})
+
+describe('calculateRivalutazioneMonetaria', () => {
+  it('annual inflation compounding over 1 year', () => {
+    const result = calculateRivalutazioneMonetaria({
+      initialAmount: 1000,
+      startDate: new Date(2020, 0, 1),
+      endDate: new Date(2021, 0, 1),
+      inflationRate: 2, isMonthlyInflation: false,
+    })
+    expect(result.finalAmount).toBeCloseTo(1020, 6)
+    expect(result.months).toBe(12)
+  })
+
+  it('monthly inflation compounding 12 months at 2%/yr', () => {
+    const result = calculateRivalutazioneMonetaria({
+      initialAmount: 1000,
+      startDate: new Date(2020, 0, 1),
+      endDate: new Date(2021, 0, 1),
+      inflationRate: 2, isMonthlyInflation: true,
+    })
+    const monthly = 0.02 / 12
+    // Rounding policy: importi arrotondati al centesimo
+    expect(result.finalAmount).toBeCloseTo(1000 * Math.pow(1 + monthly, 12), 2)
+  })
+
+  it('throws when end date precedes start date', () => {
+    expect(() => calculateRivalutazioneMonetaria({
+      initialAmount: 1000,
+      startDate: new Date(2021, 0, 1),
+      endDate: new Date(2020, 0, 1),
+      inflationRate: 2, isMonthlyInflation: false,
+    })).toThrow()
+  })
+})
+
+describe('calculatePensioneEstimate', () => {
+  it('replacement rate below 100% for a typical case', () => {
+    const result = calculatePensioneEstimate({
+      currentAge: 35, retirementAge: 67, currentSalary: 30000,
+      contributionYears: 10, growthRate: 1,
+    })
+    expect(result.estimatedPension).toBeGreaterThan(0)
+    expect(result.replacementRate).toBeGreaterThan(0)
+    expect(result.replacementRate).toBeLessThan(100)
+    expect(result.yearsToRetirement).toBe(32)
+    expect(result.contributionYearsAtRetirement).toBe(42)
+  })
+
+  it('matches independent closed-form contributivo calculation (montante * coeff/100 / 12)', () => {
+    const years = 42
+    const salary0 = 30000
+    const g = 0.01
+    // Somma geometrica: montante = 0.33 * salario0 * sum((1+g)^i, i=0..years-1)
+    const montante = 0.33 * salary0 * ((Math.pow(1 + g, years) - 1) / g)
+    const expectedMonthly = (montante * (4.683 / 100)) / 12
+    const result = calculatePensioneEstimate({
+      currentAge: 35, retirementAge: 67, currentSalary: salary0,
+      contributionYears: 10, growthRate: 1,
+    })
+    expect(result.estimatedPension).toBeCloseTo(expectedMonthly, 2)
+    expect(result.replacementRate).toBeCloseTo((expectedMonthly / (salary0 / 12)) * 100, 1)
+  })
+
+  it('zero growth keeps salary constant in montante', () => {
+    const result = calculatePensioneEstimate({
+      currentAge: 40, retirementAge: 65, currentSalary: 30000,
+      contributionYears: 5, growthRate: 0,
+    })
+    const years = 30 // 25 futuri + 5 già versati
+    const montante = 0.33 * 30000 * years
+    const expectedMonthly = (montante * (4.572 / 100)) / 12
+    expect(result.estimatedPension).toBeCloseTo(expectedMonthly, 2)
+  })
+
+  it('later retirement yields higher pension (more years + better coefficient)', () => {
+    const a = calculatePensioneEstimate({ currentAge: 40, retirementAge: 62, currentSalary: 30000, contributionYears: 10, growthRate: 1 })
+    const b = calculatePensioneEstimate({ currentAge: 40, retirementAge: 67, currentSalary: 30000, contributionYears: 10, growthRate: 1 })
+    expect(b.estimatedPension).toBeGreaterThan(a.estimatedPension)
+  })
+
+  it('throws when current age >= retirement age', () => {
+    expect(() => calculatePensioneEstimate({ currentAge: 67, retirementAge: 67, currentSalary: 30000, contributionYears: 10, growthRate: 1 })).toThrow()
+  })
+})
+
+describe('calculateTriangleArea', () => {
+  it('base 10 height 5: area 25', () => {
+    const result = calculateTriangleArea({ base: 10, height: 5 })
+    expect(result.area).toBe(25)
+  })
+
+  it('perimeter with all sides given (3-4-5 triangle)', () => {
+    const result = calculateTriangleArea({ base: 4, height: 3, sideA: 3, sideB: 4, sideC: 5 })
+    expect(result.perimeter).toBe(12)
+    expect(result.isValid).toBe(true)
+  })
+
+  it('invalid triangle flagged', () => {
+    const result = calculateTriangleArea({ base: 10, height: 1, sideA: 2, sideB: 2, sideC: 10 })
+    expect(result.isValid).toBe(false)
+  })
+
+  it('throws on non-positive base or height', () => {
+    expect(() => calculateTriangleArea({ base: 0, height: 5 })).toThrow()
+    expect(() => calculateTriangleArea({ base: 5, height: -1 })).toThrow()
+  })
+})
+
+describe('calculatePythagoras', () => {
+  it('3-4-5 triangle gives hypotenuse 5', () => {
+    const r = calculatePythagoras({ cathetusA: 3, cathetusB: 4 })
+    expect(r.hypotenuse).toBeCloseTo(5, 6)
+  })
+
+  it('round-trip: hypotenuse^2 == a^2 + b^2 for decimals', () => {
+    const r = calculatePythagoras({ cathetusA: 1.5, cathetusB: 2.5 })
+    const h = Math.round(Math.sqrt(Math.pow(1.5, 2) + Math.pow(2.5, 2)) * 100) / 100 // policy: 2 decimali
+    expect(r.hypotenuse).toBeCloseTo(h, 6)
+  })
+
+  it('large values remain finite', () => {
+    const r = calculatePythagoras({ cathetusA: 1e6, cathetusB: 1e6 })
+    expect(r.hypotenuse).toBeCloseTo(Math.sqrt(2) * 1e6, 2)
+  })
+
+  it('throws on zero/negative catheti', () => {
+    expect(() => calculatePythagoras({ cathetusA: 0, cathetusB: 4 })).toThrow()
+    expect(() => calculatePythagoras({ cathetusA: -3, cathetusB: 4 })).toThrow()
+  })
+})
+
+describe('calculateRuleOfThree', () => {
+  it('2:3 = 4:x gives x=6', () => {
+    const r = calculateRuleOfThree({ a: 2, b: 3, c: 4 })
+    expect(r.x).toBeCloseTo(6, 6)
+  })
+
+  it('inverse proportion: x = b*c/a matches independent computation', () => {
+    const { a, b, c } = { a: 12.5, b: 7.3, c: 4.1 }
+    const r = calculateRuleOfThree({ a, b, c })
+    const expected = Math.round(((b * c) / a) * 100) / 100 // policy: 2 decimali
+    expect(r.x).toBeCloseTo(expected, 6)
+  })
+
+  it('negative values allowed (proportion still holds)', () => {
+    const r = calculateRuleOfThree({ a: -4, b: 8, c: 2 })
+    expect(r.x).toBeCloseTo(-4, 6)
+  })
+
+  it('throws when a is zero', () => {
+    expect(() => calculateRuleOfThree({ a: 0, b: 3, c: 4 })).toThrow()
+  })
+})
+
+describe('calculateTrapezoidArea', () => {
+  it('(10+6)*4/2 = 32', () => {
+    const r = calculateTrapezoidArea({ majorBase: 10, minorBase: 6, height: 4 })
+    expect(r.area).toBeCloseTo(32, 6)
+  })
+
+  it('symmetric with formula (B+b)*h/2', () => {
+    const { majorBase, minorBase, height } = { majorBase: 8.5, minorBase: 3.5, height: 7 }
+    const r = calculateTrapezoidArea({ majorBase, minorBase, height })
+    expect(r.area).toBeCloseTo(((majorBase + minorBase) * height) / 2, 4)
+  })
+
+  it('throws on non-positive inputs', () => {
+    expect(() => calculateTrapezoidArea({ majorBase: 0, minorBase: 5, height: 3 })).toThrow()
+    expect(() => calculateTrapezoidArea({ majorBase: 5, minorBase: -1, height: 3 })).toThrow()
+    expect(() => calculateTrapezoidArea({ majorBase: 5, minorBase: 5, height: 0 })).toThrow()
+  })
+})
+
+describe('calculateConeVolume', () => {
+  it('r=3, h=4: volume = pi*9*4/3 = 12*pi = 37.6991', () => {
+    const r = calculateConeVolume({ radius: 3, height: 4 })
+    expect(r.volume).toBeCloseTo(Math.round(12 * Math.PI * 100) / 100, 6) // policy: 2 decimali
+  })
+
+  it('cylinder/3 check: cone is 1/3 of cylinder with same base', () => {
+    const cone = calculateConeVolume({ radius: 2, height: 6 })
+    const cylinder = Math.PI * 4 * 6
+    expect(cone.volume).toBeCloseTo(Math.round((cylinder / 3) * 100) / 100, 6) // policy: 2 decimali
+  })
+
+  it('throws on non-positive inputs', () => {
+    expect(() => calculateConeVolume({ radius: 0, height: 3 })).toThrow()
+    expect(() => calculateConeVolume({ radius: 2, height: -1 })).toThrow()
+  })
+})
+
+describe('calculateBmr', () => {
+  it('male 70kg 175cm 30y: 10*70 + 6.25*175 - 5*30 + 5 = 1648.75', () => {
+    const r = calculateBmr({ weightKg: 70, heightCm: 175, ageYears: 30, sex: 'male' })
+    expect(r.bmr).toBeCloseTo(1648.75, 4)
+  })
+
+  it('female 60kg 165cm 25y: 10*60 + 6.25*165 - 5*25 - 161 = 1345.25', () => {
+    const r = calculateBmr({ weightKg: 60, heightCm: 165, ageYears: 25, sex: 'female' })
+    expect(r.bmr).toBeCloseTo(1345.25, 4)
+  })
+
+  it('women are 166 kcal lower than men with same body (161+5)', () => {
+    const m = calculateBmr({ weightKg: 70, heightCm: 175, ageYears: 30, sex: 'male' })
+    const f = calculateBmr({ weightKg: 70, heightCm: 175, ageYears: 30, sex: 'female' })
+    expect(m.bmr - f.bmr).toBeCloseTo(166, 4)
+  })
+
+  it('throws for age < 18 (validation domain) and non-positive weight', () => {
+    expect(() => calculateBmr({ weightKg: 70, heightCm: 175, ageYears: 17, sex: 'male' })).toThrow()
+    expect(() => calculateBmr({ weightKg: 0, heightCm: 175, ageYears: 30, sex: 'male' })).toThrow()
   })
 })
