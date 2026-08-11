@@ -1,15 +1,38 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Calcolo Aumento Percentuale Online | CalcolaSubito',
-  description: 'Calcola aumento percentuale, incremento assoluto e valore finale.',
-  keywords: 'aumento percentuale, incremento percentuale, calcolo aumento',
+  title: 'Aumento Percentuale Online | CalcolaSubito',
+  description: 'Calcola l\'aumento percentuale su un valore. Valore finale, incremento assoluto, percentuale di aumento. Gratis e preciso.',
+  keywords: 'aumento percentuale, calcolo aumento, incremento percentuale, variazione percentuale',
   alternates: { canonical: '/aumento-percentuale' },
   openGraph: {
-    title: 'Calcolo Aumento Percentuale - CalcolaSubito',
-    description: 'Ottieni incremento e valore finale in pochi secondi.',
+    title: 'Aumento Percentuale - CalcolaSubito',
+    description: 'Calcola l\'incremento percentuale',
     type: 'website',
   },
+}
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Come si calcola l\'aumento percentuale?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Aumento = Valore × % / 100. Valore finale = Valore + Aumento. % aumento = (Finale - Iniziale) / Iniziale × 100.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Differenza tra aumento e sconto?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Matematicamente identici ma segno opposto. Aumento: valore finale > iniziale. Sconto: valore finale < iniziale.',
+      },
+    },
+  ],
 }
 
 export default function AumentoPercentualeLayout({
@@ -17,6 +40,15 @@ export default function AumentoPercentualeLayout({
 }: {
   children: React.ReactNode
 }) {
-  return children
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqSchema),
+        }}
+      />
+      {children}
+    </>
+  )
 }
-

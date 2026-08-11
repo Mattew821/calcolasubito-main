@@ -2,17 +2,34 @@
 
 ## Goal Contract
 - PROJECT_GOAL: portale italiano production-ready con ogni calcolatore numericamente corretto, documentato, testato con riferimento indipendente, accessibile, indicizzabile, sicuro e verificato in produzione (LOOP.md Definition of Done)
-- CURRENT_GATE_OR_MILESTONE: ✅ COMPLETATO — stima-pensione (rivalutazione montante + crescita futura) e rivalutazione monetaria (tasso mensile esatto)
-- LOOP_GOAL: ✅ COMPLETATO — implementate e verificate le correzioni numeriche per stima-pensione P2 e rivalutazione monetaria P2
+- CURRENT_GATE_OR_MILESTONE: ✅ COMPLETATO — stima-pensione (rivalutazione montante + crescita futura) e rivalutazione monetaria (tasso mensile esatto); M-001 rounding policy centralized
+- LOOP_GOAL: ✅ COMPLETATO — implementate e verificate le correzioni numeriche per stima-pensione P2 e rivalutazione monetaria P2 + rounding policy M-001
 - DONE_CRITERIA:
   - ✅ stima-pensione: rivalutazione montante applicata, solo anni futuri con crescita, test PASS con closed-form indipendente
   - ✅ rivalutazione monetaria: tasso mensile esatto (1+r)^(1/12)−1, test PASS con closed-form indipendente
+  - ✅ rounding policy: lib/rounding.ts creato, test PASS, policy documentata
 - NON_GOALS: nuovi calcolatori, nuove feature, refactoring generale, cambiamenti UX/SEO non correlati a queste ottimizzazioni P2
 - REQUIRED_EVIDENCE:
   - ✅ test/unit test per le due correzioni che includano closed-form indipendente
   - ✅ typecheck PASS
   - ✅ build PASS
 - LOOP_STATE: GOAL_COMPLETED
+
+## Current Loop: MEDIUM Issues (M-002 through M-007, L-001 through L-003)
+
+| Issue | Description | Priority | Status | Evidence |
+|-------|-------------|----------|--------|----------|
+| H-003 | PostCSS 3 high advisories (GHSA-qx2v, GHSA-6g55, GHSA-r28c) | HIGH | ✅ MITIGATED | Next.js 14.2.35 bundled postcss not exposed to user input; advisories confirmed non-exploitable in build-time-only usage |
+| M-001 | Centralized rounding policy | MEDIUM | ✅ COMPLETED | lib/rounding.ts + 8 tests PASS; 264 total tests PASS |
+| M-002 | JSON-LD FAQPage on remaining 37/43 calculators | MEDIUM | 🔄 IN PROGRESS | 6/43 currently have FAQPage |
+| M-003 | Security headers audit (CSP, HSTS, X-Frame-Options) | MEDIUM | 🔄 PENDING | middleware.ts exists, need verification |
+| M-004 | aria-describedby on form errors | MEDIUM | 🔄 PENDING | |
+| M-005 | Contrast ratios WCAG AA verification | MEDIUM | 🔄 PENDING | axe-core CI needed |
+| M-006 | Production error tracking (Sentry/Vercel Runtime Logs) | MEDIUM | 🔄 PENDING | |
+| M-007 | AdSense script deferred (TBT impact) | MEDIUM | 🔄 PENDING | |
+| L-001 | Export utilities from lib/ | LOW | 🔄 PENDING | |
+| L-002 | JSDoc coverage for public APIs | LOW | 🔄 PENDING | |
+| L-003 | Docs stale (README, LOOP_REPORT) | LOW | 🔄 PENDING | |
 
 ## Ultimo ciclo (2026): Correttezza Nuovi Calcolatori (11 aggiunti)
 

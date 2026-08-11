@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Calcolo Percentuali Online Gratuito | CalcolaSubito',
-  description: 'Calcola percentuali, sconti e proporzioni online gratis. Strumento preciso e veloce per qualsiasi calcolo percentuale. Nessuna registrazione richiesta.',
-  keywords: 'calcolo percentuali, sconto percentuale, percentuale di, aumento percentuale, proporzioni',
+  title: 'Percentuali Online | CalcolaSubito',
+  description: 'Calcolo percentuali: percentuale di un numero, variazione percentuale, percentuale inversa. Gratis e preciso.',
+  keywords: 'calcolo percentuali, percentuale, variazione percentuale, percentuale inversa',
   alternates: { canonical: '/percentuali' },
   openGraph: {
-    title: 'Calcolo Percentuali - CalcolaSubito',
-    description: 'Calcola facilmente percentuali, sconti e proporzioni',
+    title: 'Percentuali - CalcolaSubito',
+    description: 'Tutti i calcoli con le percentuali',
     type: 'website',
   },
 }
@@ -18,26 +18,26 @@ const faqSchema = {
   mainEntity: [
     {
       '@type': 'Question',
-      name: 'Come calcolare uno sconto percentuale?',
+      name: 'Come calcolare la percentuale di un numero?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Calcola la percentuale del prezzo originale, poi sottrai dal totale. Esempio: prezzo 100€, sconto 20%. Sconto = 100 × 20 ÷ 100 = 20€. Prezzo finale = 100 - 20 = 80€.',
+        text: 'Percentuale = Numero × % / 100. Es: 20% di 150 = 150 × 20 / 100 = 30.',
       },
     },
     {
       '@type': 'Question',
-      name: 'Quale percentuale è 15 su 60?',
+      name: 'Come calcolare la variazione percentuale?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Dividi 15 per 60 e moltiplica per 100: (15 ÷ 60) × 100 = 25%. Quindi 15 è il 25% di 60.',
+        text: 'Variazione % = (Finale - Iniziale) / Iniziale × 100. Positivo = aumento, negativo = diminuzione.',
       },
     },
     {
       '@type': 'Question',
-      name: 'Come calcolo un aumento percentuale?',
+      name: 'Come trovare il numero sapendo la percentuale?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Se un valore è 100 e aumenta del 10%, il nuovo valore è 100 + (100 × 10 ÷ 100) = 110.',
+        text: 'Numero = Percentuale × 100 / %. Es: 30 è il 20% di che numero? 30 × 100 / 20 = 150.',
       },
     },
   ],
@@ -60,4 +60,3 @@ export default function PercentualiLayout({
     </>
   )
 }
-
