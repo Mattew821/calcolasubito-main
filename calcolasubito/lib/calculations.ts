@@ -2571,8 +2571,10 @@ export function calculateRivalutazioneMonetaria(input: RivalutazioneInput): Riva
 
   let adjustment: number
   if (isMonthlyInflation) {
-    // Compound monthly inflation
-    const monthlyRate = inflationRate / 100 / 12
+    // Compound monthly inflation: exact monthly rate from annual rate
+    // (1 + annualRate)^(1/12) - 1
+    const annualRate = inflationRate / 100
+    const monthlyRate = Math.pow(1 + annualRate, 1 / 12) - 1
     adjustment = initialAmount * (Math.pow(1 + monthlyRate, monthsDiff) - 1)
   } else {
     // Annual inflation
@@ -2625,15 +2627,16 @@ export function calculatePensioneEstimate(input: PensioneInput): PensioneResult 
   const yearsToRetirement = retirementAge - currentAge
   const contributionYearsAtRetirement = contributionYears + yearsToRetirement
 
-  // Simplified pension formula (contributivo)
   let contributionBasis = 0
-  const years = contributionYearsAtRetirement
 
-  // Accumulate contributions with salary growth
-  let salary = currentSalary
-  for (let i = 0; i < years; i++) {
-    contributionBasis += salary * 0.33 // 33% contribution rate
-    salary *= 1 + growthRate / 100
+  // Accumulate past contributions (no growth - flat at currentSalary)
+  contributionBasis += contributionYears * currentSalary * 0.33
+
+  // Accumulate future contributions with salary growth starting from currentSalary
+  let futureSalary = currentSalary
+  for (let i = 0; i < yearsToRetirement; i++) {
+    contributionBasis += futureSalary * 0.33
+    futureSalary *= 1 + growthRate / 100
   }
 
   // Coefficienti di trasformazione 2024 (INPS, aggiornamento annuale DM):

@@ -1455,16 +1455,24 @@ describe('calculateRivalutazioneMonetaria', () => {
     expect(result.months).toBe(12)
   })
 
-  it('monthly inflation compounding 12 months at 2%/yr', () => {
+  it('monthly inflation compounding uses exact monthly rate (1+r)^(1/12)-1', () => {
     const result = calculateRivalutazioneMonetaria({
       initialAmount: 1000,
       startDate: new Date(2020, 0, 1),
       endDate: new Date(2021, 0, 1),
       inflationRate: 2, isMonthlyInflation: true,
     })
-    const monthly = 0.02 / 12
+    // Independent closed-form verification:
+    // Annual rate 2% -> monthly rate = (1.02)^(1/12) - 1
+    const annualRate = 0.02
+    const monthlyRate = Math.pow(1 + annualRate, 1 / 12) - 1
+    const expectedFinal = 1000 * Math.pow(1 + monthlyRate, 12)
     // Rounding policy: importi arrotondati al centesimo
-    expect(result.finalAmount).toBeCloseTo(1000 * Math.pow(1 + monthly, 12), 2)
+    expect(result.finalAmount).toBeCloseTo(expectedFinal, 2)
+    // Verify it's DIFFERENT from simple division (old incorrect formula)
+    const oldMonthlyRate = annualRate / 12
+    const oldExpectedFinal = 1000 * Math.pow(1 + oldMonthlyRate, 12)
+    expect(result.finalAmount).not.toBeCloseTo(oldExpectedFinal, 4)
   })
 
   it('throws when end date precedes start date', () => {
@@ -1490,16 +1498,20 @@ describe('calculatePensioneEstimate', () => {
     expect(result.contributionYearsAtRetirement).toBe(42)
   })
 
-  it('matches independent closed-form contributivo calculation (montante * coeff/100 / 12)', () => {
-    const years = 42
+  it('matches independent closed-form contributivo calculation (montante * coeff/100 / 12) - growthRate ONLY on future years (P2 corrected)', () => {
+    const contributionYearsPast = 10
+    const yearsToRetirement = 32
     const salary0 = 30000
     const g = 0.01
-    // Somma geometrica: montante = 0.33 * salario0 * sum((1+g)^i, i=0..years-1)
-    const montante = 0.33 * salary0 * ((Math.pow(1 + g, years) - 1) / g)
+    // Past contributions: flat at currentSalary (no growth on past years)
+    const pastPortion = 0.33 * salary0 * contributionYearsPast
+    // Future contributions: grows from currentSalary, sum geometric on future years
+    const futurePortion = 0.33 * salary0 * ((Math.pow(1 + g, yearsToRetirement) - 1) / g)
+    const montante = pastPortion + futurePortion
     const expectedMonthly = (montante * (4.683 / 100)) / 12
     const result = calculatePensioneEstimate({
       currentAge: 35, retirementAge: 67, currentSalary: salary0,
-      contributionYears: 10, growthRate: 1,
+      contributionYears: contributionYearsPast, growthRate: 1,
     })
     expect(result.estimatedPension).toBeCloseTo(expectedMonthly, 2)
     expect(result.replacementRate).toBeCloseTo((expectedMonthly / (salary0 / 12)) * 100, 1)
